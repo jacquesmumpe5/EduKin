@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Compile Update="Layouts\FormAddressSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormAdmins.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormAffectAgent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormAffectSection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormFinances.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormFrais.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormAuthDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormPictureManagerExample.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormRolesPermissions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormStart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Layouts\FormWebcamCapture.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>
