@@ -155,7 +155,7 @@
             panelUtilisateursList = new Siticone.Desktop.UI.WinForms.SiticonePanel();
             DgvUser = new Siticone.Desktop.UI.WinForms.SiticoneDataGridView();
             panelUtilisateursForm = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            BtnResetPassword = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            this.btnResetPassword = new Siticone.Desktop.UI.WinForms.SiticoneButton();
             BtnGererRoles = new Siticone.Desktop.UI.WinForms.SiticoneButton();
             BtnDeleteUser = new Siticone.Desktop.UI.WinForms.SiticoneButton();
             BtnDesactiveUser = new Siticone.Desktop.UI.WinForms.SiticoneButton();
@@ -1970,6 +1970,7 @@
             panelUtilisateursForm.BorderColor = Color.FromArgb(5, 21, 48);
             panelUtilisateursForm.BorderRadius = 14;
             panelUtilisateursForm.BorderThickness = 2;
+            panelUtilisateursForm.Controls.Add(this.btnResetPassword);
             panelUtilisateursForm.Controls.Add(BtnGererRoles);
             panelUtilisateursForm.Controls.Add(BtnDeleteUser);
             panelUtilisateursForm.Controls.Add(BtnDesactiveUser);
@@ -1980,18 +1981,24 @@
             panelUtilisateursForm.Padding = new Padding(20);
             panelUtilisateursForm.Size = new Size(359, 182);
             panelUtilisateursForm.TabIndex = 1;
-            BtnResetPassword.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            BtnResetPassword.ForeColor = Color.White;
-            BtnResetPassword.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
-            BtnResetPassword.HoverState.FillColor = Color.White;
-            BtnResetPassword.HoverState.Image = Properties.Resources.Ann_Dark;
-            BtnResetPassword.Image = Properties.Resources.Ann_light;
-            BtnResetPassword.ImageSize = new Size(32, 32);
-            BtnResetPassword.Location = new Point(245, 105);
-            BtnResetPassword.Name = "BtnResetPassword";
-            BtnResetPassword.Size = new Size(102, 50);
-            BtnResetPassword.TabIndex = 20;
-            BtnResetPassword.Click += BtnResetPassword_Click;
+            // 
+            // this.btnResetPassword
+            // 
+            this.btnResetPassword.BorderRadius = 14;
+            this.btnResetPassword.BorderThickness = 2;
+            this.btnResetPassword.FillColor = Color.FromArgb(5, 21, 48);
+            this.btnResetPassword.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            this.btnResetPassword.ForeColor = Color.White;
+            this.btnResetPassword.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
+            this.btnResetPassword.HoverState.FillColor = Color.White;
+            this.btnResetPassword.HoverState.Image = Properties.Resources.Ann_Dark;
+            this.btnResetPassword.Image = Properties.Resources.Ann_light;
+            this.btnResetPassword.ImageSize = new Size(32, 32);
+            this.btnResetPassword.Location = new Point(245, 105);
+            this.btnResetPassword.Name = "btnResetPassword";
+            this.btnResetPassword.Size = new Size(102, 50);
+            this.btnResetPassword.TabIndex = 20;
+            this.btnResetPassword.Click += this.btnResetPassword_Click;
             // 
             // BtnGererRoles
             // 
@@ -2975,7 +2982,6 @@
         private Siticone.Desktop.UI.WinForms.SiticoneButton BtnDeletePromotion;
         private Siticone.Desktop.UI.WinForms.SiticoneButton BtnUpdatePromotion;
         private Siticone.Desktop.UI.WinForms.SiticoneButton BtnSavePromotion;
-        private Siticone.Desktop.UI.WinForms.SiticoneButton BtnResetPassword;
         private Label label33;
         private Siticone.Desktop.UI.WinForms.SiticonePanel siticonePanel12;
         private Siticone.Desktop.UI.WinForms.SiticoneTextBox TxtFiltrePromotion;

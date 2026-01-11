@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,7 +23,14 @@ namespace EduKin.Layouts
         private readonly Paiements _paiementsService;
         private readonly Pedagogies _pedaService;
 
-        // Propri√©t√©s publiques pour les contr√¥les des utilisateurs
+        // PropriÈtÈs publiques pour les contrÙles des agents
+        // public Siticone.Desktop.UI.WinForms.SiticoneButton SaveAgentControl => BtnSaveAgent;
+        // public Siticone.Desktop.UI.WinForms.SiticoneButton UpdateAgentControl => BtnUpdateAgent;
+        // public Siticone.Desktop.UI.WinForms.SiticoneButton DelAgentControl => BtnDelAgent;
+        // public PictureBox PicBoxAgentControl => PictureBoxProfilAgent;
+        // public Siticone.Desktop.UI.WinForms.SiticoneDataGridView DataGridViewAgentControl => DataGridViewAgent;
+
+        // PropriÈtÈs publiques pour les contrÙles des utilisateurs
         public PictureBox PictureBoxProfilUserControl => PictureBoxProfilUser;
         public Siticone.Desktop.UI.WinForms.SiticoneButton BtnLoadPicUserControl => btnLoadPicUser;
         public Siticone.Desktop.UI.WinForms.SiticoneButton BtnCapturePicUserControl => btnCapturePicUser;
@@ -42,7 +49,7 @@ namespace EduKin.Layouts
 
         private void SetupEventHandlers()
         {
-            // Tous les √©v√©nements sont maintenant configur√©s dans le Designer
+            // Tous les ÈvÈnements sont maintenant configurÈs dans le Designer
             VerifyComponentReferences();
         }
 
@@ -52,10 +59,12 @@ namespace EduKin.Layouts
             if (txtNom == null || txtPostNom == null || txtPrenom == null ||
                 cmbSexe == null || cmbRole == null ||
                 BtnSaveUser == null || BtnUpdateUser == null || BtnDeleteUser == null ||
-                DgvUser == null)
+                btnResetPassword == null || DgvUser == null)
             {
                 throw new InvalidOperationException("One or more user management components are not properly initialized.");
             }
+
+
         }
 
         private void BtnUtilisateur_Click(object sender, EventArgs e)
@@ -76,7 +85,7 @@ namespace EduKin.Layouts
             {
                 if (DgvUser.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Veuillez s√©lectionner un utilisateur √† modifier.", "Attention",
+                    MessageBox.Show("Veuillez sÈlectionner un utilisateur ‡ modifier.", "Attention",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -92,7 +101,7 @@ namespace EduKin.Layouts
 
                 if (success)
                 {
-                    MessageBox.Show("Utilisateur modifi√© avec succ√®s!", "Succ√®s",
+                    MessageBox.Show("Utilisateur modifiÈ avec succËs!", "SuccËs",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
                     await LoadUsersAsync();
@@ -111,7 +120,7 @@ namespace EduKin.Layouts
             {
                 if (DgvUser.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Veuillez s√©lectionner un utilisateur √† supprimer.", "Attention",
+                    MessageBox.Show("Veuillez sÈlectionner un utilisateur ‡ supprimer.", "Attention",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -119,7 +128,7 @@ namespace EduKin.Layouts
                 var username = DgvUser.SelectedRows[0].Cells["username"].Value?.ToString();
                 if (string.IsNullOrEmpty(username)) return;
 
-                var result = MessageBox.Show($"√ätes-vous s√ªr de vouloir d√©sactiver l'utilisateur '{username}' ?",
+                var result = MessageBox.Show($" tes-vous s˚r de vouloir dÈsactiver l'utilisateur '{username}' ?",
                     "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
@@ -128,7 +137,7 @@ namespace EduKin.Layouts
 
                     if (success)
                     {
-                        MessageBox.Show("Utilisateur d√©sactiv√© avec succ√®s!", "Succ√®s",
+                        MessageBox.Show("Utilisateur dÈsactivÈ avec succËs!", "SuccËs",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearForm();
                         await LoadUsersAsync();
@@ -142,13 +151,13 @@ namespace EduKin.Layouts
             }
         }
 
-        private async void BtnResetPassword_Click(object sender, EventArgs e)
+        private async void btnResetPassword_Click(object sender, EventArgs e)
         {
             try
             {
                 if (DgvUser.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Veuillez s√©lectionner un utilisateur.", "Attention",
+                    MessageBox.Show("Veuillez sÈlectionner un utilisateur.", "Attention",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -158,7 +167,7 @@ namespace EduKin.Layouts
 
                 var newPassword = "123456";
 
-                var result = MessageBox.Show($"R√©initialiser le mot de passe de '{username}' √† '123456' ?",
+                var result = MessageBox.Show($"RÈinitialiser le mot de passe de '{username}' ‡ '123456' ?",
                     "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
@@ -167,14 +176,14 @@ namespace EduKin.Layouts
 
                     if (success)
                     {
-                        MessageBox.Show($"Mot de passe r√©initialis√© avec succ√®s!\nNouveau mot de passe: {newPassword}",
-                            "Succ√®s", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show($"Mot de passe rÈinitialisÈ avec succËs!\nNouveau mot de passe: {newPassword}",
+                            "SuccËs", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la r√©initialisation: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de la rÈinitialisation: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -188,12 +197,12 @@ namespace EduKin.Layouts
                     rolesForm.ShowDialog(this);
                 }
 
-                // Recharger les r√¥les apr√®s fermeture du formulaire
+                // Recharger les rÙles aprËs fermeture du formulaire
                 _ = LoadRolesAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de l'ouverture du gestionnaire de r√¥les: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de l'ouverture du gestionnaire de rÙles: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -252,7 +261,7 @@ namespace EduKin.Layouts
 
             if (string.IsNullOrWhiteSpace(txtPrenom.Text))
             {
-                MessageBox.Show("Le pr√©nom est requis.", "Validation",
+                MessageBox.Show("Le prÈnom est requis.", "Validation",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtPrenom.Focus();
                 return false;
@@ -260,7 +269,7 @@ namespace EduKin.Layouts
 
             if (cmbSexe.SelectedItem == null)
             {
-                MessageBox.Show("Veuillez s√©lectionner le sexe.", "Validation",
+                MessageBox.Show("Veuillez sÈlectionner le sexe.", "Validation",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 cmbSexe.Focus();
                 return false;
@@ -310,7 +319,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors du chargement des donn√©es: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors du chargement des donnÈes: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -331,7 +340,7 @@ namespace EduKin.Layouts
                 }).ToList();
 
                 // Ajouter une option vide
-                roleList.Insert(0, new { Value = (dynamic)"", Text = (dynamic)"-- S√©lectionner un r√¥le --" });
+                roleList.Insert(0, new { Value = (dynamic)"", Text = (dynamic)"-- SÈlectionner un rÙle --" });
 
                 cmbRole.DataSource = roleList;
                 cmbRole.DisplayMember = "Text";
@@ -343,7 +352,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors du chargement des r√¥les: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors du chargement des rÙles: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -382,7 +391,7 @@ namespace EduKin.Layouts
                     Nom_Complet = $"{u.nom} {u.postnom} {u.prenom}",
                     Sexe = u.sexe,
                     Telephone = u.telephone ?? "",
-                    Role = u.role_name ?? "Non d√©fini",
+                    Role = u.role_name ?? "Non dÈfini",
                     Statut = u.compte_verrouille ? "Inactif" : "Actif"
 
                 }).ToList();
@@ -404,7 +413,7 @@ namespace EduKin.Layouts
             panelNavOptions_Promotions.Visible = false;
             panelNavSection_Cours.Visible = false;
 
-            // Afficher le panel demand√©
+            // Afficher le panel demandÈ
             panelToShow.Visible = true;
             panelToShow.BringToFront();
         }
@@ -453,7 +462,7 @@ namespace EduKin.Layouts
             {
                 if (DgvSection.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Veuillez s√©lectionner une section √† modifier.", "Attention",
+                    MessageBox.Show("Veuillez sÈlectionner une section ‡ modifier.", "Attention",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -465,7 +474,7 @@ namespace EduKin.Layouts
 
                 if (success)
                 {
-                    MessageBox.Show("Section modifi√©e avec succ√®s!", "Succ√®s",
+                    MessageBox.Show("Section modifiÈe avec succËs!", "SuccËs",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearSectionForm();
                     await LoadSectionsData();
@@ -484,7 +493,7 @@ namespace EduKin.Layouts
             {
                 if (DgvSection.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Veuillez s√©lectionner une section √† supprimer.", "Attention",
+                    MessageBox.Show("Veuillez sÈlectionner une section ‡ supprimer.", "Attention",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -492,7 +501,7 @@ namespace EduKin.Layouts
                 var codSect = DgvSection.SelectedRows[0].Cells["cod_sect"].Value?.ToString();
                 var description = DgvSection.SelectedRows[0].Cells["description"].Value?.ToString();
 
-                var result = MessageBox.Show($"√ätes-vous s√ªr de vouloir supprimer la section '{description}' ?",
+                var result = MessageBox.Show($" tes-vous s˚r de vouloir supprimer la section '{description}' ?",
                     "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
@@ -501,7 +510,7 @@ namespace EduKin.Layouts
 
                     if (success)
                     {
-                        MessageBox.Show("Section supprim√©e avec succ√®s!", "Succ√®s",
+                        MessageBox.Show("Section supprimÈe avec succËs!", "SuccËs",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearSectionForm();
                         await LoadSectionsData();
@@ -591,7 +600,7 @@ namespace EduKin.Layouts
                 var row = DgvOption.SelectedRows[0];
                 TxtCodeOption.Text = row.Cells["cod_opt"].Value?.ToString() ?? "";
                 
-                // Pour l'√©dition, afficher la description dans le ComboBox
+                // Pour l'Èdition, afficher la description dans le ComboBox
                 var description = row.Cells["description"].Value?.ToString() ?? "";
                 CmbDescripOption.Text = description;
 
@@ -621,7 +630,7 @@ namespace EduKin.Layouts
                 var promotions = await Task.Run(() => _adminService.GetAllPromotions());
                 var options = await Task.Run(() => _adminService.GetAllOptions());
 
-                // Convertir en liste typ√©e pour √©viter les probl√®mes avec DisplayMember
+                // Convertir en liste typÈe pour Èviter les problËmes avec DisplayMember
                 var optionsList = options.Select(o => new
                 {
                     cod_opt = (string)o.cod_opt,
@@ -644,13 +653,13 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors du chargement des promotions: {ex.Message}\n\nD√©tails: {ex.StackTrace}", "Erreur",
+                MessageBox.Show($"Erreur lors du chargement des promotions: {ex.Message}\n\nDÈtails: {ex.StackTrace}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         /// <summary>
-        /// Charge les niveaux de promotion en fonction de l'option s√©lectionn√©e
+        /// Charge les niveaux de promotion en fonction de l'option sÈlectionnÈe
         /// </summary>
         private void LoadPromotionLevels()
         {
@@ -665,20 +674,20 @@ namespace EduKin.Layouts
 
                 var selectedOption = CmbOptionPromotion.Text;
                 
-                // V√©rifier si c'est "Education de Base"
-                if (selectedOption.Contains("Education de Base") || selectedOption.Contains("√âducation de Base"))
+                // VÈrifier si c'est "Education de Base"
+                if (selectedOption.Contains("Education de Base") || selectedOption.Contains("…ducation de Base"))
                 {
-                    // Pour Education de Base: 7√®me et 8√®me
-                    CmbDescripPromotion.Items.Add($"7√®me {selectedOption}");
-                    CmbDescripPromotion.Items.Add($"8√®me {selectedOption}");
+                    // Pour Education de Base: 7Ëme et 8Ëme
+                    CmbDescripPromotion.Items.Add($"7Ëme {selectedOption}");
+                    CmbDescripPromotion.Items.Add($"8Ëme {selectedOption}");
                 }
                 else
                 {
-                    // Pour les autres options: 1√®re √† 4√®me
-                    CmbDescripPromotion.Items.Add($"1√®re {selectedOption}");
-                    CmbDescripPromotion.Items.Add($"2√®me {selectedOption}");
-                    CmbDescripPromotion.Items.Add($"3√®me {selectedOption}");
-                    CmbDescripPromotion.Items.Add($"4√®me {selectedOption}");
+                    // Pour les autres options: 1Ëre ‡ 4Ëme
+                    CmbDescripPromotion.Items.Add($"1Ëre {selectedOption}");
+                    CmbDescripPromotion.Items.Add($"2Ëme {selectedOption}");
+                    CmbDescripPromotion.Items.Add($"3Ëme {selectedOption}");
+                    CmbDescripPromotion.Items.Add($"4Ëme {selectedOption}");
                 }
             }
             catch (Exception ex)
@@ -689,7 +698,7 @@ namespace EduKin.Layouts
         }
 
         /// <summary>
-        /// G√®re le changement de s√©lection de l'option pour charger les niveaux appropri√©s
+        /// GËre le changement de sÈlection de l'option pour charger les niveaux appropriÈs
         /// </summary>
         private void CmbOptionPromotion_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -703,7 +712,7 @@ namespace EduKin.Layouts
             {
                 if (DgvPromotion.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Veuillez s√©lectionner une promotion √† modifier.", "Attention",
+                    MessageBox.Show("Veuillez sÈlectionner une promotion ‡ modifier.", "Attention",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -719,7 +728,7 @@ namespace EduKin.Layouts
 
                 if (success)
                 {
-                    MessageBox.Show("Promotion modifi√©e avec succ√®s!", "Succ√®s",
+                    MessageBox.Show("Promotion modifiÈe avec succËs!", "SuccËs",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearPromotionForm();
                     await LoadPromotionsData();
@@ -738,7 +747,7 @@ namespace EduKin.Layouts
             {
                 if (DgvPromotion.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Veuillez s√©lectionner une promotion √† supprimer.", "Attention",
+                    MessageBox.Show("Veuillez sÈlectionner une promotion ‡ supprimer.", "Attention",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -746,7 +755,7 @@ namespace EduKin.Layouts
                 var codPromo = DgvPromotion.SelectedRows[0].Cells["cod_promo"].Value?.ToString();
                 var description = DgvPromotion.SelectedRows[0].Cells["description"].Value?.ToString();
 
-                var result = MessageBox.Show($"√ätes-vous s√ªr de vouloir supprimer la promotion '{description}' ?",
+                var result = MessageBox.Show($" tes-vous s˚r de vouloir supprimer la promotion '{description}' ?",
                     "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
@@ -755,7 +764,7 @@ namespace EduKin.Layouts
 
                     if (success)
                     {
-                        MessageBox.Show("Promotion supprim√©e avec succ√®s!", "Succ√®s",
+                        MessageBox.Show("Promotion supprimÈe avec succËs!", "SuccËs",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearPromotionForm();
                         await LoadPromotionsData();
@@ -776,7 +785,7 @@ namespace EduKin.Layouts
                 var row = DgvPromotion.SelectedRows[0];
                 TxtCodePromotion.Text = row.Cells["cod_promo"].Value?.ToString() ?? "";
                 
-                // Pour l'√©dition, afficher la description dans le ComboBox
+                // Pour l'Èdition, afficher la description dans le ComboBox
                 var description = row.Cells["description"].Value?.ToString() ?? "";
                 CmbDescripPromotion.Text = description;
 
@@ -830,14 +839,14 @@ namespace EduKin.Layouts
                 var currentSchoolId = EduKinContext.CurrentIdEcole;
                 if (string.IsNullOrEmpty(currentSchoolId))
                 {
-                    MessageBox.Show("Aucun contexte d'√©cole s√©lectionn√©.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Aucun contexte d'Ècole sÈlectionnÈ.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 var success = _adminService.CreateAffectSection(currentSchoolId, codSect);
                 if (success)
                 {
-                    MessageBox.Show("Affectation cr√©√©e.", "Succ√®s", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Affectation crÈÈe.", "SuccËs", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     await Task.Run(() => LoadAffectSections());
                 }
             }
@@ -854,7 +863,7 @@ namespace EduKin.Layouts
                 var success = _adminService.DeleteAffectSection(numAffect);
                 if (success)
                 {
-                    MessageBox.Show("Affectation supprim√©e.", "Succ√®s", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Affectation supprimÈe.", "SuccËs", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     await Task.Run(() => LoadAffectSections());
                 }
             }
@@ -881,7 +890,7 @@ namespace EduKin.Layouts
         {
             try
             {
-                // ‚úÖ Utilisation du user_index de l'utilisateur connect√© depuis la base de donn√©es
+                // ? Utilisation du user_index de l'utilisateur connectÈ depuis la base de donnÈes
                 var userIndex = EduKinContext.CurrentUserIndex;
                 _adminService.ExecuteGenerateId(TxtCodeSection, "t_sections", "cod_sect", "SEC", userIndex);
             }
@@ -892,7 +901,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la g√©n√©ration de l'ID: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de la gÈnÈration de l'ID: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -912,7 +921,7 @@ namespace EduKin.Layouts
 
                 if (success)
                 {
-                    MessageBox.Show("Section cr√©√©e avec succ√®s!", "Succ√®s",
+                    MessageBox.Show("Section crÈÈe avec succËs!", "SuccËs",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearSectionForm();
                     await LoadSectionsData();
@@ -920,7 +929,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la cr√©ation: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de la crÈation: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -929,7 +938,7 @@ namespace EduKin.Layouts
         {
             try
             {
-                // ‚úÖ Utilisation du user_index de l'utilisateur connect√© depuis la base de donn√©es
+                // ? Utilisation du user_index de l'utilisateur connectÈ depuis la base de donnÈes
                 var userIndex = EduKinContext.CurrentUserIndex;
                 _adminService.ExecuteGenerateId(TxtCodeCours, "t_cours", "id_cours", "CRS", userIndex);
             }
@@ -940,7 +949,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la g√©n√©ration de l'ID: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de la gÈnÈration de l'ID: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -949,7 +958,7 @@ namespace EduKin.Layouts
         {
             try
             {
-                // ‚úÖ Utilisation du user_index de l'utilisateur connect√© depuis la base de donn√©es
+                // ? Utilisation du user_index de l'utilisateur connectÈ depuis la base de donnÈes
                 var userIndex = EduKinContext.CurrentUserIndex;
                 _adminService.ExecuteGenerateId(TxtCodeOption, "t_options", "cod_opt", "OPT", userIndex);
             }
@@ -960,7 +969,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la g√©n√©ration de l'ID: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de la gÈnÈration de l'ID: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -969,7 +978,7 @@ namespace EduKin.Layouts
         {
             try
             {
-                // ‚úÖ Utilisation du user_index de l'utilisateur connect√© depuis la base de donn√©es
+                // ? Utilisation du user_index de l'utilisateur connectÈ depuis la base de donnÈes
                 var userIndex = EduKinContext.CurrentUserIndex;
                 _adminService.ExecuteGenerateId(TxtCodePromotion, "t_promotions", "cod_promo", "PRO", userIndex);
             }
@@ -980,7 +989,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la g√©n√©ration de l'ID: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de la gÈnÈration de l'ID: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -998,7 +1007,7 @@ namespace EduKin.Layouts
                     return;
                 }
 
-                // R√©cup√©rer le Code_Epst de l'item s√©lectionn√©
+                // RÈcupÈrer le Code_Epst de l'item sÈlectionnÈ
                 string? codeEpst = null;
                 if (CmbDescripOption.SelectedItem != null)
                 {
@@ -1018,7 +1027,7 @@ namespace EduKin.Layouts
 
                 if (success)
                 {
-                    MessageBox.Show("Option cr√©√©e avec succ√®s!", "Succ√®s",
+                    MessageBox.Show("Option crÈÈe avec succËs!", "SuccËs",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearOptionForm();
                     await LoadOptionsData();
@@ -1026,7 +1035,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la cr√©ation: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de la crÈation: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -1037,7 +1046,7 @@ namespace EduKin.Layouts
             {
                 if (DgvOption.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Veuillez s√©lectionner une option √† modifier.", "Attention",
+                    MessageBox.Show("Veuillez sÈlectionner une option ‡ modifier.", "Attention",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -1052,7 +1061,7 @@ namespace EduKin.Layouts
 
                 if (success)
                 {
-                    MessageBox.Show("Option modifi√©e avec succ√®s!", "Succ√®s",
+                    MessageBox.Show("Option modifiÈe avec succËs!", "SuccËs",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearOptionForm();
                     await LoadOptionsData();
@@ -1071,7 +1080,7 @@ namespace EduKin.Layouts
             {
                 if (DgvOption.SelectedRows.Count == 0)
                 {
-                    MessageBox.Show("Veuillez s√©lectionner une option √† supprimer.", "Attention",
+                    MessageBox.Show("Veuillez sÈlectionner une option ‡ supprimer.", "Attention",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -1079,7 +1088,7 @@ namespace EduKin.Layouts
                 var codOpt = DgvOption.SelectedRows[0].Cells["cod_opt"].Value?.ToString();
                 var description = DgvOption.SelectedRows[0].Cells["description"].Value?.ToString();
 
-                var result = MessageBox.Show($"√ätes-vous s√ªr de vouloir supprimer l'option '{description}' ?",
+                var result = MessageBox.Show($" tes-vous s˚r de vouloir supprimer l'option '{description}' ?",
                     "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
@@ -1088,7 +1097,7 @@ namespace EduKin.Layouts
 
                     if (success)
                     {
-                        MessageBox.Show("Option supprim√©e avec succ√®s!", "Succ√®s",
+                        MessageBox.Show("Option supprimÈe avec succËs!", "SuccËs",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
                         ClearOptionForm();
                         await LoadOptionsData();
@@ -1128,7 +1137,7 @@ namespace EduKin.Layouts
 
                 if (success)
                 {
-                    MessageBox.Show("Promotion cr√©√©e avec succ√®s!", "Succ√®s",
+                    MessageBox.Show("Promotion crÈÈe avec succËs!", "SuccËs",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearPromotionForm();
                     await LoadPromotionsData();
@@ -1136,7 +1145,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la cr√©ation: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de la crÈation: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -1150,19 +1159,19 @@ namespace EduKin.Layouts
                 var currentIdEcole = EduKinContext.CurrentIdEcole;
                 var selectedRole = cmbRole.SelectedItem?.ToString();
 
-                // R√©cup√©rer le chemin de la photo depuis le PictureBox
+                // RÈcupÈrer le chemin de la photo depuis le PictureBox
                 string? userProfilePath = null;
                 if (PictureBoxProfilUser.Image != null)
                 {
-                    // R√©cup√©rer le chemin stock√© dans le Tag du PictureBox ou utiliser une autre m√©thode
+                    // RÈcupÈrer le chemin stockÈ dans le Tag du PictureBox ou utiliser une autre mÈthode
                     userProfilePath = PictureBoxProfilUser.Tag as string;
                     
-                    // Si le chemin n'est pas dans le Tag, essayer de le r√©cup√©rer autrement
+                    // Si le chemin n'est pas dans le Tag, essayer de le rÈcupÈrer autrement
                     if (string.IsNullOrEmpty(userProfilePath))
                     {
-                        // Pour l'instant, nous allons supposer que le chemin est d√©j√† g√©r√© par PictureManager
-                        // TODO: Impl√©menter un meilleur syst√®me pour stocker/r√©cup√©rer le chemin de la photo
-                        MessageBox.Show("Le chemin de la photo sera sauvegard√© lors de la cr√©ation de l'utilisateur.", 
+                        // Pour l'instant, nous allons supposer que le chemin est dÈj‡ gÈrÈ par PictureManager
+                        // TODO: ImplÈmenter un meilleur systËme pour stocker/rÈcupÈrer le chemin de la photo
+                        MessageBox.Show("Le chemin de la photo sera sauvegardÈ lors de la crÈation de l'utilisateur.", 
                             "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
@@ -1182,7 +1191,7 @@ namespace EduKin.Layouts
 
                 if (success)
                 {
-                    MessageBox.Show("Utilisateur cr√©√© avec succ√®s!", "Succ√®s",
+                    MessageBox.Show("Utilisateur crÈÈ avec succËs!", "SuccËs",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearForm();
                     await LoadUsersAsync();
@@ -1190,7 +1199,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la cr√©ation: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de la crÈation: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -1209,7 +1218,7 @@ namespace EduKin.Layouts
         {
             try
             {
-                // ‚úÖ Utilisation du user_index de l'utilisateur connect√© depuis la base de donn√©es
+                // ? Utilisation du user_index de l'utilisateur connectÈ depuis la base de donnÈes
                 var userIndex = EduKinContext.CurrentUserIndex;
                 _adminService.ExecuteGenerateId(TxtIdUser, "t_users_infos", "id_user", "USR", userIndex);
             }
@@ -1220,7 +1229,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la g√©n√©ration de l'ID: {ex.Message}", "Erreur",
+                MessageBox.Show($"Erreur lors de la gÈnÈration de l'ID: {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -1242,7 +1251,7 @@ namespace EduKin.Layouts
                 var currentIdEcole = EduKinContext.CurrentIdEcole;
                 if (string.IsNullOrEmpty(currentIdEcole))
                 {
-                    MessageBox.Show("Aucun contexte d'√©cole s√©lectionn√©.", "Erreur",
+                    MessageBox.Show("Aucun contexte d'Ècole sÈlectionnÈ.", "Erreur",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -1266,59 +1275,17 @@ namespace EduKin.Layouts
         {
             try
             {
-                // 1. R√©cup√©rer les infos de base (Ecole/User)
-                // Ces appels peuvent lever une exception si non initialis√©s, mais c'est normal √† ce stade
-                string currentIdEcole = EduKinContext.CurrentIdEcole;
-                string currentUsername = EduKinContext.CurrentUserName;
+                // RÈcupÈrer le contexte actuel
+                var currentIdEcole = EduKinContext.CurrentIdEcole;
+                var currentUsername = EduKinContext.CurrentUserName;
+                var currentAnneeScol = "2025-2026"; // ¿ adapter selon votre systËme
                 
-                string currentAnneeScol = null;
-                
-                // 2. Tenter de r√©cup√©rer l'ann√©e scolaire
-                try 
-                {
-                    currentAnneeScol = EduKinContext.CurrentCodeAnnee;
-                }
-                catch (InvalidOperationException)
-                {
-                    // Le contexte de l'ann√©e n'est pas pr√™t.
-                    // Tenter une auto-initialisation via SchoolYearManager
-                    try 
-                    {
-                        var sym = new SchoolYearManager();
-                        // On a besoin de userId. EduKinContext.CurrentUserId devrait marcher si CurrentUserName marche.
-                        string userId = EduKinContext.CurrentUserId;
-                        
-                        bool initSuccess = sym.InitializeContextWithActiveYear(currentIdEcole, userId, currentUsername);
-                        
-                        if (initSuccess)
-                        {
-                            // R√©essayer de lire la propri√©t√©
-                            currentAnneeScol = EduKinContext.CurrentCodeAnnee;
-                        }
-                        else
-                        {
-                            // Pas d'ann√©e active trouv√©e
-                            throw new InvalidOperationException("Aucune ann√©e scolaire active trouv√©e pour cette √©cole.");
-                        }
-                    }
-                    catch (Exception initEx)
-                    {
-                         MessageBox.Show("Impossible d'acc√©der au module Finance.\n" +
-                                        "Raison : " + initEx.Message + "\n\n" +
-                                        "Veuillez configurer et activer une ann√©e scolaire dans le menu Administration.", 
-                            "Configuration requise", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-                }
-                
-                // Si on arrive ici, on a tout ce qu'il faut
-                
-                // R√©cup√©rer les informations de l'√©cole
+                // RÈcupÈrer les informations de l'Ècole
                 var ecole = _adminService.GetEcole(currentIdEcole);
-                var ecoleName = ecole?.denomination ?? "√âcole inconnue";
-                var ecoleAddress = "Kinshasa, RDC"; // √Ä adapter selon vos donn√©es
+                var ecoleName = ecole?.denomination ?? "…cole inconnue";
+                var ecoleAddress = "Kinshasa, RDC"; // ¿ adapter selon vos donnÈes
                 
-                // Cr√©er et afficher le formulaire des frais avec le contexte
+                // CrÈer et afficher le formulaire des frais avec le contexte
                 using (var fraisForm = new FormFrais(currentIdEcole, currentAnneeScol, currentUsername, ecoleName, ecoleAddress))
                 {
                     // Masquer le formulaire d'administration
@@ -1327,7 +1294,7 @@ namespace EduKin.Layouts
                     // Afficher le formulaire des frais en mode modal
                     var result = fraisForm.ShowDialog(this);
                     
-                    // R√©afficher le formulaire d'administration quand FormFrais se ferme
+                    // RÈafficher le formulaire d'administration quand FormFrais se ferme
                     this.Show();
                     this.BringToFront();
                 }

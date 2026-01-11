@@ -95,13 +95,8 @@ namespace EduKin.Layouts
             lblEcoleName.Text = EduKinContext.CurrentDenomination;
             lblEcoleInfo.Text = $"École: {EduKinContext.CurrentDenomination}";
             
-            // Charger le logo de l'école
+            // Afficher le logo de l'école s'il existe
             LoadSchoolLogo();
-            
-            // Vérifier que le contrôle picLogoEcole est bien initialisé
-            System.Diagnostics.Debug.WriteLine($"[InitializeForm] picLogoEcole est null: {picLogoEcole == null}");
-            
-           
             
             // Centrer le formulaire
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -116,7 +111,7 @@ namespace EduKin.Layouts
         }
 
         /// <summary>
-        /// Charge le logo de l'école depuis la base de données
+        /// Charge et affiche le logo de l'école
         /// </summary>
         private void LoadSchoolLogo()
         {
@@ -124,46 +119,27 @@ namespace EduKin.Layouts
             {
                 using (var conn = _connexion.GetConnection())
                 {
-                    conn.Open();
+                    var query = "SELECT logo FROM t_ecoles WHERE id_ecole = @IdEcole";
+                    var logoPath = conn.QueryFirstOrDefault<string>(query, new { IdEcole = EduKinContext.CurrentIdEcole });
                     
-                    // Récupération du path du logo
-                    var query = "SELECT logo FROM t_ecoles WHERE id_ecole = @idEcole";
-                    
-                    // Exécution de la requête avec Dapper
-                    var logoPath = conn.QueryFirstOrDefault<string>(query, new { idEcole = _currentIdEcole });
-
-                    if (!string.IsNullOrEmpty(logoPath))
+                    if (!string.IsNullOrEmpty(logoPath) && System.IO.File.Exists(logoPath))
                     {
-                        // Normalisation du path pour la version windows
-                        // Remplacement des slashs par des backslashs
-                        var normalizedPath = logoPath.Replace("/", "\\");
-                        
-                        System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] Path logo: {normalizedPath}");
-
-                        if (System.IO.File.Exists(normalizedPath))
-                        {
-                            // Affectation de l'image
-                            // Note: Utilisation de System.Drawing.Image.FromFile car Image est dans System.Drawing
-                            picLogoEcole.Image = System.Drawing.Image.FromFile(normalizedPath);
-                            
-                            // Ajuster le mode d'affichage si nécessaire (déjà fait dans le designer normalement)
-                            // picLogoEcole.SizeMode = PictureBoxSizeMode.Zoom;
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] Fichier introuvable: {normalizedPath}");
-                        }
+                        pictureBox1.Image = Image.FromFile(logoPath);
+                        pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+                    }
+                    else
+                    {
+                        // Logo par défaut ou vide
+                        pictureBox1.Image = null;
                     }
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] Erreur: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Erreur lors du chargement du logo: {ex.Message}");
+                // Ne pas bloquer le chargement du formulaire si le logo ne peut pas être chargé
             }
         }
-
-        
-        
 
         /// <summary>
         /// Vérifie le statut de verrouillage du compte
@@ -386,21 +362,18 @@ namespace EduKin.Layouts
             {
                 conn.Open();
                 
-                // Requête modifiée pour inclure le type_user et permettre aux utilisateurs SYSTEM de se connecter
+                System.Diagnostics.Debug.WriteLine($"[AuthenticateUser] Recherche utilisateur: '{username}' pour école: '{_currentIdEcole}'");
+                
+                // Requête modifiée pour inclure les utilisateurs système (id_ecole IS NULL)
                 var query = @"
                     SELECT u.id_user, u.username, u.pwd_hash, u.compte_verrouille, 
-                           u.account_locked_until, u.user_index, u.type_user, r.nom_role
+                           u.account_locked_until, u.user_index, r.nom_role
                     FROM t_users_infos u
                     LEFT JOIN t_roles r ON u.fk_role = r.id_role
                     WHERE u.username = @username 
+                    AND (u.id_ecole = @idEcole OR u.id_ecole IS NULL)
                     AND u.compte_verrouille = 0
-                    AND (u.account_locked_until IS NULL OR u.account_locked_until < NOW())
-                    AND (
-                        -- Utilisateurs SYSTEM : peuvent se connecter à n'importe quelle école
-                        u.type_user = 'SYSTEM' OR
-                        -- Utilisateurs d'école : doivent appartenir à l'école du contexte
-                        (u.type_user != 'SYSTEM' AND u.id_ecole = @idEcole)
-                    )";
+                    AND (u.account_locked_until IS NULL OR u.account_locked_until < NOW())";
                 
                 var user = await conn.QueryFirstOrDefaultAsync(query, new 
                 { 
@@ -408,16 +381,19 @@ namespace EduKin.Layouts
                     idEcole = _currentIdEcole 
                 });
                 
+                System.Diagnostics.Debug.WriteLine($"[AuthenticateUser] Utilisateur trouvé: {user != null}");
+                
                 if (user != null)
                 {
+                    System.Diagnostics.Debug.WriteLine($"[AuthenticateUser] Vérification mot de passe pour: {user.username}");
+                    
                     // Vérifier le mot de passe avec bcrypt
                     if (VerifyPassword(password, user.pwd_hash))
                     {
+                        System.Diagnostics.Debug.WriteLine($"[AuthenticateUser] Mot de passe valide pour: {user.username}");
+                        
                         // Utiliser directement user_index de la base de données
                         string userIndex = user.user_index.ToString().PadLeft(3, '0');
-                        
-                        // Journaliser le type d'utilisateur pour le débogage
-                        System.Diagnostics.Debug.WriteLine($"[LOGIN] Utilisateur {username} connecté - Type: {user.type_user} - École: {user.id_ecole ?? "SYSTEM"}");
                         
                         return new LoginResult
                         {
@@ -428,6 +404,14 @@ namespace EduKin.Layouts
                             UserIndex = userIndex
                         };
                     }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[AuthenticateUser] Mot de passe INVALIDE pour: {user.username}");
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"[AuthenticateUser] Aucun utilisateur trouvé avec username='{username}' et id_ecole='{_currentIdEcole}'");
                 }
                 
                 return new LoginResult { Success = false };
@@ -571,16 +555,7 @@ namespace EduKin.Layouts
         /// </summary>
         private void FormLogin_Load(object sender, EventArgs e)
         {
-            try
-            {
-             
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"[FormLogin_Load] Erreur: {ex.Message}");
-                MessageBox.Show($"Erreur lors du chargement du formulaire: {ex.Message}", 
-                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            // Le formulaire est déjà initialisé dans le constructeur
         }
 
         /// <summary>
