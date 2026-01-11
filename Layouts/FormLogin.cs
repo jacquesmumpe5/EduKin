@@ -95,8 +95,11 @@ namespace EduKin.Layouts
             lblEcoleName.Text = EduKinContext.CurrentDenomination;
             lblEcoleInfo.Text = $"École: {EduKinContext.CurrentDenomination}";
             
-            // Afficher le logo de l'école s'il existe
-            LoadSchoolLogo();
+            // Vérifier que le contrôle picLogoEcole est bien initialisé
+            System.Diagnostics.Debug.WriteLine($"[InitializeForm] picLogoEcole est null: {picLogoEcole == null}");
+            
+            // Ne pas charger le logo ici - le faire dans FormLogin_Load pour s'assurer que tout est initialisé
+            // LoadSchoolLogo();
             
             // Centrer le formulaire
             this.StartPosition = FormStartPosition.CenterScreen;
@@ -117,27 +120,173 @@ namespace EduKin.Layouts
         {
             try
             {
+                // Récupérer d'abord l'ID de l'école depuis la configuration
+                var configManager = new SchoolConfigManager();
+                var config = configManager.LoadConfig();
+                
+                if (config == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("[LoadSchoolLogo] ❌ Aucune configuration d'école trouvée");
+                    SetDefaultLogo();
+                    return;
+                }
+                
+                var idEcole = config.IdEcole;
+                System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] ID École depuis config: {idEcole}");
+                System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] picLogoEcole est null: {picLogoEcole == null}");
+                
+                if (picLogoEcole == null)
+                {
+                    System.Diagnostics.Debug.WriteLine("[LoadSchoolLogo] ❌ picLogoEcole est null - le contrôle n'est pas initialisé");
+                    return;
+                }
+                
                 using (var conn = _connexion.GetConnection())
                 {
-                    var query = "SELECT logo FROM t_ecoles WHERE id_ecole = @IdEcole";
-                    var logoPath = conn.QueryFirstOrDefault<string>(query, new { IdEcole = EduKinContext.CurrentIdEcole });
+                    var query = "SELECT logo, denomination FROM t_ecoles WHERE id_ecole = @IdEcole";
+                    var result = conn.QueryFirstOrDefault(query, new { IdEcole = idEcole });
                     
-                    if (!string.IsNullOrEmpty(logoPath) && System.IO.File.Exists(logoPath))
+                    if (result != null)
                     {
-                        pictureBox1.Image = Image.FromFile(logoPath);
-                        pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+                        var logoPath = result.logo?.ToString();
+                        var denomination = result.denomination?.ToString() ?? "Inconnue";
+                        
+                        System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] École: {denomination}");
+                        System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] Chemin du logo: '{logoPath}'");
+                        
+                        if (!string.IsNullOrEmpty(logoPath))
+                        {
+                            // Normaliser le chemin pour Windows
+                            logoPath = logoPath.Replace('/', Path.DirectorySeparatorChar);
+                            
+                            System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] Chemin normalisé: '{logoPath}'");
+                            System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] Fichier existe: {System.IO.File.Exists(logoPath)}");
+                            System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] Chemin absolu: {Path.GetFullPath(logoPath)}");
+                            System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] Répertoire courant: {Directory.GetCurrentDirectory()}");
+                            System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] Base directory: {AppDomain.CurrentDomain.BaseDirectory}");
+                            
+                            if (System.IO.File.Exists(logoPath))
+                            {
+                                try
+                                {
+                                    System.Diagnostics.Debug.WriteLine("[LoadSchoolLogo] 📁 Tentative de chargement de l'image...");
+                                    
+                                    // Charger le logo de l'école directement
+                                    var logoImage = Image.FromFile(logoPath);
+                                    
+                                    System.Diagnostics.Debug.WriteLine("[LoadSchoolLogo] ✅ Image chargée depuis fichier");
+                                    
+                                    // Libérer l'ancienne image si elle existe
+                                    if (picLogoEcole.Image != null)
+                                    {
+                                        var oldImage = picLogoEcole.Image;
+                                        picLogoEcole.Image = null;
+                                        oldImage.Dispose();
+                                        System.Diagnostics.Debug.WriteLine("[LoadSchoolLogo] 🗑️ Ancienne image libérée");
+                                    }
+                                    
+                                    picLogoEcole.Image = logoImage;
+                                    picLogoEcole.SizeMode = PictureBoxSizeMode.Zoom;
+                                    picLogoEcole.Visible = true;
+                                    
+                                    // Forcer le rafraîchissement
+                                    picLogoEcole.Refresh();
+                                    picLogoEcole.Invalidate();
+                                    
+                                    System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] ✅ Logo AFFICHÉ: {logoPath}");
+                                    return;
+                                }
+                                catch (Exception imgEx)
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] ❌ Erreur chargement image: {imgEx.Message}");
+                                    System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] ❌ Type d'erreur: {imgEx.GetType().Name}");
+                                    SetDefaultLogo();
+                                    return;
+                                }
+                            }
+                            else
+                            {
+                                System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] ❌ Le fichier logo n'existe pas: {logoPath}");
+                                System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] 🔍 Recherche dans le répertoire: {Path.GetDirectoryName(logoPath)}");
+                                
+                                // Lister les fichiers dans le répertoire pour débogage
+                                try
+                                {
+                                    var dir = Path.GetDirectoryName(logoPath);
+                                    if (!string.IsNullOrEmpty(dir) && Directory.Exists(dir))
+                                    {
+                                        var files = Directory.GetFiles(dir, "*.png");
+                                        System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] 📁 Fichiers PNG trouvés: {string.Join(", ", files)}");
+                                    }
+                                }
+                                catch (Exception dirEx)
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] ❌ Erreur lecture répertoire: {dirEx.Message}");
+                                }
+                                
+                                SetDefaultLogo();
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("[LoadSchoolLogo] ℹ️ Aucun chemin de logo défini pour cette école");
+                            SetDefaultLogo();
+                            return;
+                        }
                     }
                     else
                     {
-                        // Logo par défaut ou vide
-                        pictureBox1.Image = null;
+                        System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] ❌ École non trouvée: {idEcole}");
+                        SetDefaultLogo();
+                        return;
                     }
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Erreur lors du chargement du logo: {ex.Message}");
-                // Ne pas bloquer le chargement du formulaire si le logo ne peut pas être chargé
+                System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] ❌ Erreur lors du chargement du logo: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] StackTrace: {ex.StackTrace}");
+                SetDefaultLogo();
+            }
+        }
+
+        /// <summary>
+        /// Définit un logo par défaut vide
+        /// </summary>
+        private void SetDefaultLogo()
+        {
+            try
+            {
+                if (picLogoEcole != null)
+                {
+                    // Libérer l'ancienne image
+                    if (picLogoEcole.Image != null)
+                    {
+                        var oldImage = picLogoEcole.Image;
+                        picLogoEcole.Image = null;
+                        oldImage.Dispose();
+                    }
+                    
+                    // Logo par défaut : vide ou une image simple
+                    var defaultBitmap = new Bitmap(200, 200);
+                    using (var g = Graphics.FromImage(defaultBitmap))
+                    {
+                        g.Clear(Color.Transparent);
+                        g.DrawString("LOGO", new Font("Arial", 10, FontStyle.Bold), Brushes.LightGray, 70, 90);
+                    }
+                    
+                    picLogoEcole.Image = defaultBitmap;
+                    picLogoEcole.SizeMode = PictureBoxSizeMode.Zoom;
+                    picLogoEcole.Visible = true;
+                    picLogoEcole.Refresh();
+                    
+                    System.Diagnostics.Debug.WriteLine("[LoadSchoolLogo] ℹ️ Logo par défaut défini");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[LoadSchoolLogo] ❌ Erreur logo par défaut: {ex.Message}");
             }
         }
 
@@ -362,16 +511,21 @@ namespace EduKin.Layouts
             {
                 conn.Open();
                 
-                // Requête simplifiée - la colonne user_index existe toujours selon le schéma
+                // Requête modifiée pour inclure le type_user et permettre aux utilisateurs SYSTEM de se connecter
                 var query = @"
                     SELECT u.id_user, u.username, u.pwd_hash, u.compte_verrouille, 
-                           u.account_locked_until, u.user_index, r.nom_role
+                           u.account_locked_until, u.user_index, u.type_user, r.nom_role
                     FROM t_users_infos u
                     LEFT JOIN t_roles r ON u.fk_role = r.id_role
                     WHERE u.username = @username 
-                    AND u.id_ecole = @idEcole 
                     AND u.compte_verrouille = 0
-                    AND (u.account_locked_until IS NULL OR u.account_locked_until < NOW())";
+                    AND (u.account_locked_until IS NULL OR u.account_locked_until < NOW())
+                    AND (
+                        -- Utilisateurs SYSTEM : peuvent se connecter à n'importe quelle école
+                        u.type_user = 'SYSTEM' OR
+                        -- Utilisateurs d'école : doivent appartenir à l'école du contexte
+                        (u.type_user != 'SYSTEM' AND u.id_ecole = @idEcole)
+                    )";
                 
                 var user = await conn.QueryFirstOrDefaultAsync(query, new 
                 { 
@@ -386,6 +540,9 @@ namespace EduKin.Layouts
                     {
                         // Utiliser directement user_index de la base de données
                         string userIndex = user.user_index.ToString().PadLeft(3, '0');
+                        
+                        // Journaliser le type d'utilisateur pour le débogage
+                        System.Diagnostics.Debug.WriteLine($"[LOGIN] Utilisateur {username} connecté - Type: {user.type_user} - École: {user.id_ecole ?? "SYSTEM"}");
                         
                         return new LoginResult
                         {
@@ -539,7 +696,22 @@ namespace EduKin.Layouts
         /// </summary>
         private void FormLogin_Load(object sender, EventArgs e)
         {
-            // Le formulaire est déjà initialisé dans le constructeur
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("[FormLogin_Load] Début du chargement du formulaire");
+                System.Diagnostics.Debug.WriteLine($"[FormLogin_Load] picLogoEcole est null: {picLogoEcole == null}");
+                
+                // Charger le logo de l'école maintenant que tous les contrôles sont initialisés
+                LoadSchoolLogo();
+                
+                System.Diagnostics.Debug.WriteLine("[FormLogin_Load] Formulaire chargé avec succès");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[FormLogin_Load] Erreur: {ex.Message}");
+                MessageBox.Show($"Erreur lors du chargement du formulaire: {ex.Message}", 
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         /// <summary>
