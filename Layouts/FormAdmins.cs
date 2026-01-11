@@ -23,13 +23,6 @@ namespace EduKin.Layouts
         private readonly Paiements _paiementsService;
         private readonly Pedagogies _pedaService;
 
-        // Propriétés publiques pour les contrôles des agents
-        public Siticone.Desktop.UI.WinForms.SiticoneButton SaveAgentControl => BtnSaveAgent;
-        public Siticone.Desktop.UI.WinForms.SiticoneButton UpdateAgentControl => BtnUpdateAgent;
-        public Siticone.Desktop.UI.WinForms.SiticoneButton DelAgentControl => BtnDelAgent;
-        public PictureBox PicBoxAgentControl => PictureBoxProfilAgent;
-        public Siticone.Desktop.UI.WinForms.SiticoneDataGridView DataGridViewAgentControl => DataGridViewAgent;
-
         // Propriétés publiques pour les contrôles des utilisateurs
         public PictureBox PictureBoxProfilUserControl => PictureBoxProfilUser;
         public Siticone.Desktop.UI.WinForms.SiticoneButton BtnLoadPicUserControl => btnLoadPicUser;
@@ -59,12 +52,10 @@ namespace EduKin.Layouts
             if (txtNom == null || txtPostNom == null || txtPrenom == null ||
                 cmbSexe == null || cmbRole == null ||
                 BtnSaveUser == null || BtnUpdateUser == null || BtnDeleteUser == null ||
-                BtnResetPassword == null || DgvUser == null)
+                DgvUser == null)
             {
                 throw new InvalidOperationException("One or more user management components are not properly initialized.");
             }
-
-
         }
 
         private void BtnUtilisateur_Click(object sender, EventArgs e)
@@ -1275,10 +1266,52 @@ namespace EduKin.Layouts
         {
             try
             {
-                // Récupérer le contexte actuel
-                var currentIdEcole = EduKinContext.CurrentIdEcole;
-                var currentUsername = EduKinContext.CurrentUserName;
-                var currentAnneeScol = "2025-2026"; // À adapter selon votre système
+                // 1. Récupérer les infos de base (Ecole/User)
+                // Ces appels peuvent lever une exception si non initialisés, mais c'est normal à ce stade
+                string currentIdEcole = EduKinContext.CurrentIdEcole;
+                string currentUsername = EduKinContext.CurrentUserName;
+                
+                string currentAnneeScol = null;
+                
+                // 2. Tenter de récupérer l'année scolaire
+                try 
+                {
+                    currentAnneeScol = EduKinContext.CurrentCodeAnnee;
+                }
+                catch (InvalidOperationException)
+                {
+                    // Le contexte de l'année n'est pas prêt.
+                    // Tenter une auto-initialisation via SchoolYearManager
+                    try 
+                    {
+                        var sym = new SchoolYearManager();
+                        // On a besoin de userId. EduKinContext.CurrentUserId devrait marcher si CurrentUserName marche.
+                        string userId = EduKinContext.CurrentUserId;
+                        
+                        bool initSuccess = sym.InitializeContextWithActiveYear(currentIdEcole, userId, currentUsername);
+                        
+                        if (initSuccess)
+                        {
+                            // Réessayer de lire la propriété
+                            currentAnneeScol = EduKinContext.CurrentCodeAnnee;
+                        }
+                        else
+                        {
+                            // Pas d'année active trouvée
+                            throw new InvalidOperationException("Aucune année scolaire active trouvée pour cette école.");
+                        }
+                    }
+                    catch (Exception initEx)
+                    {
+                         MessageBox.Show("Impossible d'accéder au module Finance.\n" +
+                                        "Raison : " + initEx.Message + "\n\n" +
+                                        "Veuillez configurer et activer une année scolaire dans le menu Administration.", 
+                            "Configuration requise", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+                }
+                
+                // Si on arrive ici, on a tout ce qu'il faut
                 
                 // Récupérer les informations de l'école
                 var ecole = _adminService.GetEcole(currentIdEcole);

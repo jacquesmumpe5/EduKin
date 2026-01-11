@@ -98,7 +98,7 @@ namespace EduKin.Layouts
                 await Task.Delay(500);
 
                 UpdateProgress(20, "Vérification de la configuration...");
-                await EduKin.Tests.AuthDebugger.TestAdminFetch(); // Test temporaire
+                
                 await CheckConfiguration();
             }
             catch (Exception ex)

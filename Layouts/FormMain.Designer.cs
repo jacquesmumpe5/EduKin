@@ -737,7 +737,7 @@ namespace EduKin.Layouts
             siticonePanel1.Name = "siticonePanel1";
             siticonePanel1.Size = new Size(1014, 250);
             siticonePanel1.TabIndex = 2;
-            siticonePanel1.Paint += siticonePanel1_Paint;
+          
             // 
             // TxtEcoleProvenanceEleve
             // 
@@ -2544,6 +2544,7 @@ namespace EduKin.Layouts
             btnFinance.TabIndex = 4;
             btnFinance.Text = "Finance";
             btnFinance.TextAlign = HorizontalAlignment.Left;
+         
             // 
             // btnAdministration
             // 

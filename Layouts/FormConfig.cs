@@ -821,8 +821,8 @@ namespace EduKin.Layouts
                 }
              
                 // ÉTAPE 3: Générer un ID unique pour l'école avec le user_index authentifié
-                // ✅ Ne pas retirer les zéros, GenerateId() va les formater correctement
-                var idEcole = _administrations.GenerateId("t_ecoles", "id_ecole", "ECO", userIndex);
+                // ✅ Utiliser GenerateIdForNewSchool qui ne requiert pas de contexte initialisé
+                var idEcole = _administrations.GenerateIdForNewSchool("t_ecoles", "id_ecole", "ECO", userIndex);
                 System.Diagnostics.Debug.WriteLine($"[FormConfig.CreateNewSchool] userIndex reçu: {userIndex}");
                 System.Diagnostics.Debug.WriteLine($"[FormConfig.CreateNewSchool] ID École généré: {idEcole}");
                 MessageBox.Show("création de l'id école : " + idEcole, "info", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -848,7 +848,7 @@ namespace EduKin.Layouts
                 }
 
                 // ÉTAPE 5: Créer l'école via la couche métier
-                var success = _administrations.CreateEcole(
+                var success = _administrations.CreateEcoleForNewSchool(
                     idEcole: idEcole,
                     denomination: denomination,
                     anneeScol: anneeScol,

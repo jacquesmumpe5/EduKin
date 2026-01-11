@@ -68,11 +68,11 @@ namespace EduKin.Layouts
                 {
                     conn.Open();
 
-                    // Récupérer les sections affectées à l'école courante
-                    var query = @"SELECT DISTINCT s.cod_sect, s.description, a.num_affect
+                    // Récupérer TOUTES les sections disponibles pour l'école courante
+                    var query = @"SELECT s.cod_sect, s.description, 
+                                  CASE WHEN a.num_affect IS NOT NULL THEN a.num_affect ELSE 0 END as num_affect
                                   FROM t_sections s
-                                  INNER JOIN t_affect_sect a ON s.cod_sect = a.cod_sect
-                                  WHERE a.id_ecole = @IdEcole
+                                  LEFT JOIN t_affect_sect a ON s.cod_sect = a.cod_sect AND a.id_ecole = @IdEcole
                                   ORDER BY s.description";
 
                     var sections = conn.Query(query, new { IdEcole = EduKinContext.CurrentIdEcole });
@@ -95,7 +95,7 @@ namespace EduKin.Layouts
                     }
                     else
                     {
-                        lblInfo.Text = "Aucune section affectée à cette école.";
+                        lblInfo.Text = "Aucune section disponible dans la base de données.";
                         ClearOptionsPanel();
                     }
                 }
@@ -388,6 +388,46 @@ namespace EduKin.Layouts
                     {
                         try
                         {
+                            // 1. Vérifier si la section est déjà affectée à l'école
+                            // Si _selectedSectionAffectId est 0, c'est qu'elle n'est pas encore affectée dans l'interface
+                            // Mais on vérifie quand même en base pour être sûr (cas multi-utilisateurs)
+                            
+                            int affectSectId = _selectedSectionAffectId;
+                            
+                            if (affectSectId == 0)
+                            {
+                                // Vérification en base
+                                var checkQuery = "SELECT num_affect FROM t_affect_sect WHERE id_ecole = @IdEcole AND cod_sect = @CodSect";
+                                var existingId = await conn.QueryFirstOrDefaultAsync<int?>(checkQuery, new 
+                                { 
+                                    IdEcole = EduKinContext.CurrentIdEcole, 
+                                    CodSect = _selectedSectionCode 
+                                }, transaction);
+                                
+                                if (existingId.HasValue && existingId.Value > 0)
+                                {
+                                    affectSectId = existingId.Value;
+                                }
+                                else
+                                {
+                                    // La section n'est pas affectée, on l'affecte
+                                    var insertNoteQuery = @"INSERT INTO t_affect_sect (id_ecole, cod_sect, date_affect)
+                                                          VALUES (@IdEcole, @CodSect, @DateAffect);
+                                                          SELECT LAST_INSERT_ID();";
+
+                                    affectSectId = await conn.ExecuteScalarAsync<int>(insertNoteQuery, new
+                                    {
+                                        IdEcole = EduKinContext.CurrentIdEcole,
+                                        CodSect = _selectedSectionCode,
+                                        DateAffect = DateTime.Now
+                                    }, transaction);
+                                }
+                                
+                                // Mettre à jour la variable locale pour la suite
+                                _selectedSectionAffectId = affectSectId;
+                            }
+
+                            // 2. Affecter les options
                             foreach (var option in selectedOptions)
                             {
                                 var insertQuery = @"INSERT INTO t_affect_options (num_affect_sect, cod_opt, date_affect)
@@ -395,7 +435,7 @@ namespace EduKin.Layouts
 
                                 await conn.ExecuteAsync(insertQuery, new
                                 {
-                                    NumAffectSect = _selectedSectionAffectId,
+                                    NumAffectSect = affectSectId,
                                     CodOpt = option.CodeOption,
                                     DateAffect = DateTime.Now
                                 }, transaction);
@@ -406,8 +446,25 @@ namespace EduKin.Layouts
                             MessageBox.Show($"{selectedOptions.Count} option(s) affectée(s) avec succès !",
                                 "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                            // Recharger les options pour mettre à jour l'affichage
-                            LoadOptionsForSection(_selectedSectionCode, _selectedSectionAffectId);
+                            // Initialement je rechargerais tout, mais c'est mieux de rafraîchir proprement
+                            // Recharger la liste des sections pour mettre à jour les IDs d'affectation
+                            LoadSections();
+                            
+                            // Re-sélectionner la section courante dans la combo box
+                            foreach (var item in CmbSection.Items)
+                            {
+                                var valueProp = item.GetType().GetProperty("Value");
+                                if (valueProp?.GetValue(item)?.ToString() == _selectedSectionCode)
+                                {
+                                    CmbSection.SelectedItem = item;
+                                    break;
+                                }
+                            }
+                            // Pas besoin d'appeler LoadOptionsForSection ici car le changement de sélection le fera
+                            // ou si on a trouvé l'item et qu'on l'a set.
+                            // Si on veut forcer le refresh visuel des options:
+                            // LoadOptionsForSection(_selectedSectionCode, _selectedSectionAffectId); 
+                            // (mais attention _selectedSectionAffectId a potentiellement changé, d'où le re-load sections avant)
                         }
                         catch
                         {

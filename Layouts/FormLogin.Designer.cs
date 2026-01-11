@@ -17,251 +17,253 @@ namespace EduKin.Layouts
 
         private void InitializeComponent()
         {
-            this.panelMain = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            this.panelLeft = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            this.lblWelcome = new System.Windows.Forms.Label();
-            this.lblEcoleName = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.panelRight = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.lblEcoleInfo = new System.Windows.Forms.Label();
-            this.lblUsername = new System.Windows.Forms.Label();
-            this.txtUsername = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
-            this.lblPassword = new System.Windows.Forms.Label();
-            this.txtPassword = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
-            this.lblError = new System.Windows.Forms.Label();
-            this.btnLogin = new Siticone.Desktop.UI.WinForms.SiticoneButton();
-            this.btnCancel = new Siticone.Desktop.UI.WinForms.SiticoneButton();
-            this.lnkReconfigure = new System.Windows.Forms.LinkLabel();
-            this.panelMain.SuspendLayout();
-            this.panelLeft.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.panelRight.SuspendLayout();
-            this.SuspendLayout();
+            panelMain = new Siticone.Desktop.UI.WinForms.SiticonePanel();
+            panelRight = new Siticone.Desktop.UI.WinForms.SiticonePanel();
+            lnkReconfigure = new LinkLabel();
+            btnCancel = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            btnLogin = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            lblError = new Label();
+            txtPassword = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
+            lblPassword = new Label();
+            txtUsername = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
+            lblUsername = new Label();
+            lblEcoleInfo = new Label();
+            lblTitle = new Label();
+            panelLeft = new Siticone.Desktop.UI.WinForms.SiticonePanel();
+            picLogoEcole = new Siticone.Desktop.UI.WinForms.SiticonePictureBox();
+            lblEcoleName = new Label();
+            lblWelcome = new Label();
+            panelMain.SuspendLayout();
+            panelRight.SuspendLayout();
+            panelLeft.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picLogoEcole).BeginInit();
+            SuspendLayout();
             // 
             // panelMain
             // 
-            this.panelMain.BackColor = System.Drawing.Color.White;
-            this.panelMain.BorderRadius = 20;
-            this.panelMain.Controls.Add(this.panelRight);
-            this.panelMain.Controls.Add(this.panelLeft);
-            this.panelMain.FillColor = System.Drawing.Color.White;
-            this.panelMain.Location = new System.Drawing.Point(40, 40);
-            this.panelMain.Name = "panelMain";
-            this.panelMain.ShadowDecoration.BorderRadius = 20;
-            this.panelMain.ShadowDecoration.Depth = 30;
-            this.panelMain.ShadowDecoration.Enabled = true;
-            this.panelMain.Size = new System.Drawing.Size(920, 620);
-            this.panelMain.TabIndex = 0;
-            // 
-            // panelLeft
-            // 
-            this.panelLeft.BackColor = System.Drawing.Color.Transparent;
-            this.panelLeft.BorderRadius = 20;
-            this.panelLeft.Controls.Add(this.pictureBox1);
-            this.panelLeft.Controls.Add(this.lblEcoleName);
-            this.panelLeft.Controls.Add(this.lblWelcome);
-            this.panelLeft.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.panelLeft.Location = new System.Drawing.Point(0, 0);
-            this.panelLeft.Name = "panelLeft";
-            this.panelLeft.Size = new System.Drawing.Size(400, 620);
-            this.panelLeft.TabIndex = 0;
-            // 
-            // lblWelcome
-            // 
-            this.lblWelcome.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold);
-            this.lblWelcome.ForeColor = System.Drawing.Color.White;
-            this.lblWelcome.Location = new System.Drawing.Point(30, 350);
-            this.lblWelcome.Name = "lblWelcome";
-            this.lblWelcome.Size = new System.Drawing.Size(340, 50);
-            this.lblWelcome.TabIndex = 0;
-            this.lblWelcome.Text = "Bienvenue";
-            this.lblWelcome.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblEcoleName
-            // 
-            this.lblEcoleName.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
-            this.lblEcoleName.ForeColor = System.Drawing.Color.White;
-            this.lblEcoleName.Location = new System.Drawing.Point(30, 410);
-            this.lblEcoleName.Name = "lblEcoleName";
-            this.lblEcoleName.Size = new System.Drawing.Size(340, 80);
-            this.lblEcoleName.TabIndex = 1;
-            this.lblEcoleName.Text = "École";
-            this.lblEcoleName.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.Location = new System.Drawing.Point(100, 20);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(200, 200);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            panelMain.BackColor = Color.Transparent;
+            panelMain.BorderRadius = 20;
+            panelMain.Controls.Add(panelRight);
+            panelMain.Controls.Add(panelLeft);
+            panelMain.FillColor = Color.White;
+            panelMain.Location = new Point(40, 40);
+            panelMain.Name = "panelMain";
+            panelMain.ShadowDecoration.BorderRadius = 20;
+            panelMain.ShadowDecoration.Enabled = true;
+            panelMain.Size = new Size(920, 620);
+            panelMain.TabIndex = 0;
             // 
             // panelRight
             // 
-            this.panelRight.BackColor = System.Drawing.Color.Transparent;
-            this.panelRight.Controls.Add(this.lnkReconfigure);
-            this.panelRight.Controls.Add(this.btnCancel);
-            this.panelRight.Controls.Add(this.btnLogin);
-            this.panelRight.Controls.Add(this.lblError);
-            this.panelRight.Controls.Add(this.txtPassword);
-            this.panelRight.Controls.Add(this.lblPassword);
-            this.panelRight.Controls.Add(this.txtUsername);
-            this.panelRight.Controls.Add(this.lblUsername);
-            this.panelRight.Controls.Add(this.lblEcoleInfo);
-            this.panelRight.Controls.Add(this.lblTitle);
-            this.panelRight.Location = new System.Drawing.Point(400, 0);
-            this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(520, 620);
-            this.panelRight.TabIndex = 1;
-            // 
-            // lblTitle
-            // 
-            this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 20F, System.Drawing.FontStyle.Bold);
-            this.lblTitle.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.lblTitle.Location = new System.Drawing.Point(40, 80);
-            this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(440, 45);
-            this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "Connexion";
-            this.lblTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblEcoleInfo
-            // 
-            this.lblEcoleInfo.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.lblEcoleInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.lblEcoleInfo.Location = new System.Drawing.Point(40, 130);
-            this.lblEcoleInfo.Name = "lblEcoleInfo";
-            this.lblEcoleInfo.Size = new System.Drawing.Size(440, 30);
-            this.lblEcoleInfo.TabIndex = 1;
-            this.lblEcoleInfo.Text = "École: ";
-            this.lblEcoleInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblUsername
-            // 
-            this.lblUsername.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.lblUsername.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(37)))), ((int)(((byte)(41)))));
-            this.lblUsername.Location = new System.Drawing.Point(60, 200);
-            this.lblUsername.Name = "lblUsername";
-            this.lblUsername.Size = new System.Drawing.Size(150, 25);
-            this.lblUsername.TabIndex = 2;
-            this.lblUsername.Text = "Nom d'utilisateur:";
-            this.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtUsername
-            // 
-            this.txtUsername.BorderRadius = 10;
-            this.txtUsername.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtUsername.DefaultText = "";
-            this.txtUsername.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtUsername.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.txtUsername.Location = new System.Drawing.Point(60, 230);
-            this.txtUsername.Name = "txtUsername";
-            this.txtUsername.PasswordChar = '\0';
-            this.txtUsername.PlaceholderText = "Entrez votre nom d'utilisateur";
-            this.txtUsername.SelectedText = "";
-            this.txtUsername.Size = new System.Drawing.Size(400, 40);
-            this.txtUsername.TabIndex = 3;
-            this.txtUsername.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtUsername_KeyPress);
-            // 
-            // lblPassword
-            // 
-            this.lblPassword.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.lblPassword.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(37)))), ((int)(((byte)(41)))));
-            this.lblPassword.Location = new System.Drawing.Point(60, 290);
-            this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(150, 25);
-            this.lblPassword.TabIndex = 4;
-            this.lblPassword.Text = "Mot de passe:";
-            this.lblPassword.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
-            // txtPassword
-            // 
-            this.txtPassword.BorderRadius = 10;
-            this.txtPassword.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtPassword.DefaultText = "";
-            this.txtPassword.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtPassword.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.txtPassword.Location = new System.Drawing.Point(60, 320);
-            this.txtPassword.Name = "txtPassword";
-            this.txtPassword.PasswordChar = '●';
-            this.txtPassword.PlaceholderText = "Entrez votre mot de passe";
-            this.txtPassword.SelectedText = "";
-            this.txtPassword.Size = new System.Drawing.Size(400, 40);
-            this.txtPassword.TabIndex = 5;
-            this.txtPassword.UseSystemPasswordChar = true;
-            this.txtPassword.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPassword_KeyPress);
-            // 
-            // lblError
-            // 
-            this.lblError.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lblError.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(87)))), ((int)(((byte)(87)))));
-            this.lblError.Location = new System.Drawing.Point(60, 370);
-            this.lblError.Name = "lblError";
-            this.lblError.Size = new System.Drawing.Size(400, 40);
-            this.lblError.TabIndex = 6;
-            this.lblError.Text = "Message d'erreur";
-            this.lblError.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblError.Visible = false;
-            // 
-            // btnLogin
-            // 
-            this.btnLogin.BorderRadius = 10;
-            this.btnLogin.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.btnLogin.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.btnLogin.ForeColor = System.Drawing.Color.White;
-            this.btnLogin.Location = new System.Drawing.Point(60, 430);
-            this.btnLogin.Name = "btnLogin";
-            this.btnLogin.Size = new System.Drawing.Size(400, 45);
-            this.btnLogin.TabIndex = 7;
-            this.btnLogin.Text = "Se connecter";
-            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
-            // 
-            // btnCancel
-            // 
-            this.btnCancel.BorderRadius = 10;
-            this.btnCancel.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
-            this.btnCancel.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.btnCancel.ForeColor = System.Drawing.Color.White;
-            this.btnCancel.Location = new System.Drawing.Point(60, 490);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(400, 40);
-            this.btnCancel.TabIndex = 8;
-            this.btnCancel.Text = "Annuler";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            panelRight.BackColor = Color.Transparent;
+            panelRight.Controls.Add(lnkReconfigure);
+            panelRight.Controls.Add(btnCancel);
+            panelRight.Controls.Add(btnLogin);
+            panelRight.Controls.Add(lblError);
+            panelRight.Controls.Add(txtPassword);
+            panelRight.Controls.Add(lblPassword);
+            panelRight.Controls.Add(txtUsername);
+            panelRight.Controls.Add(lblUsername);
+            panelRight.Controls.Add(lblEcoleInfo);
+            panelRight.Controls.Add(lblTitle);
+            panelRight.Location = new Point(400, 0);
+            panelRight.Name = "panelRight";
+            panelRight.Size = new Size(520, 620);
+            panelRight.TabIndex = 1;
             // 
             // lnkReconfigure
             // 
-            this.lnkReconfigure.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.lnkReconfigure.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.lnkReconfigure.Location = new System.Drawing.Point(60, 545);
-            this.lnkReconfigure.Name = "lnkReconfigure";
-            this.lnkReconfigure.Size = new System.Drawing.Size(400, 20);
-            this.lnkReconfigure.TabIndex = 9;
-            this.lnkReconfigure.TabStop = true;
-            this.lnkReconfigure.Text = "Reconfigurer l'école";
-            this.lnkReconfigure.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lnkReconfigure.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkReconfigure_LinkClicked);
+            lnkReconfigure.Font = new Font("Segoe UI", 9F);
+            lnkReconfigure.LinkColor = Color.FromArgb(94, 148, 255);
+            lnkReconfigure.Location = new Point(60, 545);
+            lnkReconfigure.Name = "lnkReconfigure";
+            lnkReconfigure.Size = new Size(400, 20);
+            lnkReconfigure.TabIndex = 9;
+            lnkReconfigure.TabStop = true;
+            lnkReconfigure.Text = "Reconfigurer l'école";
+            lnkReconfigure.TextAlign = ContentAlignment.MiddleCenter;
+            lnkReconfigure.LinkClicked += lnkReconfigure_LinkClicked;
+            // 
+            // btnCancel
+            // 
+            btnCancel.BorderRadius = 10;
+            btnCancel.FillColor = Color.FromArgb(200, 200, 200);
+            btnCancel.Font = new Font("Segoe UI", 11F);
+            btnCancel.ForeColor = Color.White;
+            btnCancel.Location = new Point(60, 490);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(400, 40);
+            btnCancel.TabIndex = 8;
+            btnCancel.Text = "Annuler";
+            btnCancel.Click += btnCancel_Click;
+            // 
+            // btnLogin
+            // 
+            btnLogin.BorderRadius = 10;
+            btnLogin.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            btnLogin.ForeColor = Color.White;
+            btnLogin.Location = new Point(60, 430);
+            btnLogin.Name = "btnLogin";
+            btnLogin.Size = new Size(400, 45);
+            btnLogin.TabIndex = 7;
+            btnLogin.Text = "Se connecter";
+            btnLogin.Click += btnLogin_Click;
+            // 
+            // lblError
+            // 
+            lblError.Font = new Font("Segoe UI", 9F);
+            lblError.ForeColor = Color.FromArgb(255, 87, 87);
+            lblError.Location = new Point(60, 370);
+            lblError.Name = "lblError";
+            lblError.Size = new Size(400, 40);
+            lblError.TabIndex = 6;
+            lblError.Text = "Message d'erreur";
+            lblError.TextAlign = ContentAlignment.MiddleCenter;
+            lblError.Visible = false;
+            // 
+            // txtPassword
+            // 
+            txtPassword.BorderRadius = 10;
+            txtPassword.Cursor = Cursors.IBeam;
+            txtPassword.DefaultText = "";
+            txtPassword.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            txtPassword.Font = new Font("Segoe UI", 11F);
+            txtPassword.Location = new Point(60, 320);
+            txtPassword.Margin = new Padding(3, 4, 3, 4);
+            txtPassword.Name = "txtPassword";
+            txtPassword.PasswordChar = '●';
+            txtPassword.PlaceholderText = "Entrez votre mot de passe";
+            txtPassword.SelectedText = "";
+            txtPassword.Size = new Size(400, 40);
+            txtPassword.TabIndex = 5;
+            txtPassword.UseSystemPasswordChar = true;
+            txtPassword.KeyPress += txtPassword_KeyPress;
+            // 
+            // lblPassword
+            // 
+            lblPassword.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblPassword.ForeColor = Color.FromArgb(33, 37, 41);
+            lblPassword.Location = new Point(60, 290);
+            lblPassword.Name = "lblPassword";
+            lblPassword.Size = new Size(150, 25);
+            lblPassword.TabIndex = 4;
+            lblPassword.Text = "Mot de passe:";
+            lblPassword.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // txtUsername
+            // 
+            txtUsername.BorderRadius = 10;
+            txtUsername.Cursor = Cursors.IBeam;
+            txtUsername.DefaultText = "";
+            txtUsername.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
+            txtUsername.Font = new Font("Segoe UI", 11F);
+            txtUsername.Location = new Point(60, 230);
+            txtUsername.Margin = new Padding(3, 4, 3, 4);
+            txtUsername.Name = "txtUsername";
+            txtUsername.PasswordChar = '\0';
+            txtUsername.PlaceholderText = "Entrez votre nom d'utilisateur";
+            txtUsername.SelectedText = "";
+            txtUsername.Size = new Size(400, 40);
+            txtUsername.TabIndex = 3;
+            txtUsername.KeyPress += txtUsername_KeyPress;
+            // 
+            // lblUsername
+            // 
+            lblUsername.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblUsername.ForeColor = Color.FromArgb(33, 37, 41);
+            lblUsername.Location = new Point(60, 200);
+            lblUsername.Name = "lblUsername";
+            lblUsername.Size = new Size(150, 25);
+            lblUsername.TabIndex = 2;
+            lblUsername.Text = "Nom d'utilisateur:";
+            lblUsername.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // lblEcoleInfo
+            // 
+            lblEcoleInfo.Font = new Font("Segoe UI", 11F);
+            lblEcoleInfo.ForeColor = Color.FromArgb(100, 100, 100);
+            lblEcoleInfo.Location = new Point(40, 130);
+            lblEcoleInfo.Name = "lblEcoleInfo";
+            lblEcoleInfo.Size = new Size(440, 30);
+            lblEcoleInfo.TabIndex = 1;
+            lblEcoleInfo.Text = "École: ";
+            lblEcoleInfo.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // lblTitle
+            // 
+            lblTitle.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            lblTitle.ForeColor = Color.FromArgb(94, 148, 255);
+            lblTitle.Location = new Point(40, 80);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(440, 45);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "Connexion";
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // panelLeft
+            // 
+            panelLeft.BackColor = Color.Transparent;
+            panelLeft.BorderRadius = 20;
+            panelLeft.Controls.Add(picLogoEcole);
+            panelLeft.Controls.Add(lblEcoleName);
+            panelLeft.Controls.Add(lblWelcome);
+            panelLeft.FillColor = Color.FromArgb(94, 148, 255);
+            panelLeft.Location = new Point(0, 0);
+            panelLeft.Name = "panelLeft";
+            panelLeft.Size = new Size(400, 620);
+            panelLeft.TabIndex = 0;
+            // 
+            // picLogoEcole
+            // 
+            picLogoEcole.BackColor = Color.Transparent;
+            picLogoEcole.BorderRadius = 14;
+            picLogoEcole.ImageRotate = 0F;
+            picLogoEcole.Location = new Point(100, 147);
+            picLogoEcole.Name = "picLogoEcole";
+            picLogoEcole.Size = new Size(200, 200);
+            picLogoEcole.SizeMode = PictureBoxSizeMode.Zoom;
+            picLogoEcole.TabIndex = 2;
+            picLogoEcole.TabStop = false;
+            // 
+            // lblEcoleName
+            // 
+            lblEcoleName.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            lblEcoleName.ForeColor = Color.White;
+            lblEcoleName.Location = new Point(30, 410);
+            lblEcoleName.Name = "lblEcoleName";
+            lblEcoleName.Size = new Size(340, 80);
+            lblEcoleName.TabIndex = 1;
+            lblEcoleName.Text = "École";
+            lblEcoleName.TextAlign = ContentAlignment.TopCenter;
+            // 
+            // lblWelcome
+            // 
+            lblWelcome.Font = new Font("Segoe UI", 24F, FontStyle.Bold);
+            lblWelcome.ForeColor = Color.White;
+            lblWelcome.Location = new Point(30, 350);
+            lblWelcome.Name = "lblWelcome";
+            lblWelcome.Size = new Size(340, 50);
+            lblWelcome.TabIndex = 0;
+            lblWelcome.Text = "Bienvenue";
+            lblWelcome.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // FormLogin
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(242)))), ((int)(((byte)(245)))));
-            this.ClientSize = new System.Drawing.Size(1000, 700);
-            this.Controls.Add(this.panelMain);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "FormLogin";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Connexion - EduKin";
-            this.Load += new System.EventHandler(this.FormLogin_Load);
-            this.panelMain.ResumeLayout(false);
-            this.panelLeft.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.panelRight.ResumeLayout(false);
-            this.ResumeLayout(false);
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.FromArgb(240, 242, 245);
+            ClientSize = new Size(1000, 700);
+            Controls.Add(panelMain);
+            FormBorderStyle = FormBorderStyle.None;
+            Name = "FormLogin";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Connexion - EduKin";
+            Load += FormLogin_Load;
+            panelMain.ResumeLayout(false);
+            panelRight.ResumeLayout(false);
+            panelLeft.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)picLogoEcole).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -270,7 +272,6 @@ namespace EduKin.Layouts
         private Siticone.Desktop.UI.WinForms.SiticonePanel panelLeft;
         private System.Windows.Forms.Label lblWelcome;
         private System.Windows.Forms.Label lblEcoleName;
-        private System.Windows.Forms.PictureBox pictureBox1;
         private Siticone.Desktop.UI.WinForms.SiticonePanel panelRight;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblEcoleInfo;
@@ -282,5 +283,6 @@ namespace EduKin.Layouts
         private Siticone.Desktop.UI.WinForms.SiticoneButton btnLogin;
         private Siticone.Desktop.UI.WinForms.SiticoneButton btnCancel;
         private System.Windows.Forms.LinkLabel lnkReconfigure;
+        private Siticone.Desktop.UI.WinForms.SiticonePictureBox picLogoEcole;
     }
 }

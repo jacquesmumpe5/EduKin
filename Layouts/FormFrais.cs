@@ -18,9 +18,9 @@ namespace EduKin.Layouts
     {
         private readonly Paiements _paiements;
         private readonly Administrations _admin;
-        private string _currentIdEcole;
-        private string _currentAnneeScol;
-        private string _currentUsername;
+        private string _currentIdEcole = string.Empty;
+        private string _currentAnneeScol = string.Empty;
+        private string _currentUsername = string.Empty;
         private bool _isEditingFrais = false;
         private bool _isEditingTypeFrais = false;
 
@@ -39,7 +39,7 @@ namespace EduKin.Layouts
             _currentIdEcole = idEcole;
             _currentAnneeScol = anneeScol;
             _currentUsername = username;
-            
+
             // Ne pas appeler InitializeForm() ici car il est déjà appelé dans le constructeur par défaut
             // Mais mettre à jour les labels avec les vraies données
             UpdateContextLabels(username, ecoleName, ecoleAddress);
@@ -56,7 +56,7 @@ namespace EduKin.Layouts
         private void InitializeForm()
         {
             // Vérifier si le contexte est défini
-            if (string.IsNullOrEmpty(_currentIdEcole) || string.IsNullOrEmpty(_currentAnneeScol))
+            if (string.IsNullOrEmpty(_currentIdEcole))
             {
                 // Essayer de récupérer le contexte depuis le nouveau système d'isolation
                 try
@@ -64,15 +64,30 @@ namespace EduKin.Layouts
                     if (EduKinContext.IsConfigured)
                     {
                         _currentIdEcole = EduKinContext.CurrentIdEcole;
-                        _currentAnneeScol = EduKinContext.CurrentCodeAnnee;
-                        _currentUsername = EduKinContext.CurrentUserName;
+                        if (EduKinContext.IsAuthenticated)
+                        {
+                            _currentUsername = EduKinContext.CurrentUserName;
+                        }
+
+                        if (EduKinContext.HasActiveYear)
+                        {
+                            _currentAnneeScol = EduKinContext.CurrentCodeAnnee;
+                        }
+                        else if (EduKinContext.IsAuthenticated)
+                        {
+                            // Tenter de charger l'année active si elle n'a pas encore été initialisée
+                            if (EduKinContext.InitializeWithActiveYear())
+                            {
+                                _currentAnneeScol = EduKinContext.CurrentCodeAnnee;
+                            }
+                        }
                     }
                     else
                     {
-                        // Fallback vers l'ancien système si le nouveau n'est pas configuré
-                        _currentIdEcole = EduKinContext.CurrentIdEcole;
-                        _currentAnneeScol = "2025-2026"; // À récupérer depuis le contexte si disponible
-                        _currentUsername = EduKinContext.CurrentUserName;
+                        // Si aucun contexte n'est pas configuré, ne pas initialiser les données
+                        MessageBox.Show("Contexte de l'école non disponible. Veuillez vous reconnecter.", "Erreur",
+                            MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
                     }
                 }
                 catch
@@ -84,6 +99,14 @@ namespace EduKin.Layouts
                 }
             }
 
+            // Vérifier qu'une année scolaire est configurée - PAS D'ANNÉE CODÉE EN DUR
+            if (string.IsNullOrEmpty(_currentAnneeScol))
+            {
+                MessageBox.Show("Aucune année scolaire n'est configurée. Veuillez d'abord configurer une année scolaire.",
+                    "Configuration requise", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             // Vérifier si l'année est clôturée (lecture seule)
             bool isReadOnlyMode = false;
             try
@@ -91,7 +114,7 @@ namespace EduKin.Layouts
                 if (EduKinContext.IsConfigured && EduKinContext.EstCloturee)
                 {
                     isReadOnlyMode = true;
-                    MessageBox.Show($"L'année scolaire {EduKinContext.CurrentCodeAnnee} est clôturée.\nLe formulaire sera ouvert en mode lecture seule.", 
+                    MessageBox.Show($"L'année scolaire {EduKinContext.CurrentCodeAnnee} est clôturée.\nLe formulaire sera ouvert en mode lecture seule.",
                         "Année clôturée", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
@@ -118,6 +141,7 @@ namespace EduKin.Layouts
             SetButtonStates();
         }
 
+
         private void SetupEventHandlers()
         {
             // Événements des boutons Frais
@@ -140,9 +164,61 @@ namespace EduKin.Layouts
             TxtFiltreFrais.TextChanged += TxtFiltreFrais_TextChanged;
             TxtFiltreTypeFrais.TextChanged += TxtFiltreTypeFrais_TextChanged;
 
+            // Événements de génération d'ID
+            TxtCodeFrais.Enter += TxtCodeFrais_Enter;
+            TxtCodeTypeFrais.Enter += TxtCodeTypeFrais_Enter;
+
+            // Empêcher la modification de l'ID lors du focus si on est en mode création
+            // La méthode TxtCodeFrais_Enter va générer l'ID et le mettre en lecture seule
+
             // Événements du menu
             menuItemDeconnexion.Click += MenuItemDeconnexion_Click;
             menuItemQuitter.Click += MenuItemQuitter_Click;
+        }
+
+        private void TxtCodeFrais_Enter(object sender, EventArgs e)
+        {
+            if (!_isEditingFrais && string.IsNullOrEmpty(TxtCodeFrais.Text))
+            {
+                try
+                {
+                    // Récupérer dynamiquement l'index utilisateur depuis la base de données
+                    var userIndex = _admin.GetUserIndex(EduKinContext.CurrentUserId);
+
+                    // Générer un code Frais: FRS + IndexUser + ...
+                    _admin.ExecuteGenerateId(TxtCodeFrais, "t_frais", "cod_frais", "FRS", userIndex);
+                }
+                catch (Exception ex)
+                {
+                    // Ignorer silencieusement ou logger si nécessaire, pour ne pas bloquer l'UI
+                    Console.WriteLine(ex.Message);
+                }
+            }
+        }
+
+        private void TxtCodeTypeFrais_Enter(object sender, EventArgs e)
+        {
+            if (!_isEditingTypeFrais && string.IsNullOrEmpty(TxtCodeTypeFrais.Text))
+            {
+                try 
+                {
+                    // Récupérer dynamiquement l'index utilisateur depuis la base de données
+                    var currentUserId = EduKinContext.CurrentUserId;
+                    var userIndex = _admin.GetUserIndex(currentUserId);
+                    
+                    // DEBUG: Afficher l'index récupéré pour comprendre pourquoi 001 est utilisé
+                    // A RETIRER UNE FOIS LE PROBLEME RESOLU
+                    // MessageBox.Show($"Debug: UserID='{currentUserId}', Index trouvé='{userIndex}'", "Debug Index");
+
+                    // Générer un code TypeFrais: TYF + IndexUser + ...
+                    _admin.ExecuteGenerateId(TxtCodeTypeFrais, "t_type_frais", "cod_type_frais", "TYF", userIndex);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Erreur génération ID TypeFrais: {ex.Message}");
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
 
         private void ConfigureControls(bool isReadOnlyMode = false)
@@ -150,9 +226,11 @@ namespace EduKin.Layouts
             // Configuration des DataGridViews
             ConfigureDataGridViews();
 
-            // Désactiver les champs de saisie initialement ou si l'année est clôturée
-            SetFieldsReadOnly(true || isReadOnlyMode, true || isReadOnlyMode);
-            
+            // Par défaut, activer la saisie pour permettre la création (Sauf si l'année est clôturée)
+            // On désactive l'édition Type Frais par défaut pour se concentrer sur Frais, ou on active les deux.
+            // Activons les deux pour permettre la création.
+            SetFieldsReadOnly(isReadOnlyMode, isReadOnlyMode);
+
             // Si l'année est clôturée, désactiver tous les boutons de modification
             if (isReadOnlyMode)
             {
@@ -162,7 +240,7 @@ namespace EduKin.Layouts
                 BtnSaveTypeFrais.Enabled = false;
                 BtnUpdateTypeFrais.Enabled = false;
                 BtnDeleteTypeFrais.Enabled = false;
-                
+
                 // Afficher un message dans le titre
                 this.Text += " - MODE LECTURE SEULE (Année clôturée)";
             }
@@ -197,13 +275,16 @@ namespace EduKin.Layouts
                 CmbTypeFrais.DisplayMember = "description";
                 CmbTypeFrais.ValueMember = "cod_type_frais";
 
+                // Réinitialiser la sélection
+                CmbTypeFrais.SelectedIndex = -1;
+
                 // Modalités de paiement
                 CmbModalitePaiementFrais.Items.Clear();
-                CmbModalitePaiementFrais.Items.AddRange(new[] { "Mensuel", "Trimestriel", "Semestriel", "Annuel" });
+                CmbModalitePaiementFrais.Items.AddRange(new[] { "Mensuel", "Trimestriel", "Semestriel", "Annuel", "Ponctuel" });
 
                 // Périodes
                 CmbPeriodeFrais.Items.Clear();
-                CmbPeriodeFrais.Items.AddRange(new[] { "T1", "T2", "T3", "Annuel" });
+                CmbPeriodeFrais.Items.AddRange(new[] { "T1", "T2", "T3", "Annuel", "Mensuel" });
             }
             catch (Exception ex)
             {
@@ -294,9 +375,10 @@ namespace EduKin.Layouts
                 {
                     MessageBox.Show("Frais créé avec succès!", "Succès",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    ClearFraisFields();
+
+                    // Reset vers le mode Création
+                    BtnCancelFrais_Click(sender, e);
                     LoadFrais();
-                    LoadComboBoxes(); // Recharger pour mettre à jour les listes
                 }
             }
             catch (Exception ex)
@@ -310,9 +392,16 @@ namespace EduKin.Layouts
         {
             if (!_isEditingFrais)
             {
-                // Activer le mode édition
+                // Activer le mode édition (déverrouiller description, montant, etc, mais PAS le code)
                 _isEditingFrais = true;
-                SetFieldsReadOnly(false, true);
+
+                // On déverrouille les champs sauf le code
+                TxtDescriptFrais.ReadOnly = false;
+                TxtMontantFrais.ReadOnly = false;
+                CmbTypeFrais.Enabled = true;
+                CmbModalitePaiementFrais.Enabled = true;
+                CmbPeriodeFrais.Enabled = true;
+
                 SetButtonStates();
             }
             else
@@ -328,14 +417,21 @@ namespace EduKin.Layouts
                     var modalite = CmbModalitePaiementFrais.Text;
                     var periode = CmbPeriodeFrais.Text;
 
+                    // Note: UpdateFrais dans Paiements ne prend pas tous les champs (ex: typeFrais)
+                    // Il faudrait vérifier si on peut mettre à jour le type_frais
                     var success = _paiements.UpdateFrais(codFrais, description, montant, modalite, periode);
 
                     if (success)
                     {
                         MessageBox.Show("Frais modifié avec succès!", "Succès",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                        // Retour au mode Lecture de la ligne sélectionnée
                         _isEditingFrais = false;
-                        SetFieldsReadOnly(true, true);
+
+                        // Verrouiller tout
+                        SetFieldsReadOnly(true, TxtCodeTypeFrais.ReadOnly);
+
                         LoadFrais();
                         SetButtonStates();
                     }
@@ -367,7 +463,9 @@ namespace EduKin.Layouts
                     {
                         MessageBox.Show("Frais supprimé avec succès!", "Succès",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ClearFraisFields();
+
+                        // Reset vers mode Création
+                        BtnCancelFrais_Click(sender, e);
                         LoadFrais();
                     }
                 }
@@ -383,7 +481,17 @@ namespace EduKin.Layouts
         {
             _isEditingFrais = false;
             ClearFraisFields();
-            SetFieldsReadOnly(true, true);
+
+            // Mode CRÉATION : Déverrouiller les champs (Code sera généré ou saisi)
+            TxtCodeFrais.ReadOnly = false;
+            TxtDescriptFrais.ReadOnly = false;
+            TxtMontantFrais.ReadOnly = false;
+            CmbTypeFrais.Enabled = true;
+            CmbModalitePaiementFrais.Enabled = true;
+            CmbPeriodeFrais.Enabled = true;
+
+            DgvFrais.ClearSelection();
+
             SetButtonStates();
         }
 
@@ -413,6 +521,17 @@ namespace EduKin.Layouts
                         }
                     }
                 }
+
+                // Mode AFFICHAGE : Verrouiller les champs
+                _isEditingFrais = false;
+                TxtCodeFrais.ReadOnly = true;
+                TxtDescriptFrais.ReadOnly = true;
+                TxtMontantFrais.ReadOnly = true;
+                CmbTypeFrais.Enabled = false;
+                CmbModalitePaiementFrais.Enabled = false;
+                CmbPeriodeFrais.Enabled = false;
+
+                SetButtonStates();
             }
         }
 
@@ -435,7 +554,10 @@ namespace EduKin.Layouts
                 {
                     MessageBox.Show("Type de frais créé avec succès!", "Succès",
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    ClearTypeFraisFields();
+
+                    // Reset vers mode Création
+                    BtnCancelTypeFrais_Click(sender, e);
+
                     LoadTypeFrais();
                     LoadComboBoxes(); // Recharger pour mettre à jour les listes
                 }
@@ -453,7 +575,11 @@ namespace EduKin.Layouts
             {
                 // Activer le mode édition
                 _isEditingTypeFrais = true;
-                SetFieldsReadOnly(true, false);
+
+                // Déverrouiller description, Verrouiller code
+                TxtDescripTypeFrais.ReadOnly = false;
+                TxtCodeTypeFrais.ReadOnly = true;
+
                 SetButtonStates();
             }
             else
@@ -472,8 +598,12 @@ namespace EduKin.Layouts
                     {
                         MessageBox.Show("Type de frais modifié avec succès!", "Succès",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
+
                         _isEditingTypeFrais = false;
-                        SetFieldsReadOnly(true, true);
+
+                        // Revrouiller tout en mode affichage
+                        TxtDescripTypeFrais.ReadOnly = true;
+
                         LoadTypeFrais();
                         LoadComboBoxes();
                         SetButtonStates();
@@ -506,7 +636,10 @@ namespace EduKin.Layouts
                     {
                         MessageBox.Show("Type de frais supprimé avec succès!", "Succès",
                             MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        ClearTypeFraisFields();
+
+                        // Reset vers mode création
+                        BtnCancelTypeFrais_Click(sender, e);
+
                         LoadTypeFrais();
                         LoadComboBoxes();
                     }
@@ -523,7 +656,12 @@ namespace EduKin.Layouts
         {
             _isEditingTypeFrais = false;
             ClearTypeFraisFields();
-            SetFieldsReadOnly(true, true);
+
+            // Mode CRÉATION : Déverrouiller
+            TxtCodeTypeFrais.ReadOnly = false;
+            TxtDescripTypeFrais.ReadOnly = false;
+
+            DgvTypeFrais.ClearSelection();
             SetButtonStates();
         }
 
@@ -535,6 +673,13 @@ namespace EduKin.Layouts
 
                 TxtCodeTypeFrais.Text = row.Cells["cod_type_frais"].Value?.ToString() ?? "";
                 TxtDescripTypeFrais.Text = row.Cells["description"].Value?.ToString() ?? "";
+
+                // Mode AFFICHAGE : Verrouiller
+                _isEditingTypeFrais = false;
+                TxtCodeTypeFrais.ReadOnly = true;
+                TxtDescripTypeFrais.ReadOnly = true;
+
+                SetButtonStates();
             }
         }
 
@@ -581,7 +726,7 @@ namespace EduKin.Layouts
                 }
                 else
                 {
-                    var allTypeFrais = _paiements.GetAllType_Fraiss();
+                    var allTypeFrais = _paiements.GetAllType_Frais();
                     var filteredTypeFrais = allTypeFrais.Where(tf =>
                         tf.description.ToString().ToLower().Contains(filter.ToLower()) ||
                         tf.cod_type_frais.ToString().ToLower().Contains(filter.ToLower())
@@ -692,17 +837,22 @@ namespace EduKin.Layouts
 
         private void SetButtonStates()
         {
-            // Boutons Frais
-            BtnSaveFrais.Enabled = !TxtCodeFrais.ReadOnly && !_isEditingFrais;
-            BtnUpdateFrais.Enabled = DgvFrais.SelectedRows.Count > 0;
-            BtnDeleteFrais.Enabled = DgvFrais.SelectedRows.Count > 0 && !_isEditingFrais;
-            BtnCancelFrais.Enabled = _isEditingFrais || !TxtCodeFrais.ReadOnly;
+            // Boutons Frais (Actif si mode création -Code non vide- ou édition)
+            // On simplifie: Si une ligne est sélectionnée, on peut update/delete. Sinon on peut sauver.
+            bool hasSelectionFrais = DgvFrais.SelectedRows.Count > 0;
+
+            BtnSaveFrais.Enabled = !hasSelectionFrais && !_isEditingFrais;
+            BtnUpdateFrais.Enabled = hasSelectionFrais;
+            BtnDeleteFrais.Enabled = hasSelectionFrais && !_isEditingFrais;
+            BtnCancelFrais.Enabled = hasSelectionFrais || _isEditingFrais || !string.IsNullOrEmpty(TxtCodeFrais.Text);
 
             // Boutons Type Frais
-            BtnSaveTypeFrais.Enabled = !TxtCodeTypeFrais.ReadOnly && !_isEditingTypeFrais;
-            BtnUpdateTypeFrais.Enabled = DgvTypeFrais.SelectedRows.Count > 0;
-            BtnDeleteTypeFrais.Enabled = DgvTypeFrais.SelectedRows.Count > 0 && !_isEditingTypeFrais;
-            BtnCancelTypeFrais.Enabled = _isEditingTypeFrais || !TxtCodeTypeFrais.ReadOnly;
+            bool hasSelectionType = DgvTypeFrais.SelectedRows.Count > 0;
+
+            BtnSaveTypeFrais.Enabled = !hasSelectionType && !_isEditingTypeFrais;
+            BtnUpdateTypeFrais.Enabled = hasSelectionType;
+            BtnDeleteTypeFrais.Enabled = hasSelectionType && !_isEditingTypeFrais;
+            BtnCancelTypeFrais.Enabled = hasSelectionType || _isEditingTypeFrais || !string.IsNullOrEmpty(TxtCodeTypeFrais.Text);
 
             // Texte des boutons Update
             BtnUpdateFrais.Text = _isEditingFrais ? "Confirmer" : "Modifier";
@@ -737,7 +887,7 @@ namespace EduKin.Layouts
 
             // Utiliser le contexte transmis ou des valeurs par défaut
             var username = _currentUsername ?? "Admin";
-            
+
             // Mise à jour de la barre de statut
             toolStripStatusUser.Text = $"Connecté: {username}";
             toolStripStatusTime.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
@@ -746,11 +896,28 @@ namespace EduKin.Layouts
             var timer = new System.Windows.Forms.Timer { Interval = 1000 };
             timer.Tick += (s, args) => toolStripStatusTime.Text = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
             timer.Start();
+
+            // Initialisation de l'état des boutons (Mode création par défaut)
+            BtnCancelFrais_Click(this, EventArgs.Empty);
+            BtnCancelTypeFrais_Click(this, EventArgs.Empty);
         }
 
         private void BtnDeleteTypeFrais_DoubleClick(object sender, EventArgs e)
         {
 
+        }
+
+        private void FormFrais_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TxtDescripTypeFrais_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                BtnSaveTypeFrais.PerformClick();
+            }
         }
     }
 }

@@ -261,7 +261,7 @@
             // 
             // panelCRUDFrais
             // 
-            panelCRUDFrais.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelCRUDFrais.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             panelCRUDFrais.BorderColor = Color.FromArgb(5, 21, 48);
             panelCRUDFrais.BorderRadius = 14;
             panelCRUDFrais.BorderThickness = 2;
@@ -515,6 +515,7 @@
             TxtDescriptFrais.SelectedText = "";
             TxtDescriptFrais.Size = new Size(277, 36);
             TxtDescriptFrais.TabIndex = 7;
+            TxtDescriptFrais.Enter += TxtCodeFrais_Enter;
             // 
             // label11
             // 
@@ -541,6 +542,7 @@
             TxtCodeFrais.SelectedText = "";
             TxtCodeFrais.Size = new Size(277, 36);
             TxtCodeFrais.TabIndex = 7;
+            TxtCodeFrais.Enter += TxtCodeFrais_Enter;
             // 
             // label10
             // 
@@ -733,7 +735,7 @@
             // 
             // siticonePanel2
             // 
-            siticonePanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            siticonePanel2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             siticonePanel2.BorderColor = Color.FromArgb(5, 21, 48);
             siticonePanel2.BorderRadius = 14;
             siticonePanel2.BorderThickness = 2;
@@ -795,6 +797,8 @@
             TxtDescripTypeFrais.SelectedText = "";
             TxtDescripTypeFrais.Size = new Size(279, 36);
             TxtDescripTypeFrais.TabIndex = 7;
+            TxtDescripTypeFrais.Enter += TxtCodeTypeFrais_Enter;
+            TxtDescripTypeFrais.KeyUp += TxtDescripTypeFrais_KeyUp;
             // 
             // label35
             // 
@@ -821,6 +825,7 @@
             TxtCodeTypeFrais.SelectedText = "";
             TxtCodeTypeFrais.Size = new Size(279, 36);
             TxtCodeTypeFrais.TabIndex = 7;
+            TxtCodeTypeFrais.Enter += TxtCodeTypeFrais_Enter;
             // 
             // siticonePanel5
             // 
@@ -1092,6 +1097,7 @@
             StartPosition = FormStartPosition.CenterScreen;
             Text = "FormFrais";
             WindowState = FormWindowState.Maximized;
+            Load += FormFrais_Load;
             panelBanniere.ResumeLayout(false);
             panelBanniere.PerformLayout();
             menuStrip1.ResumeLayout(false);

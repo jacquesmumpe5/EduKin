@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Hôte:                         127.0.0.1
--- Version du serveur:           9.1.0 - MySQL Community Server - GPL
+-- Version du serveur:           8.4.7 - MySQL Community Server - GPL
 -- SE du serveur:                Win64
 -- HeidiSQL Version:             12.14.0.7165
 -- --------------------------------------------------------
@@ -221,8 +221,8 @@ CREATE TABLE IF NOT EXISTS `t_agents` (
 -- Listage de la structure de table ecole_db. t_annee_scolaire
 CREATE TABLE IF NOT EXISTS `t_annee_scolaire` (
   `id_annee` int NOT NULL AUTO_INCREMENT,
-  `id_ecole` int NOT NULL,
-  `code_annee` varchar(9) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `id_ecole` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_annee` varchar(9) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `date_debut` date NOT NULL,
   `date_fin` date NOT NULL,
   `est_active` tinyint(1) DEFAULT '0',
@@ -350,12 +350,15 @@ CREATE TABLE IF NOT EXISTS `t_entite_administrative` (
   KEY `idx_fk_entitemere` (`Fk_EntiteMere`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Listage des données de la table ecole_db.t_entite_administrative : ~116 873 rows (environ)
+-- Listage des données de la table ecole_db.t_entite_administrative : ~116 609 rows (environ)
 INSERT INTO `t_entite_administrative` (`IdEntite`, `IntituleEntite`, `DenominationHabitant`, `Fk_EntiteMere`, `Fk_TypeEntite`, `Etat`, `IsVisible`) VALUES
 	('ENA0000012019', 'République démocratique du congo', 'Congolaise (Kinshasa)', 'ENA0922802019', 'TEA00000000012019', 1, 1),
 	('ENA0000012024', 'Kukenda', NULL, 'ENA0927092019', 'TEA00000000092019', 1, 1),
-	('ENA3286942025', 'Luwa', '', 'ENA0947432019', 'TEA00000000062019', 1, 1),
-	('ENA3286952025', 'Bayashi', '', 'ENA3284992025', 'TEA00000000062019', 1, 1),
+	('ENA0000022024', 'Lukunga', NULL, 'ENA0927092019', 'TEA00000000092019', 1, 1),
+	('ENA0000032024', 'Lubudi', NULL, 'ENA0927092019', 'TEA00000000092019', 1, 1),
+	('ENA0922802019', 'Afrique', NULL, 'ENA0922802019', 'TEA00000000142019', 1, 1),
+	('ENA0922812019', 'Kinshasa', '', 'ENA0000012019', 'TEA00000000022019', 1, 1),
+	('ENA0922822019', 'Kinshasa', '', 'ENA0922812019', 'TEA00000000032019', 1, 1),
 	('ENA3286962025', 'Kabinda', '', 'ENA0923632019', 'TEA00000000062019', 1, 1);
 
 -- Listage de la structure de table ecole_db. t_entree
@@ -655,7 +658,7 @@ CREATE TABLE IF NOT EXISTS `t_promotions` (
   `cod_promo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `description` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `cod_opt` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `indice_promo` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `indice_promo` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`cod_promo`),
   UNIQUE KEY `description` (`description`),
   KEY `idx_promotions_cod_opt` (`cod_opt`),
@@ -991,7 +994,7 @@ CREATE TABLE IF NOT EXISTS `t_users_infos` (
   `telephone` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `id_ecole` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fk_role` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `type_user` enum('SYSTEM','ECOLE') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ECOLE',
+  `type_user` enum('SYSTEM','ECOLE') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ECOLE',
   `profil` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_index` int NOT NULL DEFAULT '0',
   `last_password_change` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Dernière modification du mot de passe',
@@ -1021,8 +1024,7 @@ CREATE TABLE IF NOT EXISTS `t_users_infos` (
 
 -- Listage des données de la table ecole_db.t_users_infos : ~1 rows (environ)
 INSERT INTO `t_users_infos` (`id_user`, `nom`, `postnom`, `prenom`, `sexe`, `username`, `pwd_hash`, `salt`, `telephone`, `id_ecole`, `fk_role`, `type_user`, `profil`, `user_index`, `last_password_change`, `failed_login_attempts`, `account_locked_until`, `created_at`, `updated_at`, `derniere_connexion`, `tentatives_connexion`, `compte_verrouille`, `date_verrouillage`) VALUES
-	('USR00100000000012025', 'Mumpe', 'Balanda', 'Jacques', 'M', 'j.mumpe', '$2a$12$V1x9Nqk7J5zK8wLm3pQrTe.abcdefghijklmnopqrstuv', NULL, NULL, NULL, 'ROL00000000001', 'SYSTEM', NULL, 1, '2026-01-05 17:54:21', 0, NULL, '2026-01-05 17:54:21', '2026-01-05 17:54:21', NULL, 0, 0, NULL),
-	('USR00100000000022025', 'JACQUES', 'DUMAS', 'JACQUES', 'M', 'jacques7', '$2a$10$2H0rB3f2cE2p4iL1aK0bAuq7nO8m1D4jL9pI6sF5tW7dZ0xV8yC3i', '2H0rB3f2cE2p4iL1aK0bAu', NULL, NULL, 'ROL00000000001', 'SYSTEM', NULL, 2, '2026-01-05 17:59:00', 0, NULL, '2026-01-05 17:59:00', '2026-01-05 17:59:30', NULL, 0, 0, NULL);
+	('USR00100000000032025', 'ADMIN', 'SUPER', 'Administrateur', 'M', 'admin', '$2a$11$ykFE/HO4MmLFUFmkA50UWub89/bXq9zr2beyL1e9qvuzdtT4EeXmW', '$2a$$11$', NULL, NULL, 'ROL00000000001', 'SYSTEM', NULL, 3, '2026-01-05 18:21:15', 0, NULL, '2026-01-05 18:21:15', '2026-01-11 09:51:04', NULL, 0, 0, NULL);
 
 -- Listage de la structure de vue ecole_db. view_cours
 -- Création d'une table temporaire pour palier aux erreurs de dépendances de VIEW

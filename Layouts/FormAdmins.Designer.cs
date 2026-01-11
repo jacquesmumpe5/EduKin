@@ -1970,7 +1970,6 @@
             panelUtilisateursForm.BorderColor = Color.FromArgb(5, 21, 48);
             panelUtilisateursForm.BorderRadius = 14;
             panelUtilisateursForm.BorderThickness = 2;
-            panelUtilisateursForm.Controls.Add(BtnResetPassword);
             panelUtilisateursForm.Controls.Add(BtnGererRoles);
             panelUtilisateursForm.Controls.Add(BtnDeleteUser);
             panelUtilisateursForm.Controls.Add(BtnDesactiveUser);
@@ -1981,12 +1980,6 @@
             panelUtilisateursForm.Padding = new Padding(20);
             panelUtilisateursForm.Size = new Size(359, 182);
             panelUtilisateursForm.TabIndex = 1;
-            // 
-            // BtnResetPassword
-            // 
-            BtnResetPassword.BorderRadius = 14;
-            BtnResetPassword.BorderThickness = 2;
-            BtnResetPassword.FillColor = Color.FromArgb(5, 21, 48);
             BtnResetPassword.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
             BtnResetPassword.ForeColor = Color.White;
             BtnResetPassword.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
@@ -2982,6 +2975,7 @@
         private Siticone.Desktop.UI.WinForms.SiticoneButton BtnDeletePromotion;
         private Siticone.Desktop.UI.WinForms.SiticoneButton BtnUpdatePromotion;
         private Siticone.Desktop.UI.WinForms.SiticoneButton BtnSavePromotion;
+        private Siticone.Desktop.UI.WinForms.SiticoneButton BtnResetPassword;
         private Label label33;
         private Siticone.Desktop.UI.WinForms.SiticonePanel siticonePanel12;
         private Siticone.Desktop.UI.WinForms.SiticoneTextBox TxtFiltrePromotion;

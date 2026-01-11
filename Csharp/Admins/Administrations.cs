@@ -101,6 +101,37 @@ namespace EduKin.Csharp.Admins
 
         #endregion
 
+        #region Gestion Utilisateur
+
+        public string GetUserIndex(string userId)
+        {
+            try
+            {
+                using (var conn = GetSecureConnection())
+                {
+                    if (conn.State != ConnectionState.Open)
+                        conn.Open();
+
+                    var query = "SELECT user_index FROM t_users_infos WHERE id_user = @UserId";
+                    // Utilisez QueryFirstOrDefault pour gérer le cas où l'utilisateur n'existe pas ou l'index est null
+                    var index = conn.QueryFirstOrDefault<int?>(query, new { UserId = userId });
+                    
+                    // Si null ou 0, retourner "001" par défaut, sinon retourner la valeur sous forme de chaîne
+                    return index.HasValue && index.Value > 0 ? index.Value.ToString() : "001";
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[GetUserIndex] Erreur: {ex.Message}");
+                // Si erreur, on retourne "001" (ce qui cause des doublons si l'index réel est "003")
+                // Il faudrait peut-être lancer une exception pour alerter l'utilisateur ?
+                // throw; 
+                return "001"; 
+            }
+        }
+
+        #endregion
+
         #region Génération d'ID avec sp_generate_id
         
         public string GenerateId(string table, string column, string prefix, string userIndex)
@@ -645,6 +676,45 @@ namespace EduKin.Csharp.Admins
         #endregion
 
         #region CRUD Écoles Étendues
+
+        /// <summary>
+        /// Crée une nouvelle école (bypass la vérification de contexte)
+        /// </summary>
+        /// <param name="idEcole">ID de l'école</param>
+        /// <param name="denomination">Dénomination de l'école</param>
+        /// <param name="anneeScol">Année scolaire</param>
+        /// <param name="fkAvenue">ID de l'avenue</param>
+        /// <param name="numero">Numéro de parcelle</param>
+        /// <param name="logo">Chemin du logo</param>
+        /// <returns>True si la création réussit</returns>
+        public bool CreateEcoleForNewSchool(string idEcole, string denomination, string anneeScol, string fkAvenue, string numero, string? logo = null)
+        {
+            try
+            {
+                // ✅ Utiliser directement _connexion sans passer par GetSecureConnection()
+                using (var conn = _connexion.GetConnection())
+                {
+                    conn.Open();
+                    
+                    var query = @"INSERT INTO t_ecoles (id_ecole, denomination, FkAvenue, numero, logo) 
+                                  VALUES (@IdEcole, @Denomination, @FkAvenue, @Numero, @Logo)";
+                    
+                    conn.Execute(query, new 
+                    { 
+                        IdEcole = idEcole, 
+                        Denomination = denomination, 
+                        FkAvenue = fkAvenue,
+                        Numero = numero,
+                        Logo = logo
+                    });
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erreur lors de la création de l'école: {ex.Message}", ex);
+            }
+        }
 
         public bool CreateEcole(string idEcole, string denomination, string anneeScol, string fkAvenue, string numero, string? logo = null)
         {

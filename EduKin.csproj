@@ -22,6 +22,7 @@
     <Folder Include="Csharp\Admins\" />
     <Folder Include="Csharp\Finances\" />
     <Folder Include="Csharp\Securites\" />
+    <Folder Include="Tests\" />
   </ItemGroup>
 
   <ItemGroup>

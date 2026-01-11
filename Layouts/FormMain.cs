@@ -422,6 +422,50 @@ namespace EduKin.Layouts
         }
 
         /// <summary>
+        /// Handles btnFinance click event - opens FormFinance
+        /// </summary>
+        public void BtnFinance_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Vérifier si le contexte de l'année scolaire est initialisé
+                try
+                {
+                    // Cette propriété lance une exception si le contexte n'est pas initialisé
+                    var checkAnnee = EduKinContext.CurrentIdAnnee;
+                }
+                catch (InvalidOperationException)
+                {
+                    MessageBox.Show("Le module Finance nécessite une année scolaire active.\n" +
+                                    "Le contexte de l'année scolaire n'est pas initialisé.\n\n" +
+                                    "Veuillez contacter un administrateur pour configurer et activer une année scolaire.",
+                        "Configuration requise", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                UpdateNavigationButtonStates(sender as Control);
+
+                // Cacher FormMain avant d'ouvrir FormFinances
+                this.Hide();
+
+                // Ouvrir le formulaire de finances
+                using (var financeForm = new FormFinances())
+                {
+                    financeForm.ShowDialog(this);
+                }
+
+                // Réafficher FormMain après la fermeture
+                this.Show();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de l'ouverture du module Finance: {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Show();
+            }
+        }
+
+        /// <summary>
         /// Switches between different panels and updates navigation label
         /// </summary>
         /// <param name="panelName">Name of the panel to switch to</param>
@@ -3124,9 +3168,5 @@ namespace EduKin.Layouts
             }
         }
 
-        private void siticonePanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
     }
 }
