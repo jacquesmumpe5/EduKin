@@ -199,7 +199,7 @@ namespace EduKin.Layouts
                 await Task.Delay(300);
                 
                 // Vérifier que le texte n'a pas changé pendant le délai
-                if (txtAvenue.Text == ((TextBox)sender).Text)
+                if (sender is Siticone.Desktop.UI.WinForms.SiticoneTextBox stb && txtAvenue.Text == stb.Text)
                 {
                     await SearchAvenues(txtAvenue.Text);
                 }
@@ -274,24 +274,70 @@ namespace EduKin.Layouts
         }
 
         /// <summary>
-        /// Permet la saisie manuelle
+        /// Ajoute une nouvelle adresse
         /// </summary>
-        private void btnManualEntry_Click(object sender, EventArgs e)
+        private void btnAjouterAdresse_Click(object sender, EventArgs e)
         {
-            txtQuartier.ReadOnly = false;
-            txtCommune.ReadOnly = false;
-            txtVille.ReadOnly = false;
-            txtProvince.ReadOnly = false;
-            
-            txtQuartier.BackColor = System.Drawing.SystemColors.Window;
-            txtCommune.BackColor = System.Drawing.SystemColors.Window;
-            txtVille.BackColor = System.Drawing.SystemColors.Window;
-            txtProvince.BackColor = System.Drawing.SystemColors.Window;
-            
-            btnOK.Enabled = true;
-            
-            MessageBox.Show("Vous pouvez maintenant saisir manuellement tous les champs d'adresse.", 
-                "Saisie manuelle", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            try
+            {
+                
+                var formNewAddress = new FormNewAddress();
+                
+                // Pré-remplir l'avenue si elle a été saisie
+                formNewAddress.SetInitialAvenue(txtAvenue.Text.Trim());
+                
+                if (formNewAddress.ShowDialog() == DialogResult.OK)
+                {
+                    // L'avenue a été ajoutée avec succès
+                    // Rafraîchir la recherche
+                    SearchAvenues(txtAvenue.Text).Wait();
+                    
+                    // Sélectionner automatiquement la nouvelle avenue si elle correspond
+                    SelectNewlyAddedAvenue(formNewAddress.Avenue, formNewAddress.Quartier, formNewAddress.Commune);
+                    
+                    MessageBox.Show($"L'avenue '{formNewAddress.Avenue}' a été ajoutée avec succès !", 
+                        "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de l'ajout de l'adresse : {ex.Message}", 
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        /// <summary>
+        /// Sélectionne automatiquement la nouvelle avenue ajoutée
+        /// </summary>
+        private void SelectNewlyAddedAvenue(string avenue, string quartier, string commune)
+        {
+            foreach (ListViewItem item in lstAvenues.Items)
+            {
+                if (item.Tag is AvenueInfo info && 
+                    info.Avenue.Equals(avenue, StringComparison.OrdinalIgnoreCase) &&
+                    info.Quartier.Equals(quartier, StringComparison.OrdinalIgnoreCase) &&
+                    info.Commune.Equals(commune, StringComparison.OrdinalIgnoreCase))
+                {
+                    item.Selected = true;
+                    lstAvenues.EnsureVisible(item.Index);
+                    
+                    // Mettre à jour les champs
+                    txtQuartier.Text = info.Quartier;
+                    txtCommune.Text = info.Commune;
+                    txtVille.Text = info.Ville;
+                    txtProvince.Text = info.Province;
+                    
+                    // Mettre à jour les propriétés
+                    SelectedAvenue = info.Avenue;
+                    SelectedQuartier = info.Quartier;
+                    SelectedCommune = info.Commune;
+                    SelectedVille = info.Ville;
+                    SelectedProvince = info.Province;
+                    
+                    btnOK.Enabled = true;
+                    break;
+                }
+            }
         }
 
         #endregion

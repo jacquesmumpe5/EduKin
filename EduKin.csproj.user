@@ -31,6 +31,9 @@
     <Compile Update="Layouts\FormLogin.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Layouts\FormNewAddress.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Layouts\FormPictureManagerExample.cs">
       <SubType>Form</SubType>
     </Compile>

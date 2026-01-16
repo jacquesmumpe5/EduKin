@@ -1,3 +1,4 @@
+using System.Windows.Forms;
 using Siticone.Desktop.UI.WinForms;
 
 namespace EduKin.Layouts
@@ -5,16 +6,6 @@ namespace EduKin.Layouts
     partial class FormAuthDialog
     {
         private System.ComponentModel.IContainer components = null;
-        private Label lblTitle;
-        private Label lblMessage;
-        private Label lblUsername;
-        private SiticoneTextBox txtUsername;
-        private Label lblPassword;
-        private SiticoneTextBox txtPassword;
-        private SiticoneButton btnAuthenticate;
-        private SiticoneButton btnCancel;
-        private Label lblError;
-        private Panel panelMain;
 
         protected override void Dispose(bool disposing)
         {
@@ -25,9 +16,11 @@ namespace EduKin.Layouts
             base.Dispose(disposing);
         }
 
+        #region Windows Form Designer generated code
+
         private void InitializeComponent()
         {
-            panelMain = new Panel();
+            panelMain = new SiticonePanel();
             lblTitle = new Label();
             lblMessage = new Label();
             lblUsername = new Label();
@@ -42,7 +35,8 @@ namespace EduKin.Layouts
             // 
             // panelMain
             // 
-            panelMain.BackColor = Color.White;
+            panelMain.BackColor = Color.Transparent;
+            panelMain.BorderRadius = 20;
             panelMain.Controls.Add(lblTitle);
             panelMain.Controls.Add(lblMessage);
             panelMain.Controls.Add(lblUsername);
@@ -52,163 +46,161 @@ namespace EduKin.Layouts
             panelMain.Controls.Add(btnAuthenticate);
             panelMain.Controls.Add(btnCancel);
             panelMain.Controls.Add(lblError);
-            panelMain.Dock = DockStyle.Fill;
-            panelMain.Location = new Point(0, 0);
-            panelMain.Margin = new Padding(3, 4, 3, 4);
+            panelMain.FillColor = Color.White;
+            panelMain.Location = new Point(25, 25);
             panelMain.Name = "panelMain";
-            panelMain.Padding = new Padding(23, 27, 23, 27);
-            panelMain.Size = new Size(457, 400);
+            panelMain.ShadowDecoration.BorderRadius = 20;
+            panelMain.ShadowDecoration.Enabled = true;
+            panelMain.Size = new Size(450, 400);
             panelMain.TabIndex = 0;
             // 
             // lblTitle
             // 
-            lblTitle.AutoSize = true;
-            lblTitle.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
-            lblTitle.ForeColor = Color.FromArgb(64, 64, 64);
-            lblTitle.Location = new Point(23, 27);
+            lblTitle.Font = new Font("Segoe UI", 20F, FontStyle.Bold);
+            lblTitle.ForeColor = Color.FromArgb(94, 148, 255);
+            lblTitle.Location = new Point(20, 20);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(291, 32);
+            lblTitle.Size = new Size(410, 45);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "Authentification requise";
+            lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblMessage
             // 
-            lblMessage.Location = new Point(23, 73);
+            lblMessage.Font = new Font("Segoe UI", 9F);
+            lblMessage.ForeColor = Color.FromArgb(64, 64, 64);
+            lblMessage.Location = new Point(25, 70);
             lblMessage.Name = "lblMessage";
-            lblMessage.Size = new Size(411, 53);
+            lblMessage.Size = new Size(400, 45);
             lblMessage.TabIndex = 1;
-            lblMessage.Text = "Seuls les Super Administrateurs peuvent créer des écoles.\nVeuillez vous authentifier :";
+            lblMessage.Text = "Seuls les Super Administrateurs peuvent effectuer cette action.\nVeuillez vous authentifier :";
+            lblMessage.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // lblUsername
             // 
             lblUsername.AutoSize = true;
-            lblUsername.Font = new Font("Segoe UI", 9F);
+            lblUsername.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             lblUsername.ForeColor = Color.FromArgb(64, 64, 64);
-            lblUsername.Location = new Point(23, 140);
+            lblUsername.Location = new Point(25, 130);
             lblUsername.Name = "lblUsername";
-            lblUsername.Size = new Size(130, 20);
+            lblUsername.Size = new Size(144, 23);
             lblUsername.TabIndex = 2;
-            lblUsername.Text = "Nom d'utilisateur :";
+            lblUsername.Text = "Nom d'utilisateur";
             // 
             // txtUsername
             // 
+            txtUsername.BorderColor = Color.FromArgb(5, 21, 48);
             txtUsername.BorderRadius = 14;
             txtUsername.Cursor = Cursors.IBeam;
             txtUsername.DefaultText = "";
-            txtUsername.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
-            txtUsername.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
-            txtUsername.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
-            txtUsername.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
             txtUsername.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtUsername.Font = new Font("Segoe UI", 9F);
             txtUsername.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtUsername.Location = new Point(23, 167);
-            txtUsername.Margin = new Padding(3, 5, 3, 5);
+            txtUsername.Location = new Point(25, 155);
+            txtUsername.Margin = new Padding(3, 4, 3, 4);
             txtUsername.Name = "txtUsername";
             txtUsername.PasswordChar = '\0';
             txtUsername.PlaceholderText = "Saisissez votre nom d'utilisateur";
             txtUsername.SelectedText = "";
-            txtUsername.Size = new Size(411, 48);
+            txtUsername.Size = new Size(400, 36);
             txtUsername.TabIndex = 3;
             txtUsername.KeyPress += txtUsername_KeyPress;
             // 
             // lblPassword
             // 
             lblPassword.AutoSize = true;
-            lblPassword.Font = new Font("Segoe UI", 9F);
+            lblPassword.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             lblPassword.ForeColor = Color.FromArgb(64, 64, 64);
-            lblPassword.Location = new Point(23, 233);
+            lblPassword.Location = new Point(25, 205);
             lblPassword.Name = "lblPassword";
-            lblPassword.Size = new Size(105, 20);
+            lblPassword.Size = new Size(114, 23);
             lblPassword.TabIndex = 4;
-            lblPassword.Text = "Mot de passe :";
+            lblPassword.Text = "Mot de passe";
             // 
             // txtPassword
             // 
+            txtPassword.BorderColor = Color.FromArgb(5, 21, 48);
             txtPassword.BorderRadius = 14;
             txtPassword.Cursor = Cursors.IBeam;
             txtPassword.DefaultText = "";
-            txtPassword.DisabledState.BorderColor = Color.FromArgb(208, 208, 208);
-            txtPassword.DisabledState.FillColor = Color.FromArgb(226, 226, 226);
-            txtPassword.DisabledState.ForeColor = Color.FromArgb(138, 138, 138);
-            txtPassword.DisabledState.PlaceholderForeColor = Color.FromArgb(138, 138, 138);
             txtPassword.FocusedState.BorderColor = Color.FromArgb(94, 148, 255);
             txtPassword.Font = new Font("Segoe UI", 9F);
             txtPassword.HoverState.BorderColor = Color.FromArgb(94, 148, 255);
-            txtPassword.Location = new Point(23, 260);
-            txtPassword.Margin = new Padding(3, 5, 3, 5);
+            txtPassword.Location = new Point(25, 230);
+            txtPassword.Margin = new Padding(3, 4, 3, 4);
             txtPassword.Name = "txtPassword";
-            txtPassword.PasswordChar = '●';
+            txtPassword.PasswordChar = '\u25CF';
             txtPassword.PlaceholderText = "Saisissez votre mot de passe";
             txtPassword.SelectedText = "";
-            txtPassword.Size = new Size(411, 48);
+            txtPassword.Size = new Size(400, 36);
             txtPassword.TabIndex = 5;
             txtPassword.KeyPress += txtPassword_KeyPress;
             // 
+            // lblError
+            // 
+            lblError.Font = new Font("Segoe UI", 8F, FontStyle.Italic);
+            lblError.ForeColor = Color.Red;
+            lblError.Location = new Point(25, 280);
+            lblError.Name = "lblError";
+            lblError.Size = new Size(400, 20);
+            lblError.TabIndex = 8;
+            lblError.Visible = false;
+            // 
             // btnAuthenticate
             // 
-            btnAuthenticate.BorderRadius = 14;
-            btnAuthenticate.DisabledState.BorderColor = Color.DarkGray;
-            btnAuthenticate.DisabledState.CustomBorderColor = Color.DarkGray;
-            btnAuthenticate.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
-            btnAuthenticate.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
-            btnAuthenticate.FillColor = Color.FromArgb(0, 122, 204);
-            btnAuthenticate.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnAuthenticate.BorderRadius = 10;
+            btnAuthenticate.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             btnAuthenticate.ForeColor = Color.White;
-            btnAuthenticate.Location = new Point(200, 333);
-            btnAuthenticate.Margin = new Padding(3, 4, 3, 4);
+            btnAuthenticate.Location = new Point(150, 320);
             btnAuthenticate.Name = "btnAuthenticate";
-            btnAuthenticate.Size = new Size(132, 47);
+            btnAuthenticate.Size = new Size(140, 45);
             btnAuthenticate.TabIndex = 6;
             btnAuthenticate.Text = "Authentifier";
             btnAuthenticate.Click += btnAuthenticate_Click;
             // 
             // btnCancel
             // 
-            btnCancel.BorderRadius = 14;
-            btnCancel.DisabledState.BorderColor = Color.DarkGray;
-            btnCancel.DisabledState.CustomBorderColor = Color.DarkGray;
-            btnCancel.DisabledState.FillColor = Color.FromArgb(169, 169, 169);
-            btnCancel.DisabledState.ForeColor = Color.FromArgb(141, 141, 141);
-            btnCancel.FillColor = Color.FromArgb(108, 117, 125);
-            btnCancel.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnCancel.BorderRadius = 10;
+            btnCancel.FillColor = Color.Silver;
+            btnCancel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
             btnCancel.ForeColor = Color.White;
-            btnCancel.Location = new Point(343, 333);
-            btnCancel.Margin = new Padding(3, 4, 3, 4);
+            btnCancel.Location = new Point(300, 320);
             btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(91, 47);
+            btnCancel.Size = new Size(120, 45);
             btnCancel.TabIndex = 7;
             btnCancel.Text = "Annuler";
             btnCancel.Click += btnCancel_Click;
-            // 
-            // lblError
-            // 
-            lblError.Font = new Font("Segoe UI", 8.25F);
-            lblError.ForeColor = Color.Red;
-            lblError.Location = new Point(23, 313);
-            lblError.Name = "lblError";
-            lblError.Size = new Size(411, 16);
-            lblError.TabIndex = 8;
-            lblError.Visible = false;
             // 
             // FormAuthDialog
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = Color.White;
-            ClientSize = new Size(457, 400);
+            BackColor = Color.FromArgb(240, 242, 245);
+            ClientSize = new Size(500, 450);
             Controls.Add(panelMain);
-            FormBorderStyle = FormBorderStyle.FixedDialog;
-            Margin = new Padding(3, 4, 3, 4);
+            FormBorderStyle = FormBorderStyle.None;
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "FormAuthDialog";
-            this.AcceptButton = btnAuthenticate;
+            AcceptButton = btnAuthenticate;
             StartPosition = FormStartPosition.CenterParent;
             Text = "Authentification Administrateur";
             panelMain.ResumeLayout(false);
             panelMain.PerformLayout();
             ResumeLayout(false);
         }
+
+        #endregion
+
+        private SiticonePanel panelMain;
+        private Label lblTitle;
+        private Label lblMessage;
+        private Label lblUsername;
+        private SiticoneTextBox txtUsername;
+        private Label lblPassword;
+        private SiticoneTextBox txtPassword;
+        private SiticoneButton btnAuthenticate;
+        private SiticoneButton btnCancel;
+        private Label lblError;
     }
 }
