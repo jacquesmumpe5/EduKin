@@ -511,14 +511,19 @@ namespace EduKin.Layouts
         {
             try
             {
-                var sections = await Task.Run(() => _adminService.GetAllSections());
-                var sectionList = sections.Select(s => new
+                // 1) Initialiser le contexte école AVANT tout chargement
+                if (!EduKinContext.IsConfigured)
                 {
-                    Code_Section = s.cod_sect?.ToString() ?? "",
-                    Description = s.description?.ToString() ?? ""
-                }).ToList();
+                    // Utiliser un ID d'école valide pour l'initialisation
+                    _adminService.InitializeSchoolContext("ID_ECOLE_VALIDE");
+                }
 
-                DgvSection.DataSource = sectionList;
+                // Forcer les propriétés du DataGridView
+                DgvSection.AutoGenerateColumns = false;
+                DgvSection.DataSource = null;
+
+                // Charger les sections SANS Task.Run (directement sur thread UI)
+                LoadSections();
             }
             catch (Exception ex)
             {
@@ -526,6 +531,51 @@ namespace EduKin.Layouts
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void LoadSections()
+        {
+            try
+            {
+                using (var conn = _adminService.GetSecureConnection())
+                {
+                    conn.Open();
+
+                    // REQUÊTE SQL À UTILISER (STRICTEMENT)
+                    var query = @"SELECT 
+                        id_section,
+                        intitule
+                    FROM vue_sections
+                    WHERE id_ecole = @IdEcole
+                    ORDER BY intitule";
+
+                    using (var cmd = new MySqlCommand(query, (MySqlConnection)conn))
+                    {
+                        cmd.Parameters.AddWithValue("@IdEcole", EduKinContext.CurrentIdEcole);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            // Vider le DataGridView avant de le remplir
+                            DgvSection.Rows.Clear();
+
+                            // LOGIQUE IMPOSÉE
+                            while (reader.Read())
+                            {
+                                DgvSection.Rows.Add(
+                                    reader[0], // ColCodeSection = id_section
+                                    reader[1]  // ColDescripSection = intitule
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors du chargement des sections: {ex.Message}", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private async Task LoadCoursData()
         {
             try
@@ -635,19 +685,21 @@ namespace EduKin.Layouts
         {
             try
             {
-                var options = await Task.Run(() => _adminService.GetAllOptions());
-                var sections = await Task.Run(() => _adminService.GetAllSections());
+                // 1) Initialiser le contexte école AVANT tout chargement
+                if (!EduKinContext.IsConfigured)
+                {
+                    // Utiliser un ID d'école valide pour l'initialisation
+                    _adminService.InitializeSchoolContext("ID_ECOLE_VALIDE");
+                }
+
+                // Forcer les propriétés du DataGridView
+                DgvOption.AutoGenerateColumns = false;
+                DgvOption.DataSource = null;
+
                 var availableSourceOptions = await Task.Run(() => _adminService.GetAvailableSourceOptions());
 
-                var sectionList = sections.Select(s => new
-                {
-                    cod_sect = s.cod_sect?.ToString() ?? "",
-                    description = s.description?.ToString() ?? ""
-                }).ToList();
-
-                CmbSectionOption.DataSource = sectionList;
-                CmbSectionOption.DisplayMember = "description";
-                CmbSectionOption.ValueMember = "cod_sect";
+                // Charger les sections pour le ComboBox (uniquement celles affectées à l'école)
+                await LoadSectionsForOptionComboBox();
 
                 // Charger les options sources disponibles dans CmbDescripOption avec Code_Epst
                 var sourceOptionsList = availableSourceOptions.Select(o => new
@@ -665,15 +717,103 @@ namespace EduKin.Layouts
                     CmbDescripOption.Items.Add(item);
                 }
 
-                var optionList = options.Select(o => new
-                {
-                    Code_Option = o.cod_opt?.ToString() ?? "",
-                    Description = o.description?.ToString() ?? "",
-                    Code_Section = o.cod_sect?.ToString() ?? "",
-                    Code_Epst = o.code_epst?.ToString() ?? ""
-                }).ToList();
+                // Charger les options SANS Task.Run (directement sur thread UI)
+                LoadOptions();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors du chargement des options: {ex.Message}", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
-                DgvOption.DataSource = optionList;
+        private async Task LoadSectionsForOptionComboBox()
+        {
+            try
+            {
+                using (var conn = _adminService.GetSecureConnection())
+                {
+                    conn.Open();
+
+                    // Utiliser la vue vue_sections avec filtre id_ecole
+                    var query = @"SELECT 
+                        id_section,
+                        intitule
+                    FROM vue_sections
+                    WHERE id_ecole = @IdEcole
+                    ORDER BY intitule";
+
+                    using (var cmd = new MySqlCommand(query, (MySqlConnection)conn))
+                    {
+                        cmd.Parameters.AddWithValue("@IdEcole", EduKinContext.CurrentIdEcole);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            var sectionList = new List<object>();
+
+                            while (reader.Read())
+                            {
+                                sectionList.Add(new
+                                {
+                                    cod_sect = reader[0]?.ToString() ?? "",
+                                    description = reader[1]?.ToString() ?? ""
+                                });
+                            }
+
+                            CmbSectionOption.DataSource = sectionList;
+                            CmbSectionOption.DisplayMember = "description";
+                            CmbSectionOption.ValueMember = "cod_sect";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors du chargement des sections pour le ComboBox: {ex.Message}", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadOptions()
+        {
+            try
+            {
+                using (var conn = _adminService.GetSecureConnection())
+                {
+                    conn.Open();
+
+                    // REQUÊTE SQL À UTILISER (STRICTEMENT)
+                    var query = @"SELECT 
+                        id_option,
+                        intitule,
+                        id_section,
+                        sections
+                    FROM vue_options
+                    WHERE id_ecole = @IdEcole
+                    ORDER BY intitule";
+
+                    using (var cmd = new MySqlCommand(query, (MySqlConnection)conn))
+                    {
+                        cmd.Parameters.AddWithValue("@IdEcole", EduKinContext.CurrentIdEcole);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            // Vider le DataGridView avant de le remplir
+                            DgvOption.Rows.Clear();
+
+                            // LOGIQUE IMPOSÉE
+                            while (reader.Read())
+                            {
+                                DgvOption.Rows.Add(
+                                    reader[0], // ColIdOption = id_option
+                                    reader[1], // ColDescriptOption = intitule
+                                    reader[2], // ColFkSectOption = id_section
+                                    reader[3]  // ColDescripSectOption = sections
+                                );
+                            }
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -688,7 +828,7 @@ namespace EduKin.Layouts
             {
                 var row = DgvOption.SelectedRows[0];
                 TxtCodeOption.Text = row.Cells["cod_opt"].Value?.ToString() ?? "";
-                
+
                 // Pour l'�dition, afficher la description dans le ComboBox
                 var description = row.Cells["description"].Value?.ToString() ?? "";
                 CmbDescripOption.Text = description;
@@ -727,17 +867,8 @@ namespace EduKin.Layouts
                 DgvPromotion.AutoGenerateColumns = false;
                 DgvPromotion.DataSource = null;
 
-                // Charger les options pour le ComboBox
-                var options = await Task.Run(() => _adminService.GetAllOptions());
-                var optionsList = options.Select(o => new
-                {
-                    cod_opt = (string)o.id_option,
-                    description = (string)o.description
-                }).ToList();
-
-                CmbOptionPromotion.DataSource = optionsList;
-                CmbOptionPromotion.DisplayMember = "description";
-                CmbOptionPromotion.ValueMember = "cod_opt";
+                // Charger les options pour le ComboBox (uniquement celles affectées à l'école)
+                await LoadOptionsForPromotionComboBox();
 
                 // Charger les promotions SANS Task.Run (directement sur thread UI)
                 LoadPromotions();
@@ -749,6 +880,53 @@ namespace EduKin.Layouts
             }
         }
 
+        private async Task LoadOptionsForPromotionComboBox()
+        {
+            try
+            {
+                using (var conn = _adminService.GetSecureConnection())
+                {
+                    conn.Open();
+
+                    // Utiliser la vue vue_options avec filtre id_ecole
+                    var query = @"SELECT 
+                        id_option,
+                        intitule
+                    FROM vue_options
+                    WHERE id_ecole = @IdEcole
+                    ORDER BY intitule";
+
+                    using (var cmd = new MySqlCommand(query, (MySqlConnection)conn))
+                    {
+                        cmd.Parameters.AddWithValue("@IdEcole", EduKinContext.CurrentIdEcole);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            var optionsList = new List<object>();
+
+                            while (reader.Read())
+                            {
+                                optionsList.Add(new
+                                {
+                                    cod_opt = reader[0]?.ToString() ?? "",
+                                    description = reader[1]?.ToString() ?? ""
+                                });
+                            }
+
+                            CmbOptionPromotion.DataSource = optionsList;
+                            CmbOptionPromotion.DisplayMember = "description";
+                            CmbOptionPromotion.ValueMember = "cod_opt";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors du chargement des options pour le ComboBox: {ex.Message}", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void LoadPromotions()
         {
             try
@@ -756,7 +934,7 @@ namespace EduKin.Layouts
                 using (var conn = _adminService.GetSecureConnection())
                 {
                     conn.Open();
-                    
+
                     // REQUÊTE SQL À UTILISER (STRICTEMENT)
                     var query = @"SELECT 
                     id_promotion,
@@ -770,12 +948,12 @@ namespace EduKin.Layouts
                     using (var cmd = new MySqlCommand(query, (MySqlConnection)conn))
                     {
                         cmd.Parameters.AddWithValue("@IdEcole", EduKinContext.CurrentIdEcole);
-                        
+
                         using (var reader = cmd.ExecuteReader())
                         {
                             // Vider le DataGridView avant de le remplir
                             DgvPromotion.Rows.Clear();
-                            
+
                             // LOGIQUE IMPOSÉE
                             while (reader.Read())
                             {
@@ -805,14 +983,14 @@ namespace EduKin.Layouts
             try
             {
                 CmbDescripPromotion.Items.Clear();
-                
+
                 if (CmbOptionPromotion.SelectedItem == null)
                 {
                     return;
                 }
 
                 var selectedOption = CmbOptionPromotion.Text;
-                
+
                 // V�rifier si c'est "Education de Base"
                 if (selectedOption.Contains("Education de Base") || selectedOption.Contains("�ducation de Base"))
                 {
@@ -923,7 +1101,7 @@ namespace EduKin.Layouts
             {
                 var row = DgvPromotion.SelectedRows[0];
                 TxtCodePromotion.Text = row.Cells["ColCodePromotion"].Value?.ToString() ?? "";
-                
+
                 // Pour l'�dition, afficher la description dans le ComboBox
                 var description = row.Cells["ColDescriptionPromotion"].Value?.ToString() ?? "";
                 CmbDescripPromotion.Text = description;
@@ -1303,13 +1481,13 @@ namespace EduKin.Layouts
                 {
                     // Récupérer le chemin stocké dans le Tag du PictureBox ou utiliser une autre méthode
                     userProfilePath = PictureBoxProfilUser.Tag as string;
-                    
+
                     // Si le chemin n'est pas dans le Tag, essayer de le récupérer autrement
                     if (string.IsNullOrEmpty(userProfilePath))
                     {
                         // Pour l'instant, nous allons supposer que le chemin est déjà géré par PictureManager
                         // TODO: Implémenter un meilleur système pour stocker/récupérer le chemin de la photo
-                        MessageBox.Show("Le chemin de la photo sera sauvegardé lors de la création de l'utilisateur.", 
+                        MessageBox.Show("Le chemin de la photo sera sauvegardé lors de la création de l'utilisateur.",
                             "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
@@ -1345,7 +1523,7 @@ namespace EduKin.Layouts
             }
         }
 
-        
+
 
         private void TxtIdUser_Enter(object sender, EventArgs e)
         {
@@ -1412,21 +1590,21 @@ namespace EduKin.Layouts
                 var currentIdEcole = EduKinContext.CurrentIdEcole;
                 var currentUsername = EduKinContext.CurrentUserName;
                 var currentAnneeScol = "2025-2026"; // � adapter selon votre syst�me
-                
+
                 // R�cup�rer les informations de l'�cole
                 var ecole = _adminService.GetEcole(currentIdEcole);
                 var ecoleName = ecole?.denomination ?? "�cole inconnue";
                 var ecoleAddress = "Kinshasa, RDC"; // � adapter selon vos donn�es
-                
+
                 // Cr�er et afficher le formulaire des frais avec le contexte
                 using (var fraisForm = new FormFrais(currentIdEcole, currentAnneeScol, currentUsername, ecoleName, ecoleAddress))
                 {
                     // Masquer le formulaire d'administration
                     this.Hide();
-                    
+
                     // Afficher le formulaire des frais en mode modal
                     var result = fraisForm.ShowDialog(this);
-                    
+
                     // R�afficher le formulaire d'administration quand FormFrais se ferme
                     this.Show();
                     this.BringToFront();
@@ -1436,7 +1614,7 @@ namespace EduKin.Layouts
             {
                 MessageBox.Show($"Erreur lors de l'ouverture du module Finance: {ex.Message}",
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
+
                 // S'assurer que le formulaire d'administration est visible en cas d'erreur
                 this.Show();
             }
@@ -1457,6 +1635,11 @@ namespace EduKin.Layouts
                 MessageBox.Show($"Erreur lors de la fermeture: {ex.Message}",
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void panelNavAccueil_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
