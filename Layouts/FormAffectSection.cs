@@ -69,10 +69,10 @@ namespace EduKin.Layouts
                     conn.Open();
 
                     // Récupérer TOUTES les sections disponibles pour l'école courante
-                    var query = @"SELECT s.cod_sect, s.description, 
+                    var query = @"SELECT s.id_section, s.description, 
                                   CASE WHEN a.num_affect IS NOT NULL THEN a.num_affect ELSE 0 END as num_affect
                                   FROM t_sections s
-                                  LEFT JOIN t_affect_sect a ON s.cod_sect = a.cod_sect AND a.id_ecole = @IdEcole
+                                  LEFT JOIN t_affect_sect a ON s.id_section = a.fk_section AND a.fk_ecole = @IdEcole
                                   ORDER BY s.description";
 
                     var sections = conn.Query(query, new { IdEcole = EduKinContext.CurrentIdEcole });
@@ -82,7 +82,7 @@ namespace EduKin.Layouts
                         var item = new
                         {
                             Text = section.description,
-                            Value = section.cod_sect,
+                            Value = section.id_section,
                             AffectId = section.num_affect
                         };
                         CmbSection.Items.Add(item);
@@ -130,11 +130,11 @@ namespace EduKin.Layouts
                     conn.Open();
 
                     // Récupérer toutes les options de la section avec leur statut d'affectation
-                    var query = @"SELECT o.cod_opt, o.description, o.code_epst,
+                    var query = @"SELECT o.id_option, o.description, o.code_epst,
                                          CASE WHEN ao.num_affect_opt IS NOT NULL THEN 1 ELSE 0 END as is_affected
                                   FROM t_options o
-                                  LEFT JOIN t_affect_options ao ON o.cod_opt = ao.cod_opt AND ao.num_affect_sect = @AffectId
-                                  WHERE o.cod_sect = @CodeSection
+                                  LEFT JOIN t_affect_options ao ON o.id_option = ao.fk_option AND ao.num_affect_sect = @AffectId
+                                  WHERE o.fk_section = @CodeSection
                                   ORDER BY o.description";
 
                     var options = conn.Query(query, new { CodeSection = codeSection, AffectId = affectId });
@@ -143,7 +143,7 @@ namespace EduKin.Layouts
                     {
                         _currentOptions.Add(new OptionItem
                         {
-                            CodeOption = option.cod_opt,
+                            CodeOption = option.id_option,
                             NomOption = option.description,
                             CodeEpst = option.code_epst ?? "N/A",
                             IsAffected = option.is_affected == 1,
@@ -397,7 +397,7 @@ namespace EduKin.Layouts
                             if (affectSectId == 0)
                             {
                                 // Vérification en base
-                                var checkQuery = "SELECT num_affect FROM t_affect_sect WHERE id_ecole = @IdEcole AND cod_sect = @CodSect";
+                                var checkQuery = "SELECT num_affect FROM t_affect_sect WHERE fk_ecole = @IdEcole AND fk_section = @CodSect";
                                 var existingId = await conn.QueryFirstOrDefaultAsync<int?>(checkQuery, new 
                                 { 
                                     IdEcole = EduKinContext.CurrentIdEcole, 
@@ -411,7 +411,7 @@ namespace EduKin.Layouts
                                 else
                                 {
                                     // La section n'est pas affectée, on l'affecte
-                                    var insertNoteQuery = @"INSERT INTO t_affect_sect (id_ecole, cod_sect, date_affect)
+                                    var insertNoteQuery = @"INSERT INTO t_affect_sect (fk_ecole, fk_section, date_affect)
                                                           VALUES (@IdEcole, @CodSect, @DateAffect);
                                                           SELECT LAST_INSERT_ID();";
 
@@ -430,7 +430,7 @@ namespace EduKin.Layouts
                             // 2. Affecter les options
                             foreach (var option in selectedOptions)
                             {
-                                var insertQuery = @"INSERT INTO t_affect_options (num_affect_sect, cod_opt, date_affect)
+                                var insertQuery = @"INSERT INTO t_affect_options (num_affect_sect, fk_option, date_affect)
                                                    VALUES (@NumAffectSect, @CodOpt, @DateAffect)";
 
                                 await conn.ExecuteAsync(insertQuery, new

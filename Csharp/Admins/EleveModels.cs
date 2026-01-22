@@ -358,11 +358,11 @@ namespace EduKin.Csharp.Admins
         public DateTime? DateNaissance { get; set; }
         public string LieuNaissance { get; set; } = string.Empty;
         public string NomTuteur { get; set; } = string.Empty;
-        public string? TelephoneTuteur { get; set; }
-        public string? Avenue { get; set; }
+        public string? TelTuteur { get; set; }
+        public string? FkAvenue { get; set; }
         public string? Numero { get; set; }
         public string? EcoleProvenance { get; set; }
-        public string? Promotion { get; set; }
+        public string? FkPromotion { get; set; }
         public string? AnneeScol { get; set; }
         
         public List<string> ValidationErrors { get; set; } = new();

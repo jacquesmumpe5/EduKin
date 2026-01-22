@@ -20,6 +20,103 @@ namespace EduKin.Layouts
         {
             InitializeComponent();
             _rolesService = new GestionRolesPermissions();
+            ConfigureDataGridViews();
+        }
+
+        private void ConfigureDataGridViews()
+        {
+            // Configuration dgvRoles
+            dgvRoles.AutoGenerateColumns = false;
+            dgvRoles.AllowUserToAddRows = false;
+            dgvRoles.AllowUserToDeleteRows = false;
+            dgvRoles.ReadOnly = true;
+            dgvRoles.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvRoles.MultiSelect = false;
+
+            // Ajouter les colonnes manuelles avec des en-têtes propres
+            if (dgvRoles.Columns.Count == 0)
+            {
+                dgvRoles.Columns.Add("colIdRole", "ID Rôle");
+                dgvRoles.Columns.Add("colNomRole", "Nom Rôle");
+                dgvRoles.Columns.Add("colDescription", "Description");
+                dgvRoles.Columns.Add("colDateCreation", "Date Création");
+
+                // Configurer les DataPropertyName
+                dgvRoles.Columns["colIdRole"].DataPropertyName = "id_role";
+                dgvRoles.Columns["colNomRole"].DataPropertyName = "nom_role";
+                dgvRoles.Columns["colDescription"].DataPropertyName = "description";
+                dgvRoles.Columns["colDateCreation"].DataPropertyName = "date_creation";
+
+                // Ajuster la largeur des colonnes
+                dgvRoles.Columns["colIdRole"].Width = 80;
+                dgvRoles.Columns["colNomRole"].Width = 150;
+                dgvRoles.Columns["colDescription"].Width = 200;
+                dgvRoles.Columns["colDateCreation"].Width = 100;
+            }
+
+            // Configuration dgvPermissions
+            dgvPermissions.AutoGenerateColumns = false;
+            dgvPermissions.AllowUserToAddRows = false;
+            dgvPermissions.AllowUserToDeleteRows = false;
+            dgvPermissions.ReadOnly = true;
+            dgvPermissions.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvPermissions.MultiSelect = false;
+
+            // Ajouter les colonnes manuelles avec des en-têtes propres
+            if (dgvPermissions.Columns.Count == 0)
+            {
+                dgvPermissions.Columns.Add("colIdPermission", "ID Permission");
+                dgvPermissions.Columns.Add("colNomPermission", "Nom Permission");
+                dgvPermissions.Columns.Add("colDescription", "Description");
+                dgvPermissions.Columns.Add("colModule", "Module");
+                dgvPermissions.Columns.Add("colDateCreation", "Date Création");
+
+                // Configurer les DataPropertyName
+                dgvPermissions.Columns["colIdPermission"].DataPropertyName = "id_permission";
+                dgvPermissions.Columns["colNomPermission"].DataPropertyName = "nom_permission";
+                dgvPermissions.Columns["colDescription"].DataPropertyName = "description";
+                dgvPermissions.Columns["colModule"].DataPropertyName = "module";
+                dgvPermissions.Columns["colDateCreation"].DataPropertyName = "date_creation";
+
+                // Ajuster la largeur des colonnes
+                dgvPermissions.Columns["colIdPermission"].Width = 80;
+                dgvPermissions.Columns["colNomPermission"].Width = 150;
+                dgvPermissions.Columns["colDescription"].Width = 200;
+                dgvPermissions.Columns["colModule"].Width = 100;
+                dgvPermissions.Columns["colDateCreation"].Width = 100;
+            }
+
+            // Configuration dgvRolePermissions
+            dgvRolePermissions.AutoGenerateColumns = false;
+            dgvRolePermissions.AllowUserToAddRows = false;
+            dgvRolePermissions.AllowUserToDeleteRows = false;
+            dgvRolePermissions.ReadOnly = true;
+            dgvRolePermissions.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvRolePermissions.MultiSelect = false;
+
+            // Ajouter les colonnes manuelles avec des en-têtes propres
+            if (dgvRolePermissions.Columns.Count == 0)
+            {
+                dgvRolePermissions.Columns.Add("colIdRole", "ID Rôle");
+                dgvRolePermissions.Columns.Add("colNomRole", "Nom Rôle");
+                dgvRolePermissions.Columns.Add("colIdPermission", "ID Permission");
+                dgvRolePermissions.Columns.Add("colNomPermission", "Nom Permission");
+                dgvRolePermissions.Columns.Add("colDateAttribution", "Date Attribution");
+
+                // Configurer les DataPropertyName
+                dgvRolePermissions.Columns["colIdRole"].DataPropertyName = "id_role";
+                dgvRolePermissions.Columns["colNomRole"].DataPropertyName = "nom_role";
+                dgvRolePermissions.Columns["colIdPermission"].DataPropertyName = "id_permission";
+                dgvRolePermissions.Columns["colNomPermission"].DataPropertyName = "nom_permission";
+                dgvRolePermissions.Columns["colDateAttribution"].DataPropertyName = "date_attribution";
+
+                // Ajuster la largeur des colonnes
+                dgvRolePermissions.Columns["colIdRole"].Width = 80;
+                dgvRolePermissions.Columns["colNomRole"].Width = 150;
+                dgvRolePermissions.Columns["colIdPermission"].Width = 80;
+                dgvRolePermissions.Columns["colNomPermission"].Width = 150;
+                dgvRolePermissions.Columns["colDateAttribution"].Width = 100;
+            }
         }
 
         private async void FormRolesPermissions_Load(object sender, EventArgs e)

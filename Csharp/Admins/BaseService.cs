@@ -117,7 +117,7 @@ namespace EduKin.Csharp.Admins
                 // Ajouter l'ID école seulement si la table le supporte
                 if (TableSupportsIsolation(tableName))
                 {
-                    dataDict["id_ecole"] = EduKinContext.CurrentIdEcole;
+                    dataDict["fk_ecole"] = EduKinContext.CurrentIdEcole;
                 }
                 
                 // Ajouter les timestamps automatiquement
@@ -282,7 +282,7 @@ namespace EduKin.Csharp.Admins
         /// Obtient une connexion à la base de données avec vérification du contexte
         /// </summary>
         /// <returns>Connexion à la base de données</returns>
-        protected IDbConnection GetSecureConnection()
+        public IDbConnection GetSecureConnection()
         {
             EnsureEduKinContextInitialized();
             return _connexion.GetConnection();
@@ -296,7 +296,7 @@ namespace EduKin.Csharp.Admins
         /// <param name="prefix">Préfixe de l'ID</param>
         /// <param name="defaultSuffix">Suffixe par défaut</param>
         /// <returns>Nouvel ID unique</returns>
-        protected string GenerateUniqueId(string tableName, string idColumn, string prefix, string defaultSuffix = "001")
+        protected string GenerateUniqueId(string tableName, string idColumn, string prefix, string defaultSuffix)
         {
             return ExecuteWithRetry(() =>
             {
@@ -504,7 +504,7 @@ namespace EduKin.Csharp.Admins
         #region Méthodes de Validation et Utilitaires
 
         /// <summary>
-        /// Vérifie si une table supporte l'isolation par id_ecole
+        /// Vérifie si une table supporte l'isolation par fk_ecole
         /// </summary>
         /// <param name="tableName">Nom de la table</param>
         /// <returns>True si la table supporte l'isolation</returns>
@@ -605,7 +605,7 @@ namespace EduKin.Csharp.Admins
         /// </summary>
         private bool ValidateAgentData(Dictionary<string, object?> data)
         {
-            var requiredFields = new[] { "matricule", "nom", "postnom", "prenom", "sexe", "service", "id_ecole" };
+            var requiredFields = new[] { "matricule", "nom", "postnom", "prenom", "sexe", "service", "fk_ecole" };
             
             foreach (var field in requiredFields)
             {

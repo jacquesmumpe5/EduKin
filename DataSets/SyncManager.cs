@@ -222,8 +222,8 @@ namespace EduKin.DataSets
                     sqliteConn.Open();
                     mysqlConn.Open();
 
-                    // Créer les tables SQLite si elles n'existent pas
-                    CreateSQLiteTables(sqliteConn);
+                    // Création des tables SQLite désactivée - les objets DB doivent être créés manuellement
+                    System.Diagnostics.Debug.WriteLine("Création des tables SQLite désactivée - les objets DB doivent être créés manuellement");
 
                     // Synchroniser depuis MySQL vers SQLite
                     SyncTableFromMySQL(mysqlConn, sqliteConn, "t_eleves");
@@ -785,91 +785,6 @@ namespace EduKin.DataSets
                 }
             }
             return null;
-        }
-
-        /// <summary>
-        /// Crée les tables SQLite avec une structure compatible
-        /// </summary>
-        private void CreateSQLiteTables(SQLiteConnection conn)
-        {
-            var tableCreationScripts = GetSQLiteTableCreationScripts();
-            
-            foreach (var script in tableCreationScripts)
-            {
-                try
-                {
-                    conn.Execute(script);
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Erreur lors de la création de table SQLite: {ex.Message}");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Obtient les scripts de création des tables SQLite
-        /// </summary>
-        private List<string> GetSQLiteTableCreationScripts()
-        {
-            return new List<string>
-            {
-                // Script pour t_eleves adapté à SQLite
-                @"CREATE TABLE IF NOT EXISTS t_eleves (
-                    matricule TEXT PRIMARY KEY,
-                    nom TEXT NOT NULL,
-                    postnom TEXT NOT NULL,
-                    prenom TEXT NOT NULL,
-                    sexe TEXT CHECK (sexe IN ('M', 'F')) NOT NULL,
-                    lieu_naiss TEXT,
-                    date_naiss DATE,
-                    nom_tuteur TEXT NOT NULL,
-                    tel_tuteur TEXT,
-                    FkAvenue TEXT,
-                    numero TEXT,
-                    ecole_prov TEXT,
-                    profil TEXT,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )",
-
-                // Script pour t_agents adapté à SQLite
-                @"CREATE TABLE IF NOT EXISTS t_agents (
-                    matricule TEXT PRIMARY KEY,
-                    nom TEXT NOT NULL,
-                    postnom TEXT NOT NULL,
-                    prenom TEXT NOT NULL,
-                    sexe TEXT CHECK (sexe IN ('M', 'F')) NOT NULL,
-                    lieu_naiss TEXT NOT NULL,
-                    date_naiss DATE NOT NULL,
-                    service TEXT NOT NULL,
-                    fonction TEXT,
-                    grade TEXT,
-                    role TEXT,
-                    email TEXT,
-                    tel TEXT,
-                    FkAvenue TEXT,
-                    Numero TEXT,
-                    profil TEXT,
-                    id_ecole TEXT NOT NULL,
-                    sal_base REAL,
-                    ipr REAL,
-                    sal_net REAL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )",
-
-                // Autres tables...
-                @"CREATE TABLE IF NOT EXISTS t_affectation (
-                    id_affect INTEGER PRIMARY KEY AUTOINCREMENT,
-                    matricule TEXT NOT NULL,
-                    cod_promo TEXT NOT NULL,
-                    annee_scol TEXT NOT NULL,
-                    indice_promo TEXT NOT NULL,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )"
-            };
         }
 
         /// <summary>

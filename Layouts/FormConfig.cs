@@ -25,36 +25,36 @@ namespace EduKin.Layouts
             try
             {
                 System.Diagnostics.Debug.WriteLine("=== DEBUT Constructeur FormConfig ===");
-                
+
                 InitializeComponent();
                 System.Diagnostics.Debug.WriteLine("InitializeComponent() terminé");
-                
+
                 _configManager = new SchoolConfigManager();
                 System.Diagnostics.Debug.WriteLine("SchoolConfigManager créé");
-                
+
                 _connexion = Connexion.Instance;
                 System.Diagnostics.Debug.WriteLine("Connexion.Instance récupéré");
-                
+
                 _administrations = new Administrations();
                 System.Diagnostics.Debug.WriteLine("Administrations créé");
-                
+
                 // S'abonner aux changements de connexion
                 _connexion.ConnectionChanged += OnConnectionChanged;
                 System.Diagnostics.Debug.WriteLine("Événement ConnectionChanged abonné");
-                
+
                 System.Diagnostics.Debug.WriteLine("=== FIN Constructeur FormConfig ===");
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"ERREUR dans constructeur FormConfig: {ex.Message}");
                 System.Diagnostics.Debug.WriteLine($"StackTrace: {ex.StackTrace}");
-                
+
                 MessageBox.Show(
                     $"Erreur lors de l'initialisation de FormConfig:\n{ex.Message}",
                     "Erreur Critique",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
-                
+
                 throw;
             }
         }
@@ -71,15 +71,15 @@ namespace EduKin.Layouts
                 return;
             }
 
-            var message = e.IsOnline 
+            var message = e.IsOnline
                 ? $"🟢 Connexion rétablie - {e.DatabaseType}"
                 : $"🔴 Mode hors ligne - {e.DatabaseType}";
 
             // Afficher le statut dans l'interface (vous pouvez ajouter un label pour cela)
             this.Text = $"Configuration École - {message}";
-            
+
             // Afficher une notification discrète
-            MessageBox.Show(message, "Changement de connexion", 
+            MessageBox.Show(message, "Changement de connexion",
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
@@ -97,7 +97,7 @@ namespace EduKin.Layouts
         {
             // Afficher le statut de connexion au démarrage
             var (success, message) = _connexion.TestConnection();
-            
+
             if (!success)
             {
                 // Afficher pourquoi MySQL n'est pas accessible
@@ -122,48 +122,11 @@ namespace EduKin.Layouts
                 EnsureSchemaCorrection();
             }
 
-            // Initialiser les vues SQLite si nécessaire (mode hors ligne)
-            if (!_connexion.IsOnline)
-            {
-                var initializer = new SQLiteInitializer();
-                if (!initializer.ViewsExist())
-                {
-                    var result = MessageBox.Show(
-                        "Les vues de la base de données locale doivent être initialisées.\nVoulez-vous continuer ?",
-                        "Initialisation requise",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question);
-
-                    if (result == DialogResult.Yes)
-                    {
-                        if (!initializer.InitializeViews())
-                        {
-                            MessageBox.Show(
-                                "Erreur lors de l'initialisation des vues.\nVeuillez vérifier que la base de données contient les tables nécessaires.",
-                                "Erreur",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error);
-                            return;
-                        }
-                        
-                        MessageBox.Show(
-                            "Vues initialisées avec succès !",
-                            "Succès",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
-                    }
-                    else
-                    {
-                        return;
-                    }
-                }
-            }
-
             // Mettre à jour le statut de connexion dans le titre
             var dbInfo = _connexion.GetCurrentDatabase();
             var statusIcon = _connexion.IsOnline ? "🟢" : "🔴";
             this.Text = $"Configuration École - {statusIcon} {dbInfo}";
-            
+
             btnSelectSchool.Enabled = false;
         }
 
@@ -178,10 +141,10 @@ namespace EduKin.Layouts
             {
                 // Forcer une vérification de connexion avant de charger
                 _connexion.ForceCheckConnection();
-                
+
                 var dbInfo = _connexion.GetCurrentDatabase();
                 var statusIcon = _connexion.IsOnline ? "🟢" : "🔴";
-                
+
                 // Mettre à jour le titre de la fenêtre avec le statut
                 this.Text = $"Configuration École - {statusIcon} {dbInfo}";
 
@@ -206,12 +169,12 @@ namespace EduKin.Layouts
                     FROM vue_avenue_hierarchie 
                     WHERE Avenue LIKE @searchText
                     ORDER BY Avenue, Quartier, Commune";
-                
-                var dataTable = await Task.Run(() => 
+
+                var dataTable = await Task.Run(() =>
                     ExecuteQueryWithParameter(query, "@searchText", $"%{searchText}%"));
-                
+
                 lstAvenues.Items.Clear();
-                
+
                 foreach (DataRow row in dataTable.Rows)
                 {
                     // Format: Avenue -> Quartier -> Commune -> Ville -> Province
@@ -228,7 +191,7 @@ namespace EduKin.Layouts
                     };
                     lstAvenues.Items.Add(item);
                 }
-                
+
                 // Réinitialiser la liste des écoles
                 lstEcoles.Items.Clear();
                 lblNoSchool.Visible = false;
@@ -236,7 +199,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la recherche d'avenues : {ex.Message}", 
+                MessageBox.Show($"Erreur lors de la recherche d'avenues : {ex.Message}",
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -255,8 +218,8 @@ namespace EduKin.Layouts
                     WHERE Avenue = @avenue 
                       AND Quartier = @quartier
                     ORDER BY Ecole";
-                
-                var dataTable = await Task.Run(() => 
+
+                var dataTable = await Task.Run(() =>
                 {
                     var dt = new DataTable();
                     using (var conn = _connexion.GetConnection())
@@ -265,17 +228,17 @@ namespace EduKin.Layouts
                         using (var cmd = conn.CreateCommand())
                         {
                             cmd.CommandText = query;
-                            
+
                             var paramAvenue = cmd.CreateParameter();
                             paramAvenue.ParameterName = "@avenue";
                             paramAvenue.Value = avenueInfo.Avenue;
                             cmd.Parameters.Add(paramAvenue);
-                            
+
                             var paramQuartier = cmd.CreateParameter();
                             paramQuartier.ParameterName = "@quartier";
                             paramQuartier.Value = avenueInfo.Quartier;
                             cmd.Parameters.Add(paramQuartier);
-                            
+
                             using (var reader = cmd.ExecuteReader())
                             {
                                 dt.Load(reader);
@@ -284,9 +247,9 @@ namespace EduKin.Layouts
                     }
                     return dt;
                 });
-                
+
                 lstEcoles.Items.Clear();
-                
+
                 foreach (DataRow row in dataTable.Rows)
                 {
                     var item = new ListViewItem(row["denomination"].ToString());
@@ -295,7 +258,7 @@ namespace EduKin.Layouts
                     item.Tag = row["id_ecole"].ToString();
                     lstEcoles.Items.Add(item);
                 }
-                
+
                 if (lstEcoles.Items.Count == 0)
                 {
                     lblNoSchool.Visible = true;
@@ -304,12 +267,12 @@ namespace EduKin.Layouts
                 {
                     lblNoSchool.Visible = false;
                 }
-                
+
                 btnSelectSchool.Enabled = false;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors du chargement des écoles : {ex.Message}", 
+                MessageBox.Show($"Erreur lors du chargement des écoles : {ex.Message}",
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -338,7 +301,7 @@ namespace EduKin.Layouts
         {
             // Attendre un peu avant de lancer la recherche (debounce)
             await Task.Delay(300);
-            
+
             if (txtAvenue.Text == ((TextBox)sender).Text)
             {
                 await SearchAvenues(txtAvenue.Text);
@@ -372,23 +335,23 @@ namespace EduKin.Layouts
         private void btnSelectSchool_Click(object sender, EventArgs e)
         {
             if (lstEcoles.SelectedItems.Count == 0) return;
-            
+
             try
             {
                 var selectedItem = lstEcoles.SelectedItems[0];
                 var idEcole = selectedItem.Tag.ToString();
                 var denomination = selectedItem.Text;
-                
+
                 // Demander l'authentification avant de configurer l'école
                 string userIndex;
                 string authenticatedUserId;
                 if (!AuthenticateAdmin())
                 {
-                    MessageBox.Show("Authentification échouée. Seuls les Super Administrateurs, Administrateurs ou Directeurs peuvent configurer une école.", 
+                    MessageBox.Show("Authentification échouée. Seuls les Super Administrateurs, Administrateurs ou Directeurs peuvent configurer une école.",
                         "Accès refusé", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                
+
                 // Récupérer les informations d'authentification
                 using (var authDialog = new FormAuthDialog())
                 {
@@ -399,7 +362,7 @@ namespace EduKin.Layouts
                     userIndex = authDialog.UserIndex;
                     authenticatedUserId = authDialog.AuthenticatedUserId;
                 }
-                
+
                 // Créer et sauvegarder la configuration
                 var config = new SchoolConfig
                 {
@@ -407,12 +370,12 @@ namespace EduKin.Layouts
                     Denomination = denomination,
                     ConfiguredDate = DateTime.Now
                 };
-                
+
                 _configManager.SaveConfig(config);
-                
+
                 // Initialiser le contexte de l'école
                 EduKinContext.Initialize(idEcole, denomination);
-                
+
                 // Initialiser le contexte complet avec l'année scolaire active
                 var schoolYearManager = new SchoolYearManager();
                 var contextInitialized = schoolYearManager.InitializeContextWithActiveYear(
@@ -423,10 +386,10 @@ namespace EduKin.Layouts
 
                 if (!contextInitialized)
                 {
-                    MessageBox.Show("École sélectionnée mais erreur lors de l'initialisation de l'année scolaire.", 
+                    MessageBox.Show("École sélectionnée mais erreur lors de l'initialisation de l'année scolaire.",
                         "Avertissement", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-                
+
                 // Debug: Vérifier que l'initialisation a fonctionné
                 var debugMessage = $"École '{denomination}' configurée avec succès!\n\n" +
                                  $"Debug Info:\n" +
@@ -434,14 +397,14 @@ namespace EduKin.Layouts
                                  $"Dénomination: {denomination}\n" +
                                  $"Contexte configuré: {EduKinContext.IsConfigured}\n" +
                                  $"ID Contexte: {(EduKinContext.IsConfigured ? EduKinContext.TryGetCurrentIdEcole() : "Non disponible")}";
-                
+
                 MessageBox.Show(debugMessage, "Configuration", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                
+
                 NavigateToLogin();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la configuration : {ex.Message}", 
+                MessageBox.Show($"Erreur lors de la configuration : {ex.Message}",
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -453,7 +416,7 @@ namespace EduKin.Layouts
         private void btnToggleMode_Click(object sender, EventArgs e)
         {
             _isCreatingNewSchool = !_isCreatingNewSchool;
-            
+
             if (_isCreatingNewSchool)
             {
                 // Passer en mode création
@@ -481,7 +444,7 @@ namespace EduKin.Layouts
         {
             // Attendre un peu avant de lancer la recherche (debounce)
             await Task.Delay(300);
-            
+
             if (txtNewAvenue.Text == ((TextBox)sender).Text)
             {
                 await SearchAvenuesForCreation(txtNewAvenue.Text);
@@ -513,12 +476,12 @@ namespace EduKin.Layouts
                     FROM vue_avenue_hierarchie 
                     WHERE Avenue LIKE @searchText
                     ORDER BY Avenue, Quartier, Commune";
-                
-                var dataTable = await Task.Run(() => 
+
+                var dataTable = await Task.Run(() =>
                     ExecuteQueryWithParameter(query, "@searchText", $"%{searchText}%"));
-                
+
                 lstNewAvenues.Items.Clear();
-                
+
                 foreach (DataRow row in dataTable.Rows)
                 {
                     // Format: Avenue -> Quartier -> Commune -> Ville -> Province
@@ -538,7 +501,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la recherche d'avenues : {ex.Message}", 
+                MessageBox.Show($"Erreur lors de la recherche d'avenues : {ex.Message}",
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -549,7 +512,7 @@ namespace EduKin.Layouts
         private void lstNewAvenues_SelectedIndexChanged(object sender, EventArgs e)
         {
             // L'avenue sélectionnée sera utilisée lors de la création
-            btnCreateSchool.Enabled = lstNewAvenues.SelectedItems.Count > 0 && 
+            btnCreateSchool.Enabled = lstNewAvenues.SelectedItems.Count > 0 &&
                                       !string.IsNullOrWhiteSpace(txtDenomination?.Text);
         }
 
@@ -567,35 +530,9 @@ namespace EduKin.Layouts
                 if (_connexion.IsOnline) // MySQL correction
                 {
                     // Vérifier le type de colonne pour id_ecole dans t_annee_scolaire
-                    var checkQuery = @"
-                        SELECT DATA_TYPE 
-                        FROM INFORMATION_SCHEMA.COLUMNS 
-                        WHERE TABLE_SCHEMA = DATABASE() 
-                          AND TABLE_NAME = 't_annee_scolaire' 
-                          AND COLUMN_NAME = 'id_ecole'";
-
-                    var dt = ExecuteQuery(checkQuery);
-                    
-                    if (dt.Rows.Count > 0)
-                    {
-                        var dataType = dt.Rows[0]["DATA_TYPE"].ToString().ToLower();
-                        if (dataType == "int" || dataType == "integer" || dataType == "smallint" || dataType == "tinyint")
-                        {
-                            System.Diagnostics.Debug.WriteLine($"[SchemaCorrection] Correction requise: id_ecole est {dataType}, doit être VARCHAR");
-                            
-                            using (var conn = _connexion.GetConnection())
-                            {
-                                conn.Open();
-                                using (var cmd = conn.CreateCommand())
-                                {
-                                    // Modification critique : changer INT en VARCHAR pour supporter les IDs générés
-                                    cmd.CommandText = "ALTER TABLE t_annee_scolaire MODIFY COLUMN id_ecole VARCHAR(50) NOT NULL";
-                                    cmd.ExecuteNonQuery();
-                                }
-                            }
-                            System.Diagnostics.Debug.WriteLine("[SchemaCorrection] Schéma corrigé avec succès");
-                        }
-                    }
+                    // Vérification du schéma - DÉSACTIVÉE
+                    // Les modifications de structure doivent être faites manuellement
+                    System.Diagnostics.Debug.WriteLine("Vérification du schéma désactivée - les modifications DB doivent être faites manuellement");
                 }
             }
             catch (Exception ex)
@@ -615,7 +552,7 @@ namespace EduKin.Layouts
             {
                 // Debug : afficher la requête exacte
                 System.Diagnostics.Debug.WriteLine($"Requête SQL : {query}");
-                
+
                 using (var conn = _connexion.GetConnection())
                 {
                     conn.Open();
@@ -649,20 +586,20 @@ namespace EduKin.Layouts
                 // Debug : afficher la requête exacte
                 System.Diagnostics.Debug.WriteLine($"Requête SQL : {query}");
                 System.Diagnostics.Debug.WriteLine($"Paramètre {paramName} : {paramValue}");
-                
+
                 using (var conn = _connexion.GetConnection())
                 {
                     conn.Open();
                     using (var cmd = conn.CreateCommand())
                     {
                         cmd.CommandText = query;
-                        
+
                         // Ajouter le paramètre de manière sécurisée
                         var parameter = cmd.CreateParameter();
                         parameter.ParameterName = paramName;
                         parameter.Value = (object?)paramValue ?? DBNull.Value;
                         cmd.Parameters.Add(parameter);
-                        
+
                         using (var reader = cmd.ExecuteReader())
                         {
                             dt.Load(reader);
@@ -696,7 +633,7 @@ namespace EduKin.Layouts
                 "Confirmation",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
-            
+
             if (result == DialogResult.Yes)
             {
                 Application.Exit();
@@ -719,7 +656,7 @@ namespace EduKin.Layouts
         /// </summary>
         private void txtDenomination_TextChanged(object sender, EventArgs e)
         {
-            btnCreateSchool.Enabled = lstNewAvenues.SelectedItems.Count > 0 && 
+            btnCreateSchool.Enabled = lstNewAvenues.SelectedItems.Count > 0 &&
                                       !string.IsNullOrWhiteSpace(txtDenomination?.Text);
         }
 
@@ -741,14 +678,14 @@ namespace EduKin.Layouts
                 // Validation des champs
                 if (string.IsNullOrWhiteSpace(txtDenomination?.Text))
                 {
-                    MessageBox.Show("Veuillez saisir la dénomination de l'école.", "Validation", 
+                    MessageBox.Show("Veuillez saisir la dénomination de l'école.", "Validation",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 if (lstNewAvenues.SelectedItems.Count == 0)
                 {
-                    MessageBox.Show("Veuillez sélectionner une avenue.", "Validation", 
+                    MessageBox.Show("Veuillez sélectionner une avenue.", "Validation",
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
@@ -756,7 +693,7 @@ namespace EduKin.Layouts
                 var selectedItem = lstNewAvenues.SelectedItems[0];
                 if (selectedItem.Tag is not AvenueInfo avenueInfo)
                 {
-                    MessageBox.Show("Erreur lors de la récupération des informations de l'avenue.", "Erreur", 
+                    MessageBox.Show("Erreur lors de la récupération des informations de l'avenue.", "Erreur",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -768,25 +705,25 @@ namespace EduKin.Layouts
                 {
                     if (authDialog.ShowDialog() != DialogResult.OK)
                     {
-                        MessageBox.Show("Authentification annulée. La création de l'école a été interrompue.", 
+                        MessageBox.Show("Authentification annulée. La création de l'école a été interrompue.",
                             "Authentification requise", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
-                    
+
                     userIndex = authDialog.UserIndex;
                     authenticatedUserId = authDialog.AuthenticatedUserId;
-                    MessageBox.Show($"Authentification réussie !\nUtilisateur: {authenticatedUserId}\nRôle: {authDialog.UserRole}\nIndex: {userIndex}", 
+                    MessageBox.Show($"Authentification réussie !\nUtilisateur: {authenticatedUserId}\nRôle: {authDialog.UserRole}\nIndex: {userIndex}",
                         "Authentification", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
                 // ÉTAPE 2: Récupérer les données du formulaire
                 var denomination = txtDenomination.Text.Trim();
                 var numeroParcelle = string.IsNullOrWhiteSpace(txtNumero?.Text) ? "N/A" : txtNumero.Text.Trim();
-                
+
                 // Gestion de l'année scolaire
                 string anneeScol;
                 DateTime dateDebut, dateFin;
-                
+
                 if (string.IsNullOrWhiteSpace(txtAnneeScol?.Text))
                 {
                     // Générer automatiquement l'année scolaire courante
@@ -807,19 +744,19 @@ namespace EduKin.Layouts
                         }
                         else
                         {
-                            MessageBox.Show("Format d'année scolaire invalide. Utilisez le format YYYY-YYYY (ex: 2025-2026)", 
+                            MessageBox.Show("Format d'année scolaire invalide. Utilisez le format YYYY-YYYY (ex: 2025-2026)",
                                 "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                             return;
                         }
                     }
                     else
                     {
-                        MessageBox.Show("Format d'année scolaire invalide. Utilisez le format YYYY-YYYY (ex: 2025-2026)", 
+                        MessageBox.Show("Format d'année scolaire invalide. Utilisez le format YYYY-YYYY (ex: 2025-2026)",
                             "Validation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return;
                     }
                 }
-             
+
                 // ÉTAPE 3: Générer un ID unique pour l'école avec le user_index authentifié
                 // ✅ Utiliser GenerateIdForNewSchool qui ne requiert pas de contexte initialisé
                 var idEcole = _administrations.GenerateIdForNewSchool("t_ecoles", "id_ecole", "ECO", userIndex);
@@ -833,15 +770,15 @@ namespace EduKin.Layouts
                 {
                     openFileDialog.Filter = "Images|*.jpg;*.jpeg;*.png;*.bmp;*.gif|Tous les fichiers|*.*";
                     openFileDialog.Title = "Sélectionner le logo de l'école";
-                    
+
                     if (openFileDialog.ShowDialog() == DialogResult.OK)
                     {
                         var pictureManager = new PictureManager("Photos/Ecole");
                         logoPath = pictureManager.CopyToSecureLocation(openFileDialog.FileName, idEcole);
-                        
+
                         if (!string.IsNullOrEmpty(logoPath))
                         {
-                            MessageBox.Show($"Logo sauvegardé avec succès: {logoPath}", "Succès", 
+                            MessageBox.Show($"Logo sauvegardé avec succès: {logoPath}", "Succès",
                                 MessageBoxButtons.OK, MessageBoxIcon.Information);
                         }
                     }
@@ -859,7 +796,7 @@ namespace EduKin.Layouts
 
                 if (!success)
                 {
-                    MessageBox.Show("Erreur lors de la création de l'école dans la base de données.", 
+                    MessageBox.Show("Erreur lors de la création de l'école dans la base de données.",
                         "Erreur de création", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
@@ -876,7 +813,7 @@ namespace EduKin.Layouts
 
                 if (!yearCreated)
                 {
-                    MessageBox.Show("École créée mais erreur lors de la création de l'année scolaire.", 
+                    MessageBox.Show("École créée mais erreur lors de la création de l'année scolaire.",
                         "Avertissement", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
 
@@ -887,9 +824,9 @@ namespace EduKin.Layouts
                     Denomination = denomination,
                     ConfiguredDate = DateTime.Now
                 };
-                
+
                 _configManager.SaveConfig(config);
-                
+
                 // 🔴 CRITIQUE: Initialiser EduKinContext avec l'idEcole généré
                 // Note: InitializeComplete sera appelé plus tard via InitializeContextWithActiveYear
                 EduKinContext.Initialize(idEcole, denomination);
@@ -897,7 +834,8 @@ namespace EduKin.Layouts
                 System.Diagnostics.Debug.WriteLine($"[FormConfig.CreateNewSchool] ID École: {idEcole}");
 
                 // ÉTAPE 7: Initialiser le contexte d'isolation
-                try {
+                try
+                {
                     var contextInitialized = schoolYearManager.InitializeContextWithActiveYear(
                         idEcole: idEcole,
                         userId: authenticatedUserId,
@@ -906,13 +844,13 @@ namespace EduKin.Layouts
 
                     if (!contextInitialized)
                     {
-                        MessageBox.Show("École créée mais erreur lors de l'initialisation du contexte.", 
+                        MessageBox.Show("École créée mais erreur lors de l'initialisation du contexte.",
                             "Avertissement", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"École créée mais erreur lors de l'initialisation du contexte: {ex.Message}", 
+                    MessageBox.Show($"École créée mais erreur lors de l'initialisation du contexte: {ex.Message}",
                         "Avertissement", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
 
@@ -924,20 +862,131 @@ namespace EduKin.Layouts
                     $"Année Scolaire: {anneeScol}\n" +
                     $"Période: {dateDebut:dd/MM/yyyy} - {dateFin:dd/MM/yyyy}\n" +
                     $"User Index: {userIndex}\n" +
-                    $"Contexte d'isolation: {(EduKinContext.IsConfigured ? "✓ Configuré" : "✗ Non configuré")}", 
-                    "École créée", 
-                    MessageBoxButtons.OK, 
+                    $"Contexte d'isolation: {(EduKinContext.IsConfigured ? "✓ Configuré" : "✗ Non configuré")}",
+                    "École créée",
+                    MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
 
                 NavigateToLogin();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors de la création de l'école : {ex.Message}", "Erreur", 
+                MessageBox.Show($"Erreur lors de la création de l'école : {ex.Message}", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         #endregion
+
+        private async void btnNewAdresse_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine("=== DÉBUT AJOUT NOUVELLE ADRESSE ===");
+                
+                var formNewAddress = new FormNewAddress();
+
+                // Pré-remplir l'avenue si elle a été saisie
+                formNewAddress.SetInitialAvenue(txtAvenue.Text.Trim());
+                System.Diagnostics.Debug.WriteLine($"Avenue initiale: {txtAvenue.Text.Trim()}");
+
+                if (formNewAddress.ShowDialog() == DialogResult.OK)
+                {
+                    System.Diagnostics.Debug.WriteLine("=== FORMULAIRE FERMÉ AVEC OK ===");
+                    System.Diagnostics.Debug.WriteLine($"Nouvelle avenue: {formNewAddress.Avenue}");
+                    System.Diagnostics.Debug.WriteLine($"Nouveau quartier: {formNewAddress.Quartier}");
+                    System.Diagnostics.Debug.WriteLine($"Nouvelle commune: {formNewAddress.Commune}");
+
+                    // L'avenue a été ajoutée avec succès
+                    // Rafraîchir la recherche de manière asynchrone
+                    System.Diagnostics.Debug.WriteLine("Début rafraîchissement recherche...");
+                    await SearchAvenues(txtAvenue.Text);
+                    System.Diagnostics.Debug.WriteLine($"Rafraîchissement terminé. Nombre d'avenues: {lstAvenues.Items.Count}");
+
+                    // Sélectionner automatiquement la nouvelle avenue si elle correspond
+                    System.Diagnostics.Debug.WriteLine("Début sélection nouvelle avenue...");
+                    await SelectNewlyAddedAvenue(formNewAddress.Avenue, formNewAddress.Quartier, formNewAddress.Commune);
+
+                    MessageBox.Show($"L'avenue '{formNewAddress.Avenue}' a été ajoutée avec succès !",
+                        "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    
+                    System.Diagnostics.Debug.WriteLine("=== AJOUT NOUVELLE ADRESSE TERMINÉ AVEC SUCCÈS ===");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("=== FORMULAIRE FERMÉ AVEC CANCEL ===");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"=== ERREUR AJOUT ADRESSE: {ex.Message} ===");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+                MessageBox.Show($"Erreur lors de l'ajout de l'adresse : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task SelectNewlyAddedAvenue(string avenue, string quartier, string commune)
+        {
+            try
+            {
+                System.Diagnostics.Debug.WriteLine($"=== DÉBUT SÉLECTION NOUVELLE AVENUE ===");
+                System.Diagnostics.Debug.WriteLine($"Recherche: Avenue='{avenue}', Quartier='{quartier}', Commune='{commune}'");
+                System.Diagnostics.Debug.WriteLine($"Nombre d'avenues dans la liste: {lstAvenues.Items.Count}");
+
+                if (string.IsNullOrEmpty(avenue) || lstAvenues.Items.Count == 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("Retour anticipé: avenue vide ou liste vide");
+                    return;
+                }
+
+                for (int i = 0; i < lstAvenues.Items.Count; i++)
+                {
+                    var item = lstAvenues.Items[i];
+                    System.Diagnostics.Debug.WriteLine($"Vérification item {i}: {item.Text}");
+                    
+                    if (item.Tag is AvenueInfo info &&
+                        !string.IsNullOrEmpty(info.Avenue) &&
+                        !string.IsNullOrEmpty(info.Quartier) &&
+                        !string.IsNullOrEmpty(info.Commune) &&
+                        info.Avenue.Equals(avenue, StringComparison.OrdinalIgnoreCase) &&
+                        info.Quartier.Equals(quartier, StringComparison.OrdinalIgnoreCase) &&
+                        info.Commune.Equals(commune, StringComparison.OrdinalIgnoreCase))
+                    {
+                        System.Diagnostics.Debug.WriteLine("=== AVENUE TROUVÉE ET SÉLECTIONNÉE ===");
+                        System.Diagnostics.Debug.WriteLine($"Info trouvée: {info.Avenue} → {info.Quartier} → {info.Commune}");
+                        
+                        // Désélectionner tous les éléments d'abord
+                        lstAvenues.SelectedItems.Clear();
+                        
+                        // Sélectionner le nouvel élément
+                        item.Selected = true;
+                        lstAvenues.EnsureVisible(i);
+
+                        // Mettre à jour les champs
+                        txtAvenue.Text = info.Avenue;
+                        
+                        // Charger les écoles pour cette avenue
+                        System.Diagnostics.Debug.WriteLine("Début chargement écoles...");
+                        await LoadEcolesByAvenue(info);
+                        System.Diagnostics.Debug.WriteLine("Chargement écoles terminé");
+                        
+                        System.Diagnostics.Debug.WriteLine("=== SÉLECTION NOUVELLE AVENUE TERMINÉE ===");
+                        break;
+                    }
+                }
+                
+                if (lstAvenues.SelectedItems.Count == 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("=== AVENUE NON TROUVÉE DANS LA LISTE ===");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"=== ERREUR SÉLECTION NOUVELLE AVENUE: {ex.Message} ===");
+                System.Diagnostics.Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+            }
+        }
+
     }
 }

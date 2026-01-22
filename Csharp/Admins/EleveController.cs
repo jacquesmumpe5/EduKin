@@ -158,7 +158,7 @@ namespace EduKin.Csharp.Admins
         /// <param name="matricule">Matricule de l'élève à charger</param>
         /// <exception cref="ArgumentException">Si le matricule est vide ou null</exception>
         /// <exception cref="InvalidOperationException">Si l'élève n'est pas trouvé</exception>
-        public void LoadEleveFromGrid(string matricule)
+        public async Task LoadEleveFromGrid(string matricule)
         {
             if (string.IsNullOrWhiteSpace(matricule))
             {
@@ -183,7 +183,7 @@ namespace EduKin.Csharp.Admins
                 SetOperationMode(OperationMode.Edit);
 
                 // Charger les données dans l'interface
-                LoadDataToInterface(_currentEleve);
+                await LoadDataToInterface(_currentEleve);
             }
             catch (Exception ex)
             {
@@ -457,7 +457,7 @@ namespace EduKin.Csharp.Admins
             viewModel.LieuNaissance = data.lieu_naiss ?? string.Empty;
             viewModel.NomTuteur = data.nom_tuteur ?? string.Empty;
             viewModel.TelTuteur = data.tel_tuteur ?? string.Empty;
-            viewModel.FkAvenue = data.FkAvenue ?? string.Empty;
+            viewModel.FkAvenue = data.fk_avenue ?? string.Empty;
             viewModel.NumeroAdresse = data.numero ?? string.Empty;
             viewModel.EcoleProvenance = data.ecole_prov ?? string.Empty;
             viewModel.CheminPhoto = data.profil ?? string.Empty;
@@ -467,7 +467,7 @@ namespace EduKin.Csharp.Admins
         /// Charge les données du modèle vers l'interface
         /// </summary>
         /// <param name="viewModel">Modèle de vue contenant les données</param>
-        private void LoadDataToInterface(EleveViewModel viewModel)
+        private async Task LoadDataToInterface(EleveViewModel viewModel)
         {
             // Champs de base de l'élève
             if (_formMain.MatriculeEleveControl != null)
@@ -514,8 +514,15 @@ namespace EduKin.Csharp.Admins
             {
                 try
                 {
-                    if (System.IO.File.Exists(viewModel.CheminPhoto))
+                    if (viewModel.CheminPhoto.StartsWith("http"))
                     {
+                        // Photo depuis URL (ancien système) - plus supporté
+                        // Pour l'instant, afficher une image par défaut
+                        _formMain.PicBoxEleveControl.Image = null;
+                    }
+                    else if (System.IO.File.Exists(viewModel.CheminPhoto))
+                    {
+                        // Photo locale (compatibilité descendante)
                         _formMain.PicBoxEleveControl.Image = System.Drawing.Image.FromFile(viewModel.CheminPhoto);
                     }
                 }

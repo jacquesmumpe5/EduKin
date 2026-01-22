@@ -29,6 +29,7 @@ namespace EduKin.Layouts
         private string _selectedNumParcelleAgent; // Store selected parcel number for agent
         private string _selectedPhotoPathAgent; // Store selected photo path for agent
         private string _selectedPhotoPathEleve; // Store selected photo path for eleve
+        private PictureManager _pictureManager;
 
         // Assignment information storage
         private string _selectedAnneeScolaire = string.Empty;
@@ -157,6 +158,9 @@ namespace EduKin.Layouts
                 _eleveController = new EleveController(_elevesService, this);
                 _agentController = new AgentController(_agentsService, this);
                 _currentSchoolYear = _dashboardService.GetCurrentSchoolYear();
+                
+                // Initialiser le gestionnaire de photos
+                _pictureManager = new PictureManager();
 
                 // Initialiser les ComboBox
                 InitializeComboBoxes();
@@ -226,7 +230,7 @@ namespace EduKin.Layouts
                         {
                             // Construire l'adresse complète en utilisant le service Eleves
                             var adresse = _elevesService.GetAdresseComplete(
-                                ecoleInfo.FkAvenue?.ToString(),
+                                ecoleInfo.fk_avenue?.ToString(),
                                 ecoleInfo.numero?.ToString()
                             );
                             lblAdresseEcole.Text = $"Adresse: {adresse}";
@@ -571,7 +575,7 @@ namespace EduKin.Layouts
         /// <summary>
         /// Opens FormAddressSearch dialog for student address selection
         /// </summary>
-        /// <returns>Tuple containing IdAvenue (FkAvenue) and numero, or null if cancelled</returns>
+        /// <returns>Tuple containing IdAvenue (fk_avenue) and numero, or null if cancelled</returns>
         public (string IdAvenue, string Numero)? OpenAddressSearchDialog()
         {
             try
@@ -700,7 +704,7 @@ namespace EduKin.Layouts
         /// <returns>True if student was created successfully</returns>
         public async Task<bool> CreateStudentWithAddress(
             string nom, string postNom, string prenom, string sexe, string nomTuteur, string userIndex,
-            string? fkAvenue = null, string? numero = null, string? lieuNaiss = null, DateTime? dateNaiss = null,
+            string? fk_avenue = null, string? numero = null, string? lieuNaiss = null, DateTime? dateNaiss = null,
             string? telTuteur = null, string? ecoleProv = null, string? profil = null)
         {
             try
@@ -712,7 +716,7 @@ namespace EduKin.Layouts
                     sexe: sexe,
                     nomTuteur: nomTuteur,
                     lieuNaiss: lieuNaiss ?? "",
-                    fkAvenue: fkAvenue ?? "",
+                    fkAvenue: fk_avenue ?? "",
                     numero: numero ?? "",
                     userIndex: userIndex,
                     dateNaiss: dateNaiss,
@@ -741,28 +745,25 @@ namespace EduKin.Layouts
         #region Photo Management Integration
 
         /// <summary>
-        /// Loads an existing photo into the PictureBox from a file path
+        /// Loads an existing photo into the PictureBox from local path
         /// </summary>
-        /// <param name="photoPath">Path to the photo file</param>
+        /// <param name="photoPath">Path of the photo</param>
         /// <returns>True if photo was loaded successfully</returns>
-        public bool LoadExistingPhoto(string photoPath)
+        public async Task<bool> LoadExistingPhoto(string photoUrl)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(photoPath))
+                if (string.IsNullOrWhiteSpace(photoUrl))
                 {
                     ClearPhoto();
                     return false;
                 }
 
-                // Create PictureManager instance
-                var pictureManager = new PictureManager("Photos/Eleves");
-
-                // Load the photo into the PictureBox
-                if (pictureManager.LoadPicture(PicBoxEleve, photoPath))
+                // Load the photo from local path into the PictureBox
+                if (_pictureManager.LoadPicture(PicBoxEleve, photoUrl))
                 {
                     // Store the photo path for database recording
-                    _selectedPhotoPathEleve = photoPath;
+                    _selectedPhotoPathEleve = photoUrl;
                     return true;
                 }
                 else
@@ -773,7 +774,7 @@ namespace EduKin.Layouts
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Erreur lors du chargement de la photo existante: {ex.Message}",
+                MessageBox.Show($"Erreur lors du chargement de la photo: {ex.Message}",
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 ClearPhoto();
                 return false;
@@ -781,7 +782,7 @@ namespace EduKin.Layouts
         }
 
         /// <summary>
-        /// Clears the current photo from the PictureBox and resets the selected photo path
+        /// Clears current photo from the PictureBox and resets the selected photo URL
         /// </summary>
         public void ClearPhoto()
         {
@@ -795,11 +796,14 @@ namespace EduKin.Layouts
                     oldImage.Dispose();
                 }
 
-                // Reset the selected photo path
+                // Reset the selected photo URL
                 _selectedPhotoPathEleve = string.Empty;
 
                 // Set PictureBox to show a placeholder or default state
                 PicBoxEleve.SizeMode = PictureBoxSizeMode.CenterImage;
+                
+                // Set default image using PictureManager
+                _pictureManager.SetDefaultImage(PicBoxEleve);
             }
             catch (Exception ex)
             {
@@ -934,7 +938,7 @@ namespace EduKin.Layouts
                         DataGridViewEleve.DataSource = dataTable;
 
                         // Configure the DataGridView appearance
-                        ConfigureDataGridViewAppearance();
+                        ConfigureStudentsDataGridViewAppearance();
 
                         // Update statistics
                         UpdateElevesStatistics(elevesList);
@@ -1455,9 +1459,6 @@ namespace EduKin.Layouts
         {
             try
             {
-                // Create PictureManager instance for agent photos
-                var pictureManager = new PictureManager("Photos/Agents");
-
                 // Get the matricule for unique identification
                 var matricule = TxtMatriculeAgent.Text.Trim();
                 if (string.IsNullOrEmpty(matricule))
@@ -1467,23 +1468,44 @@ namespace EduKin.Layouts
                     return;
                 }
 
-                // Capture photo using PictureManager (will be saved to secure location with matricule)
-                var capturedPhotoPath = await pictureManager.CapturePhotoAsync(PictureBoxProfilAgent, matricule);
-
-                if (!string.IsNullOrEmpty(capturedPhotoPath))
+                // Open webcam capture form
+                using (var webcamForm = new FormWebcamCapture())
                 {
-                    // Store the secured photo path for database recording
-                    _selectedPhotoPathAgent = capturedPhotoPath;
+                    if (webcamForm.ShowDialog() == DialogResult.OK && webcamForm.CapturedImage != null)
+                    {
+                        // Create a temporary PictureBox to hold the captured image
+                        using (var tempPictureBox = new PictureBox())
+                        {
+                            tempPictureBox.Image = webcamForm.CapturedImage;
+                            
+                            // Save captured image locally
+                            var photoPath = _pictureManager.SavePicture(tempPictureBox, $"agent_{matricule}_{DateTime.Now:yyyyMMdd_HHmmss}_capture.jpg");
+                            
+                            if (!string.IsNullOrEmpty(photoPath))
+                            {
+                                // Load the photo into PictureBox
+                                if (_pictureManager.LoadPicture(PictureBoxProfilAgent, photoPath))
+                                {
+                                    // Store the photo path for database recording
+                                    _selectedPhotoPathAgent = photoPath;
 
-                    // Provide user feedback
-                    MessageBox.Show("Photo capturée et sécurisée avec succès!",
-                        "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    // User cancelled or capture failed
-                    MessageBox.Show("Capture de photo annulée ou échouée.",
-                        "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    // Provide user feedback
+                                    MessageBox.Show("Photo capturée et enregistrée avec succès!",
+                                        "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Erreur lors du chargement de la photo.",
+                                        "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("Erreur lors de l'enregistrement de la photo.",
+                                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -1494,15 +1516,12 @@ namespace EduKin.Layouts
         }
 
         /// <summary>
-        /// Handles BtnLoadPicAgent Click event - opens file dialog for photo selection
+        /// Handles BtnLoadPicAgent Click event - opens file dialog for photo selection and saves locally
         /// </summary>
-        private void BtnLoadPicAgent_Click(object sender, EventArgs e)
+        private async void BtnLoadPicAgent_Click(object sender, EventArgs e)
         {
             try
             {
-                // Create PictureManager instance for agent photos
-                var pictureManager = new PictureManager("Photos/Agents");
-
                 // Get the matricule for unique identification
                 var matricule = TxtMatriculeAgent.Text.Trim();
                 if (string.IsNullOrEmpty(matricule))
@@ -1512,21 +1531,42 @@ namespace EduKin.Layouts
                     return;
                 }
 
-                // Open file dialog and load selected picture (will be copied to secure location)
-                if (pictureManager.BrowseAndLoadPicture(PictureBoxProfilAgent, out string securedPath, matricule))
+                // Open file dialog to select photo
+                using (var openFileDialog = new OpenFileDialog())
                 {
-                    // Store the secured photo path for database recording
-                    _selectedPhotoPathAgent = securedPath;
+                    openFileDialog.Title = "Sélectionner une photo pour l'agent";
+                    openFileDialog.Filter = "Fichiers images|*.jpg;*.jpeg;*.png;*.bmp;*.gif|Tous les fichiers|*.*";
+                    openFileDialog.FilterIndex = 1;
+                    
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        // Copy to secure location
+                        var photoPath = _pictureManager.CopyToSecureLocation(openFileDialog.FileName, $"agent_{matricule}_{DateTime.Now:yyyyMMdd_HHmmss}_{Path.GetFileName(openFileDialog.FileName)}");
+                        
+                        if (!string.IsNullOrEmpty(photoPath))
+                        {
+                            // Load the photo into PictureBox
+                            if (_pictureManager.LoadPicture(PictureBoxProfilAgent, photoPath))
+                            {
+                                // Store the photo path for database recording
+                                _selectedPhotoPathAgent = photoPath;
 
-                    // Provide user feedback
-                    MessageBox.Show("Photo chargée et sécurisée avec succès!",
-                        "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    // User cancelled or load failed
-                    MessageBox.Show("Aucune photo sélectionnée.",
-                        "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                // Provide user feedback
+                                MessageBox.Show("Photo chargée et enregistrée avec succès!",
+                                    "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Erreur lors du chargement de la photo.",
+                                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Erreur lors de l'enregistrement de la photo.",
+                                "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -1585,7 +1625,7 @@ namespace EduKin.Layouts
                     sexe: CmbSexeAgent.Text.Trim(),
                     lieuNaiss: TxtLieuNaissAgent.Text.Trim(),
                     dateNaiss: DtpDateNaissAgent.Value.Date,
-                    userIndex: EduKinContext.CurrentUserIndex.ToString(),
+                    userIndex: EduKinContext.CurrentUserIndex,
                     email: string.IsNullOrWhiteSpace(TxtEmailAgent.Text) ? null : TxtEmailAgent.Text.Trim(),
                     tel: string.IsNullOrWhiteSpace(TxtTelAgent.Text) ? null : TxtTelAgent.Text.Trim(),
                     fkAvenue: _selectedIdAvenueAgent,
@@ -1869,7 +1909,7 @@ namespace EduKin.Layouts
         /// Loads agent data from the database and populates the form
         /// </summary>
         /// <param name="matricule">Agent matricule to load</param>
-        private void LoadAgentFromGrid(string matricule)
+        private async void LoadAgentFromGrid(string matricule)
         {
             try
             {
@@ -1908,7 +1948,7 @@ namespace EduKin.Layouts
                     // Load photo if exists
                     if (!string.IsNullOrEmpty(agentData.profil))
                     {
-                        LoadExistingAgentPhoto(agentData.profil);
+                        await LoadExistingAgentPhoto(agentData.profil);
                     }
                     else
                     {
@@ -1931,8 +1971,8 @@ namespace EduKin.Layouts
         /// <summary>
         /// Loads an existing agent photo into the PictureBox
         /// </summary>
-        /// <param name="photoPath">Path to the photo file</param>
-        private bool LoadExistingAgentPhoto(string photoPath)
+        /// <param name="photoPath">Path or URL to the photo file</param>
+        private async Task<bool> LoadExistingAgentPhoto(string photoPath)
         {
             try
             {
@@ -1942,17 +1982,27 @@ namespace EduKin.Layouts
                     return false;
                 }
 
-                var pictureManager = new PictureManager("Photos/Agents");
-
-                if (pictureManager.LoadPicture(PictureBoxProfilAgent, photoPath))
+                if (photoPath.StartsWith("http"))
                 {
-                    _selectedPhotoPathAgent = photoPath;
-                    return true;
+                    // Photo depuis URL (ancien système Supabase) - tenter de télécharger
+                    // Pour l'instant, afficher une image par défaut
+                    _pictureManager.SetDefaultImage(PictureBoxProfilAgent);
+                    MessageBox.Show("Les photos URL ne sont plus supportées. Veuillez sélectionner une nouvelle photo.", "Avertissement", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return false;
                 }
                 else
                 {
-                    ClearAgentPhoto();
-                    return false;
+                    // Photo locale
+                    if (_pictureManager.LoadPicture(PictureBoxProfilAgent, photoPath))
+                    {
+                        _selectedPhotoPathAgent = photoPath;
+                        return true;
+                    }
+                    else
+                    {
+                        ClearAgentPhoto();
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -2061,9 +2111,6 @@ namespace EduKin.Layouts
         {
             try
             {
-                // Create PictureManager instance for student photos
-                var pictureManager = new PictureManager("Photos/Eleves");
-
                 // Get the matricule for unique identification
                 var matricule = TxtMatriculeEleve.Text.Trim();
                 if (string.IsNullOrEmpty(matricule))
@@ -2073,23 +2120,44 @@ namespace EduKin.Layouts
                     return;
                 }
 
-                // Capture photo using PictureManager (will be saved to secure location with matricule)
-                var capturedPhotoPath = await pictureManager.CapturePhotoAsync(PicBoxEleve, matricule);
-
-                if (!string.IsNullOrEmpty(capturedPhotoPath))
+                // Open webcam capture form
+                using (var webcamForm = new FormWebcamCapture())
                 {
-                    // Store the secured photo path for database recording
-                    _selectedPhotoPathEleve = capturedPhotoPath;
+                    if (webcamForm.ShowDialog() == DialogResult.OK && webcamForm.CapturedImage != null)
+                    {
+                        // Create a temporary PictureBox to hold the captured image
+                        using (var tempPictureBox = new PictureBox())
+                        {
+                            tempPictureBox.Image = webcamForm.CapturedImage;
+                            
+                            // Save captured image locally
+                            var photoPath = _pictureManager.SavePicture(tempPictureBox, $"eleve_{matricule}_{DateTime.Now:yyyyMMdd_HHmmss}_capture.jpg");
+                            
+                            if (!string.IsNullOrEmpty(photoPath))
+                            {
+                                // Load the photo into PictureBox
+                                if (_pictureManager.LoadPicture(PicBoxEleve, photoPath))
+                                {
+                                    // Store the photo path for database recording
+                                    _selectedPhotoPathEleve = photoPath;
 
-                    // Provide user feedback
-                    MessageBox.Show("Photo capturée et sécurisée avec succès!",
-                        "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    // User cancelled or capture failed
-                    MessageBox.Show("Capture de photo annulée ou échouée.",
-                        "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    // Provide user feedback
+                                    MessageBox.Show("Photo capturée et enregistrée avec succès!",
+                                        "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("Erreur lors du chargement de la photo.",
+                                        "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
+                            }
+                            else
+                            {
+                                MessageBox.Show("Erreur lors de l'enregistrement de la photo.",
+                                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -2100,15 +2168,12 @@ namespace EduKin.Layouts
         }
 
         /// <summary>
-        /// Handles BtnLoadPicEleve Click event - opens file dialog for photo selection
+        /// Handles BtnLoadPicEleve Click event - loads student photo from file system and saves locally
         /// </summary>
-        private void BtnLoadPicEleve_Click(object sender, EventArgs e)
+        private async void BtnLoadPicEleve_Click(object sender, EventArgs e)
         {
             try
             {
-                // Create PictureManager instance for student photos
-                var pictureManager = new PictureManager("Photos/Eleves");
-
                 // Get the matricule for unique identification
                 var matricule = TxtMatriculeEleve.Text.Trim();
                 if (string.IsNullOrEmpty(matricule))
@@ -2118,21 +2183,42 @@ namespace EduKin.Layouts
                     return;
                 }
 
-                // Open file dialog and load selected picture (will be copied to secure location)
-                if (pictureManager.BrowseAndLoadPicture(PicBoxEleve, out string securedPath, matricule))
+                // Open file dialog to select photo
+                using (var openFileDialog = new OpenFileDialog())
                 {
-                    // Store the secured photo path for database recording
-                    _selectedPhotoPathEleve = securedPath;
+                    openFileDialog.Title = "Sélectionner une photo pour l'élève";
+                    openFileDialog.Filter = "Fichiers images|*.jpg;*.jpeg;*.png;*.bmp;*.gif|Tous les fichiers|*.*";
+                    openFileDialog.FilterIndex = 1;
+                    
+                    if (openFileDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        // Copy to secure location
+                        var photoPath = _pictureManager.CopyToSecureLocation(openFileDialog.FileName, $"eleve_{matricule}_{DateTime.Now:yyyyMMdd_HHmmss}_{Path.GetFileName(openFileDialog.FileName)}");
+                        
+                        if (!string.IsNullOrEmpty(photoPath))
+                        {
+                            // Load the photo into PictureBox
+                            if (_pictureManager.LoadPicture(PicBoxEleve, photoPath))
+                            {
+                                // Store the photo path for database recording
+                                _selectedPhotoPathEleve = photoPath;
 
-                    // Provide user feedback
-                    MessageBox.Show("Photo chargée et sécurisée avec succès!",
-                        "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    // User cancelled or load failed
-                    MessageBox.Show("Aucune photo sélectionnée.",
-                        "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                // Provide user feedback
+                                MessageBox.Show("Photo chargée et enregistrée avec succès!",
+                                    "Photo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            }
+                            else
+                            {
+                                MessageBox.Show("Erreur lors du chargement de la photo.",
+                                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                        }
+                        else
+                        {
+                            MessageBox.Show("Erreur lors de l'enregistrement de la photo.",
+                                "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -2424,7 +2510,7 @@ namespace EduKin.Layouts
                 // Use the Administrations service which handles school isolation
                 var success = await Task.Run(() => _administrations.CreateAffectation(
                     matricule: matricule,
-                    codPromo: codePromotion,
+                    IdPromo: codePromotion,
                     anneeScol: anneeScolaire,
                     indicePromo: indicePromotion
                 ));
@@ -2568,17 +2654,8 @@ namespace EduKin.Layouts
         /// </summary>
         private string GetCurrentUserIndex()
         {
-            try
-            {
-                // TODO: Implement proper user index retrieval from logged-in user
-                // For now, return default value
-                // This should be retrieved from the current user's information
-                return "001";
-            }
-            catch
-            {
-                return "001";
-            }
+            // ✅ Utiliser le contexte utilisateur - pas besoin de fallback "001"
+            return EduKinContext.CurrentUserIndex;
         }
 
         /// <summary>
@@ -2744,6 +2821,21 @@ namespace EduKin.Layouts
 
 
 
+
+        /// <summary>
+        /// Configures the DataGridView appearance for students
+        /// </summary>
+        private void ConfigureStudentsDataGridViewAppearance()
+        {
+            if (DataGridViewEleve == null) return;
+
+            DataGridViewEleve.AutoGenerateColumns = false;
+            DataGridViewEleve.AllowUserToAddRows = false;
+            DataGridViewEleve.AllowUserToDeleteRows = false;
+            DataGridViewEleve.ReadOnly = true;
+            DataGridViewEleve.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            DataGridViewEleve.MultiSelect = false;
+        }
 
         /// <summary>
         /// Configures the DataGridView appearance for agents

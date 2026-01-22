@@ -195,7 +195,7 @@ namespace EduKin.Inits
             _currentUserId = userId;
             _currentUserName = userName;
             _currentUserRole = userRole;
-            _currentUserIndex = userIndex ?? "001";
+            _currentUserIndex = userIndex;
             _isAuthenticated = true;
 
             System.Diagnostics.Debug.WriteLine($"[ApplicationContext] Utilisateur connecté: {userName} (Rôle: {userRole})");
@@ -234,7 +234,7 @@ namespace EduKin.Inits
             _currentUserId = userId;
             _currentUserName = userName;
             _currentUserRole = userRole;
-            _currentUserIndex = userIndex ?? "001";
+            _currentUserIndex = userIndex;
             _dateDebutAnnee = dateDebut;
             _dateFinAnnee = dateFin;
             _estActive = estActive;
@@ -385,7 +385,7 @@ namespace EduKin.Inits
                             var existingQuery = @"
                                 SELECT COUNT(*) 
                                 FROM t_annee_scolaire 
-                                WHERE id_ecole = (SELECT CAST(SUBSTRING(id_ecole, 4) AS UNSIGNED) FROM t_ecoles WHERE id_ecole = @IdEcole)
+                                WHERE fk_ecole = @IdEcole
                                   AND code_annee = @CodeAnnee";
 
                             var existingCount = conn.ExecuteScalar<int>(existingQuery, new { IdEcole = _currentIdEcole, CodeAnnee = codeAnnee }, transaction);
@@ -399,7 +399,7 @@ namespace EduKin.Inits
                                 var deactivateQuery = @"
                                     UPDATE t_annee_scolaire 
                                     SET est_active = 0 
-                                    WHERE id_ecole = (SELECT CAST(SUBSTRING(id_ecole, 4) AS UNSIGNED) FROM t_ecoles WHERE id_ecole = @IdEcole)
+                                    WHERE fk_ecole = @IdEcole
                                       AND est_active = 1";
 
                                 conn.Execute(deactivateQuery, new { IdEcole = _currentIdEcole }, transaction);
@@ -407,9 +407,9 @@ namespace EduKin.Inits
 
                             // Créer la nouvelle année scolaire
                             var insertQuery = @"
-                                INSERT INTO t_annee_scolaire (id_ecole, code_annee, date_debut, date_fin, est_active, est_cloturee, date_creation)
+                                INSERT INTO t_annee_scolaire (fk_ecole, code_annee, date_debut, date_fin, est_active, est_cloturee, date_create)
                                 VALUES (
-                                    (SELECT CAST(SUBSTRING(id_ecole, 4) AS UNSIGNED) FROM t_ecoles WHERE id_ecole = @IdEcole),
+                                    @IdEcole,
                                     @CodeAnnee, @DateDebut, @DateFin, @EstActive, 0, NOW()
                                 )";
 
@@ -455,7 +455,7 @@ namespace EduKin.Inits
                     var query = @"
                         SELECT a.*, e.id_ecole as ecole_id_string, e.denomination
                         FROM t_annee_scolaire a
-                        INNER JOIN t_ecoles e ON a.id_ecole = CAST(SUBSTRING(e.id_ecole, 4) AS UNSIGNED)
+                        INNER JOIN t_ecoles e ON a.fk_ecole = e.id_ecole
                         WHERE e.id_ecole = @IdEcole AND a.est_active = 1
                         LIMIT 1";
 
@@ -484,7 +484,7 @@ namespace EduKin.Inits
                     var query = @"
                         SELECT a.*, e.id_ecole as ecole_id_string, e.denomination
                         FROM t_annee_scolaire a
-                        INNER JOIN t_ecoles e ON a.id_ecole = CAST(SUBSTRING(e.id_ecole, 4) AS UNSIGNED)
+                        INNER JOIN t_ecoles e ON a.fk_ecole = e.id_ecole
                         WHERE e.id_ecole = @IdEcole
                         ORDER BY a.date_debut DESC";
 
@@ -526,7 +526,7 @@ namespace EduKin.Inits
                             var deactivateQuery = @"
                                 UPDATE t_annee_scolaire 
                                 SET est_active = 0 
-                                WHERE id_ecole = (SELECT CAST(SUBSTRING(id_ecole, 4) AS UNSIGNED) FROM t_ecoles WHERE id_ecole = @IdEcole)
+                                WHERE fk_ecole = @IdEcole
                                   AND est_active = 1";
 
                             conn.Execute(deactivateQuery, new { IdEcole = _currentIdEcole }, transaction);
@@ -603,7 +603,7 @@ namespace EduKin.Inits
                     var query = @"
                         SELECT COUNT(*) 
                         FROM t_annee_scolaire a
-                        INNER JOIN t_ecoles e ON a.id_ecole = CAST(SUBSTRING(e.id_ecole, 4) AS UNSIGNED)
+                        INNER JOIN t_ecoles e ON a.fk_ecole = e.id_ecole
                         WHERE e.id_ecole = @IdEcole";
 
                     var count = conn.ExecuteScalar<int>(query, new { IdEcole = _currentIdEcole });
@@ -683,14 +683,14 @@ namespace EduKin.Inits
                 var whereIndex = lowerQuery.IndexOf(" where ");
                 var beforeWhere = query.Substring(0, whereIndex + 7);
                 var afterWhere = query.Substring(whereIndex + 7);
-                return $"{beforeWhere}({afterWhere}) AND {tablePrefix}id_ecole = @IdEcole";
+                return $"{beforeWhere}({afterWhere}) AND {tablePrefix}fk_ecole = @IdEcole";
             }
             else
             {
                 var insertPosition = FindInsertPositionForWhere(query);
                 var beforeInsert = query.Substring(0, insertPosition);
                 var afterInsert = query.Substring(insertPosition);
-                return $"{beforeInsert} WHERE {tablePrefix}id_ecole = @IdEcole{afterInsert}";
+                return $"{beforeInsert} WHERE {tablePrefix}fk_ecole = @IdEcole{afterInsert}";
             }
         }
 
@@ -703,11 +703,11 @@ namespace EduKin.Inits
                 var whereIndex = lowerQuery.IndexOf(" where ");
                 var beforeWhere = query.Substring(0, whereIndex + 7);
                 var afterWhere = query.Substring(whereIndex + 7);
-                return $"{beforeWhere}({afterWhere}) AND {tablePrefix}id_ecole = @IdEcole";
+                return $"{beforeWhere}({afterWhere}) AND {tablePrefix}fk_ecole = @IdEcole";
             }
             else
             {
-                return $"{query} WHERE {tablePrefix}id_ecole = @IdEcole";
+                return $"{query} WHERE {tablePrefix}fk_ecole = @IdEcole";
             }
         }
 
@@ -720,11 +720,11 @@ namespace EduKin.Inits
                 var whereIndex = lowerQuery.IndexOf(" where ");
                 var beforeWhere = query.Substring(0, whereIndex + 7);
                 var afterWhere = query.Substring(whereIndex + 7);
-                return $"{beforeWhere}({afterWhere}) AND {tablePrefix}id_ecole = @IdEcole";
+                return $"{beforeWhere}({afterWhere}) AND {tablePrefix}fk_ecole = @IdEcole";
             }
             else
             {
-                return $"{query} WHERE {tablePrefix}id_ecole = @IdEcole";
+                return $"{query} WHERE {tablePrefix}fk_ecole = @IdEcole";
             }
         }
 

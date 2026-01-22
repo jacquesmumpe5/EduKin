@@ -78,40 +78,8 @@ namespace EduKin.DataSets
 
                 try
                 {
-                    // Créer les tables manquantes
-                    var missingTables = await GetMissingTables(conn);
-                    foreach (var table in missingTables)
-                    {
-                        var createScript = GenerateCreateTableScript(table, "SQLite");
-                        await conn.ExecuteAsync(createScript, transaction: transaction);
-                        migrations.Add($"Créé la table {table}");
-                    }
-
-                    // Ajouter les colonnes manquantes
-                    var missingColumns = await GetMissingColumns(conn);
-                    foreach (var column in missingColumns)
-                    {
-                        var alterScript = GenerateAddColumnScript(column.TableName, column.ColumnName, column.DataType);
-                        await conn.ExecuteAsync(alterScript, transaction: transaction);
-                        migrations.Add($"Ajouté la colonne {column.ColumnName} à {column.TableName}");
-                    }
-
-                    // Créer les index manquants
-                    var missingIndexes = await GetMissingIndexes(conn);
-                    foreach (var index in missingIndexes)
-                    {
-                        var indexScript = GenerateCreateIndexScript(index);
-                        await conn.ExecuteAsync(indexScript, transaction: transaction);
-                        migrations.Add($"Créé l'index {index.IndexName}");
-                    }
-
-                    // Créer les vues
-                    var initializer = new SQLiteInitializer();
-                    if (!initializer.ViewsExist())
-                    {
-                        initializer.InitializeViews();
-                        migrations.Add("Créé les vues nécessaires");
-                    }
+                    // Création d'objets DB désactivée - les objets doivent être créés manuellement
+                    System.Diagnostics.Debug.WriteLine("Création d'objets DB désactivée - les objets doivent être créés manuellement");
 
                     transaction.Commit();
                     result.Success = true;
@@ -425,9 +393,101 @@ namespace EduKin.DataSets
                         new() { Name = "postnom", DataType = "VARCHAR", IsNullable = false },
                         new() { Name = "prenom", DataType = "VARCHAR", IsNullable = false },
                         new() { Name = "sexe", DataType = "ENUM", IsNullable = false },
-                        new() { Name = "id_ecole", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "fk_ecole", DataType = "VARCHAR", IsNullable = false },
                         new() { Name = "created_at", DataType = "TIMESTAMP", IsNullable = true },
                         new() { Name = "updated_at", DataType = "TIMESTAMP", IsNullable = true }
+                    }
+                },
+                ["t_promotions"] = new TableSchema
+                {
+                    Name = "t_promotions",
+                    Columns = new List<ColumnSchema>
+                    {
+                        new() { Name = "id_promotion", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "description", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "fk_option", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "created_at", DataType = "TIMESTAMP", IsNullable = true },
+                        new() { Name = "updated_at", DataType = "TIMESTAMP", IsNullable = true }
+                    }
+                },
+                ["t_options"] = new TableSchema
+                {
+                    Name = "t_options",
+                    Columns = new List<ColumnSchema>
+                    {
+                        new() { Name = "id_option", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "description", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "fk_section", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "code_epst", DataType = "VARCHAR", IsNullable = true },
+                        new() { Name = "created_at", DataType = "TIMESTAMP", IsNullable = true },
+                        new() { Name = "updated_at", DataType = "TIMESTAMP", IsNullable = true }
+                    }
+                },
+                ["t_sections"] = new TableSchema
+                {
+                    Name = "t_sections",
+                    Columns = new List<ColumnSchema>
+                    {
+                        new() { Name = "id_section", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "description", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "etat", DataType = "INT", IsNullable = true },
+                        new() { Name = "date_create", DataType = "DATETIME", IsNullable = true }
+                    }
+                },
+                ["t_affectation"] = new TableSchema
+                {
+                    Name = "t_affectation",
+                    Columns = new List<ColumnSchema>
+                    {
+                        new() { Name = "id_affect", DataType = "INT", IsNullable = false },
+                        new() { Name = "fk_matricule_eleve", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "fk_promotion", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "annee_scol", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "indice_promo", DataType = "VARCHAR", IsNullable = true },
+                        new() { Name = "created_at", DataType = "TIMESTAMP", IsNullable = true },
+                        new() { Name = "updated_at", DataType = "TIMESTAMP", IsNullable = true }
+                    }
+                },
+                ["t_affect_sect"] = new TableSchema
+                {
+                    Name = "t_affect_sect",
+                    Columns = new List<ColumnSchema>
+                    {
+                        new() { Name = "num_affect", DataType = "INT", IsNullable = false },
+                        new() { Name = "fk_ecole", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "fk_section", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "date_affect", DataType = "DATETIME", IsNullable = true }
+                    }
+                },
+                ["t_grilles"] = new TableSchema
+                {
+                    Name = "t_grilles",
+                    Columns = new List<ColumnSchema>
+                    {
+                        new() { Name = "num", DataType = "INT", IsNullable = false },
+                        new() { Name = "fk_matricule_eleve", DataType = "VARCHAR", IsNullable = true },
+                        new() { Name = "periode", DataType = "VARCHAR", IsNullable = true },
+                        new() { Name = "annee_scol", DataType = "VARCHAR", IsNullable = true },
+                        new() { Name = "fk_cours", DataType = "VARCHAR", IsNullable = true },
+                        new() { Name = "intitule", DataType = "VARCHAR", IsNullable = true },
+                        new() { Name = "cotes", DataType = "DECIMAL", IsNullable = true },
+                        new() { Name = "maxima", DataType = "DECIMAL", IsNullable = true },
+                        new() { Name = "statut", DataType = "VARCHAR", IsNullable = true },
+                        new() { Name = "fk_promo", DataType = "VARCHAR", IsNullable = true },
+                        new() { Name = "indice", DataType = "VARCHAR", IsNullable = true },
+                        new() { Name = "created_at", DataType = "TIMESTAMP", IsNullable = true },
+                        new() { Name = "updated_at", DataType = "TIMESTAMP", IsNullable = true }
+                    }
+                },
+                ["t_cours"] = new TableSchema
+                {
+                    Name = "t_cours",
+                    Columns = new List<ColumnSchema>
+                    {
+                        new() { Name = "id_cours", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "intitule", DataType = "VARCHAR", IsNullable = false },
+                        new() { Name = "etat", DataType = "INT", IsNullable = true },
+                        new() { Name = "date_create", DataType = "DATETIME", IsNullable = true }
                     }
                 }
                 // Ajouter d'autres tables selon les besoins
@@ -493,7 +553,7 @@ namespace EduKin.DataSets
             var recommendedIndexes = new[]
             {
                 new MissingIndex { TableName = "t_eleves", IndexName = "idx_eleves_nom", Columns = new[] { "nom", "prenom" } },
-                new MissingIndex { TableName = "t_agents", IndexName = "idx_agents_ecole", Columns = new[] { "id_ecole" } },
+                new MissingIndex { TableName = "t_agents", IndexName = "idx_agents_ecole", Columns = new[] { "fk_ecole" } },
                 new MissingIndex { TableName = "t_affectation", IndexName = "idx_affectation_eleve", Columns = new[] { "matricule" } }
             };
 
@@ -516,43 +576,6 @@ namespace EduKin.DataSets
             }
 
             return missingIndexes;
-        }
-
-        /// <summary>
-        /// Génère un script de création de table
-        /// </summary>
-        private string GenerateCreateTableScript(string tableName, string databaseType)
-        {
-            if (!_expectedSchemas.ContainsKey(tableName))
-                throw new ArgumentException($"Schéma non défini pour la table {tableName}");
-
-            var schema = _expectedSchemas[tableName];
-            var columns = schema.Columns.Select(c => 
-                $"{c.Name} {ConvertToSQLiteType(c.DataType)}" +
-                (c.IsNullable ? "" : " NOT NULL") +
-                (c.IsPrimaryKey ? " PRIMARY KEY" : "") +
-                (!string.IsNullOrEmpty(c.DefaultValue) ? $" DEFAULT {c.DefaultValue}" : "")
-            );
-
-            return $"CREATE TABLE IF NOT EXISTS {tableName} ({string.Join(", ", columns)})";
-        }
-
-        /// <summary>
-        /// Génère un script d'ajout de colonne
-        /// </summary>
-        private string GenerateAddColumnScript(string tableName, string columnName, string dataType)
-        {
-            return $"ALTER TABLE {tableName} ADD COLUMN {columnName} {dataType}";
-        }
-
-        /// <summary>
-        /// Génère un script de création d'index
-        /// </summary>
-        private string GenerateCreateIndexScript(MissingIndex index)
-        {
-            var uniqueClause = index.IsUnique ? "UNIQUE " : "";
-            var columns = string.Join(", ", index.Columns);
-            return $"CREATE {uniqueClause}INDEX IF NOT EXISTS {index.IndexName} ON {index.TableName} ({columns})";
         }
 
         /// <summary>

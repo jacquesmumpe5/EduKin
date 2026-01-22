@@ -1,7 +1,6 @@
 using MySql.Data.MySqlClient;
 using System.Data;
 using System.Data.SQLite;
-using System.Text.Json;
 
 namespace EduKin.DataSets
 {
@@ -21,12 +20,12 @@ namespace EduKin.DataSets
 
         private Connexion()
         {
-            // Configuration MySQL (en ligne)
+            // Configuration MySQL (principale)
             _mysqlConnectionString = "Server=127.0.0.1;Port=3309;Database=ecole_db;User ID=root;Password=Polochon1991;Charset=utf8mb4;";
             
-            // Configuration SQLite (local)
+            // Configuration SQLite (backup local)
             string appPath = AppDomain.CurrentDomain.BaseDirectory;
-           _sqliteConnectionString = $"Data Source={Path.Combine(appPath, "ecole_local.db")};Version=3;";
+           _sqliteConnectionString = $"Data Source={Path.Combine(appPath, "ecole_db.db")};Version=3;";
             
             _isOnline = CheckConnection();
             
@@ -61,6 +60,7 @@ namespace EduKin.DataSets
             }
         }
 
+
         public MySqlConnection GetMySqlConnection()
         {
             return new MySqlConnection(_mysqlConnectionString);
@@ -77,24 +77,22 @@ namespace EduKin.DataSets
             {
                 try
                 {
+                    // Tester la connexion MySQL
                     using (var conn = new MySqlConnection(_mysqlConnectionString))
                     {
                         conn.Open();
-                        
-                        // Test de validation de la connexion
                         using (var cmd = conn.CreateCommand())
                         {
                             cmd.CommandText = "SELECT 1";
-                            cmd.CommandTimeout = 5; // Timeout court pour éviter les blocages
+                            cmd.CommandTimeout = 5;
                             cmd.ExecuteScalar();
                         }
-                        
-                        _isOnline = true;
-                        _retryCount = 0; // Réinitialiser le compteur de retry
-                        
-                        LogConnectionEvent("SUCCESS", "Connexion MySQL établie avec succès");
-                        return true;
                     }
+                    
+                    _isOnline = true;
+                    _retryCount = 0;
+                    LogConnectionEvent("SUCCESS", "Connexion MySQL établie avec succès");
+                    return true;
                 }
                 catch (Exception ex)
                 {
@@ -212,15 +210,15 @@ namespace EduKin.DataSets
             {
                 return "⚠️ Mode hors ligne - Utilisation de SQLite\n\n" +
                        "Raisons possibles :\n" +
-                       "• Serveur MySQL non démarré\n" +
+                       "• Serveur MySQL inaccessible\n" +
                        "• Identifiants incorrects\n" +
-                       "• Base de données 'ecole_db' inexistante\n" +
-                       "• Pas de connexion réseau au serveur";
+                       "• Pas de connexion internet\n" +
+                       "• Base de données 'ecole_db' inexistante";
             }
         }
 
         /// <summary>
-        /// Teste la connexion et retourne un message détaillé
+        /// Teste la connexion MySQL et retourne un message détaillé
         /// </summary>
         public (bool success, string message) TestConnection()
         {
@@ -229,45 +227,42 @@ namespace EduKin.DataSets
                 using (var conn = new MySqlConnection(_mysqlConnectionString))
                 {
                     conn.Open();
-                    
-                    // Vérifier que la base de données contient des tables
                     using (var cmd = conn.CreateCommand())
                     {
-                        cmd.CommandText = "SHOW TABLES";
-                        using (var reader = cmd.ExecuteReader())
-                        {
-                            int tableCount = 0;
-                            while (reader.Read())
-                            {
-                                tableCount++;
-                            }
-                            
-                            if (tableCount == 0)
-                            {
-                                return (false, "⚠️ Base de données vide - Aucune table trouvée");
-                            }
-                            
-                            return (true, $"✅ Connexion MySQL réussie - {tableCount} tables trouvées");
-                        }
+                        cmd.CommandText = "SELECT 1";
+                        cmd.ExecuteScalar();
                     }
                 }
+                
+                return (true, "✅ Connexion MySQL réussie\n\nBase de données accessible sur 127.0.0.1:3309");
             }
             catch (MySqlException ex)
             {
-                string message = ex.Number switch
+                var suggestions = ex.Number switch
                 {
-                    0 => "❌ Serveur MySQL inaccessible\n\nVérifiez que :\n• MySQL est démarré\n• Le serveur écoute sur 127.0.0.1:3306",
-                    1045 => "❌ Authentification échouée\n\nVérifiez :\n• Nom d'utilisateur : root\n• Mot de passe",
-                    1049 => "❌ Base de données 'ecole_db' introuvable\n\nCréez la base de données ou importez le fichier SQL",
-                    _ => $"❌ Erreur MySQL ({ex.Number})\n\n{ex.Message}"
+                    0 => "Vérifiez :\n• Le serveur MySQL est démarré\n• L'adresse 127.0.0.1:3309 est accessible\n• Le pare-feu ne bloque pas la connexion",
+                    1045 => "Vérifiez :\n• Nom d'utilisateur : root\n• Mot de passe correct\n• Permissions MySQL",
+                    1049 => "Vérifiez :\n• La base de données 'ecole_db' existe\n• Importez le fichier SQL si nécessaire",
+                    _ => "Vérifiez :\n• La configuration MySQL\n• Les logs pour plus de détails"
                 };
                 
-                return (false, message);
+                return (false, $"❌ Échec connexion MySQL\n\nErreur {ex.Number}: {ex.Message}\n\n{suggestions}");
             }
             catch (Exception ex)
             {
                 return (false, $"❌ Erreur inattendue\n\n{ex.Message}");
             }
+        }
+
+        /// <summary>
+        /// Masque le mot de passe dans la chaîne de connexion pour les logs
+        /// </summary>
+        private string MaskPassword(string connectionString)
+        {
+            return System.Text.RegularExpressions.Regex.Replace(
+                connectionString, 
+                @"Password=[^;]*", 
+                "Password=***MASKED***");
         }
 
         #region Méthodes Avancées de Gestion d'Erreurs et Compatibilité
@@ -293,7 +288,7 @@ namespace EduKin.DataSets
                 {
                     case 0:
                         details.Message = "Serveur MySQL inaccessible ou non démarré";
-                        details.Suggestion = "Vérifiez que MySQL est démarré et accessible sur 127.0.0.1:3306";
+                        details.Suggestion = "Vérifiez que MySQL est démarré et accessible sur 127.0.0.1:3309";
                         details.Severity = ErrorSeverity.High;
                         break;
                     case 1045:
@@ -307,16 +302,6 @@ namespace EduKin.DataSets
                         details.Suggestion = "Créez la base de données ou importez le fichier SQL";
                         details.Severity = ErrorSeverity.Critical;
                         details.IsRetryable = false;
-                        break;
-                    case 2006:
-                        details.Message = "Connexion MySQL perdue";
-                        details.Suggestion = "Reconnexion automatique en cours...";
-                        details.Severity = ErrorSeverity.Medium;
-                        break;
-                    case 2013:
-                        details.Message = "Connexion au serveur MySQL perdue pendant la requête";
-                        details.Suggestion = "Vérifiez la stabilité du réseau";
-                        details.Severity = ErrorSeverity.Medium;
                         break;
                     default:
                         details.Message = $"Erreur MySQL: {mysqlEx.Message}";
@@ -350,9 +335,18 @@ namespace EduKin.DataSets
         {
             try
             {
+                LogConnectionEvent("FALLBACK_INIT", "Début de l'initialisation SQLite");
+                
                 using (var conn = new SQLiteConnection(_sqliteConnectionString))
                 {
                     conn.Open();
+                    
+                    // Activer les clés étrangères pour SQLite
+                    using (var cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "PRAGMA foreign_keys = ON";
+                        cmd.ExecuteNonQuery();
+                    }
                     
                     // Vérifier si la base de données est initialisée
                     var tableCount = GetSQLiteTableCount(conn);
@@ -363,19 +357,201 @@ namespace EduKin.DataSets
                         InitializeSQLiteDatabase(conn);
                     }
                     
-                    // Activer les clés étrangères pour SQLite
-                    using (var cmd = conn.CreateCommand())
+                    // Vérifier que les tables essentielles existent
+                    var essentialTables = new[] { "t_eleves", "t_agents", "t_entite_administrative", "t_type_entite_administrative" };
+                    var missingTables = new List<string>();
+                    
+                    foreach (var table in essentialTables)
                     {
-                        cmd.CommandText = "PRAGMA foreign_keys = ON";
-                        cmd.ExecuteNonQuery();
+                        if (!TableExists(conn, table))
+                        {
+                            missingTables.Add(table);
+                        }
                     }
                     
-                    LogConnectionEvent("SUCCESS", $"Base de données SQLite prête ({tableCount} tables)");
+                    if (missingTables.Any())
+                    {
+                        LogConnectionEvent("MISSING_TABLES", $"Tables manquantes: {string.Join(", ", missingTables)}");
+                        // Créer les tables manquantes individuellement
+                        CreateMissingTables(conn, missingTables);
+                    }
+                    
+                    LogConnectionEvent("SUCCESS", $"Base de données SQLite prête ({GetSQLiteTableCount(conn)} tables)");
                 }
             }
             catch (Exception ex)
             {
-                LogConnectionEvent("ERROR", $"Erreur lors de l'initialisation SQLite: {ex.Message}", ex);
+                LogConnectionEvent("ERROR", $"Erreur critique lors de l'initialisation SQLite: {ex.Message}", ex);
+                // Ne pas lancer d'exception pour éviter que l'application plante
+                // L'application peut continuer même si SQLite n'est pas parfaitement initialisé
+            }
+        }
+
+        /// <summary>
+        /// Vérifie si une table existe dans SQLite
+        /// </summary>
+        private bool TableExists(SQLiteConnection conn, string tableName)
+        {
+            try
+            {
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=@name";
+                    cmd.Parameters.AddWithValue("@name", tableName);
+                    var result = Convert.ToInt32(cmd.ExecuteScalar());
+                    return result > 0;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Crée les tables manquantes dans SQLite
+        /// </summary>
+        private void CreateMissingTables(SQLiteConnection conn, List<string> missingTables)
+        {
+            var tableScripts = new Dictionary<string, string>
+            {
+                ["t_eleves"] = @"
+                    CREATE TABLE IF NOT EXISTS t_eleves (
+                        matricule TEXT PRIMARY KEY,
+                        nom TEXT NOT NULL,
+                        postnom TEXT,
+                        prenom TEXT,
+                        sexe TEXT,
+                        date_naiss DATE,
+                        lieu_naiss TEXT,
+                        nom_tuteur TEXT,
+                        tel_tuteur TEXT,
+                        fk_avenue TEXT,
+                        numero TEXT,
+                        ecole_prov TEXT,
+                        profil TEXT,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )",
+                ["t_agents"] = @"
+                    CREATE TABLE IF NOT EXISTS t_agents (
+                        matricule TEXT PRIMARY KEY,
+                        nom TEXT NOT NULL,
+                        postnom TEXT,
+                        prenom TEXT,
+                        sexe TEXT,
+                        date_naiss DATE NOT NULL,
+                        lieu_naiss TEXT,
+                        email TEXT,
+                        tel TEXT,
+                        fk_avenue TEXT,
+                        numero TEXT,
+                        fk_ecole TEXT,
+                        profil TEXT,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )",
+                ["t_entite_administrative"] = @"
+                    CREATE TABLE IF NOT EXISTS t_entite_administrative (
+                        IdEntite TEXT PRIMARY KEY,
+                        IntituleEntite TEXT,
+                        fk_entite_mere TEXT,
+                        fk_type_entite TEXT,
+                        DenominationHabitant TEXT,
+                        etat TEXT DEFAULT '1',
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )",
+                ["t_type_entite_administrative"] = @"
+                    CREATE TABLE IF NOT EXISTS t_type_entite_administrative (
+                        IdTypeEntite TEXT PRIMARY KEY,
+                        IntituleTypeEntite TEXT,
+                        Etat TEXT DEFAULT '1'
+                    )",
+                ["t_promotions"] = @"
+                    CREATE TABLE IF NOT EXISTS t_promotions (
+                        id_promotion TEXT PRIMARY KEY,
+                        description TEXT NOT NULL,
+                        fk_option TEXT NOT NULL,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )",
+                ["t_options"] = @"
+                    CREATE TABLE IF NOT EXISTS t_options (
+                        id_option TEXT PRIMARY KEY,
+                        description TEXT NOT NULL,
+                        fk_section TEXT NOT NULL,
+                        code_epst TEXT,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )",
+                ["t_sections"] = @"
+                    CREATE TABLE IF NOT EXISTS t_sections (
+                        id_section TEXT PRIMARY KEY,
+                        description TEXT NOT NULL,
+                        etat INTEGER DEFAULT 1,
+                        date_create DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )",
+                ["t_affectation"] = @"
+                    CREATE TABLE IF NOT EXISTS t_affectation (
+                        id_affect INTEGER PRIMARY KEY AUTOINCREMENT,
+                        fk_matricule_eleve TEXT NOT NULL,
+                        fk_promotion TEXT NOT NULL,
+                        annee_scol TEXT NOT NULL,
+                        indice_promo TEXT,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )",
+                ["t_affect_sect"] = @"
+                    CREATE TABLE IF NOT EXISTS t_affect_sect (
+                        num_affect INTEGER PRIMARY KEY AUTOINCREMENT,
+                        fk_ecole TEXT NOT NULL,
+                        fk_section TEXT NOT NULL,
+                        date_affect DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )",
+                ["t_grilles"] = @"
+                    CREATE TABLE IF NOT EXISTS t_grilles (
+                        num INTEGER PRIMARY KEY AUTOINCREMENT,
+                        fk_matricule_eleve TEXT,
+                        periode TEXT,
+                        annee_scol TEXT,
+                        fk_cours TEXT,
+                        intitule TEXT,
+                        cotes REAL,
+                        maxima REAL,
+                        statut TEXT,
+                        fk_promo TEXT,
+                        indice TEXT,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )",
+                ["t_cours"] = @"
+                    CREATE TABLE IF NOT EXISTS t_cours (
+                        id_cours TEXT PRIMARY KEY,
+                        intitule TEXT NOT NULL,
+                        etat INTEGER DEFAULT 1,
+                        date_create DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )"
+            };
+
+            foreach (var tableName in missingTables)
+            {
+                if (tableScripts.TryGetValue(tableName, out var script))
+                {
+                    try
+                    {
+                        using (var cmd = conn.CreateCommand())
+                        {
+                            cmd.CommandText = script;
+                            cmd.ExecuteNonQuery();
+                            LogConnectionEvent("TABLE_CREATED", $"Table {tableName} créée avec succès");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogConnectionEvent("TABLE_ERROR", $"Erreur lors de la création de la table {tableName}: {ex.Message}", ex);
+                    }
+                }
             }
         }
 
@@ -396,52 +572,7 @@ namespace EduKin.DataSets
         /// </summary>
         private void InitializeSQLiteDatabase(SQLiteConnection conn)
         {
-            var initializer = new SQLiteInitializer();
-            
-            // Créer les tables de base
-            CreateBasicSQLiteTables(conn);
-            
-            // Créer les vues
-            initializer.InitializeViews();
-            
             LogConnectionEvent("INIT", "Base de données SQLite initialisée avec succès");
-        }
-
-        /// <summary>
-        /// Crée les tables de base dans SQLite
-        /// </summary>
-        private void CreateBasicSQLiteTables(SQLiteConnection conn)
-        {
-            var tableScripts = new[]
-            {
-                // Table de métadonnées pour le suivi des synchronisations
-                @"CREATE TABLE IF NOT EXISTS _sync_metadata (
-                    table_name TEXT PRIMARY KEY,
-                    last_sync DATETIME,
-                    checksum TEXT,
-                    record_count INTEGER,
-                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-                )",
-                
-                // Table de logs pour le debugging
-                @"CREATE TABLE IF NOT EXISTS _connection_logs (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    event_type TEXT NOT NULL,
-                    message TEXT NOT NULL,
-                    details TEXT,
-                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-                )"
-            };
-
-            foreach (var script in tableScripts)
-            {
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = script;
-                    cmd.ExecuteNonQuery();
-                }
-            }
         }
 
         /// <summary>
@@ -449,82 +580,51 @@ namespace EduKin.DataSets
         /// </summary>
         private void LogConnectionEvent(string eventType, string message, Exception? exception = null)
         {
-            var logEntry = new
-            {
-                EventType = eventType,
-                Message = message,
-                Exception = exception?.ToString(),
-                Timestamp = DateTime.Now,
-                IsOnline = _isOnline,
-                RetryCount = _retryCount
-            };
-
-            // Log dans la console de debug
-            System.Diagnostics.Debug.WriteLine($"[CONNECTION-{eventType}] {message}");
-            
-            if (exception != null)
-            {
-                System.Diagnostics.Debug.WriteLine($"[CONNECTION-EXCEPTION] {exception}");
-            }
-
-            // Log dans un fichier
-            LogToFile(logEntry);
-            
-            // Log dans SQLite si disponible
-            LogToSQLite(logEntry);
-        }
-
-        /// <summary>
-        /// Log dans un fichier
-        /// </summary>
-        private void LogToFile(object logEntry)
-        {
             try
             {
-                var logDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-                Directory.CreateDirectory(logDir);
-                
-                var logFile = Path.Combine(logDir, $"connection_{DateTime.Now:yyyy-MM-dd}.log");
-                var jsonEntry = JsonSerializer.Serialize(logEntry, new JsonSerializerOptions { WriteIndented = true });
-                var logLine = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] {jsonEntry}{Environment.NewLine}";
-                
-                File.AppendAllText(logFile, logLine);
-            }
-            catch
-            {
-                // Ignorer les erreurs de logging pour éviter les boucles infinies
-            }
-        }
-
-        /// <summary>
-        /// Log dans la base SQLite
-        /// </summary>
-        private void LogToSQLite(object logEntry)
-        {
-            try
-            {
-                using (var conn = new SQLiteConnection(_sqliteConnectionString))
+                var logEntry = new
                 {
-                    conn.Open();
+                    EventType = eventType,
+                    Message = message,
+                    Exception = exception?.ToString(),
+                    Timestamp = DateTime.Now,
+                    IsOnline = _isOnline,
+                    RetryCount = _retryCount
+                };
+
+                // Log dans la console de debug
+                System.Diagnostics.Debug.WriteLine($"[CONNECTION-{eventType}] {message}");
+                Console.WriteLine($"[CONNECTION-{eventType}] {message}");
+
+                // Log dans fichier texte (plus fiable que SQLite pour les logs)
+                try
+                {
+                    string appPath = AppDomain.CurrentDomain.BaseDirectory;
+                    string logPath = Path.Combine(appPath, "logs");
                     
-                    var json = JsonSerializer.Serialize(logEntry);
-                    using (var cmd = conn.CreateCommand())
+                    if (!Directory.Exists(logPath))
                     {
-                        cmd.CommandText = @"INSERT INTO _connection_logs (event_type, message, details) 
-                                          VALUES (@EventType, @Message, @Details)";
-                        
-                        var entry = (dynamic)logEntry;
-                        cmd.Parameters.AddWithValue("@EventType", entry.EventType ?? "UNKNOWN");
-                        cmd.Parameters.AddWithValue("@Message", entry.Message ?? "");
-                        cmd.Parameters.AddWithValue("@Details", json);
-                        
-                        cmd.ExecuteNonQuery();
+                        Directory.CreateDirectory(logPath);
                     }
+                    
+                    string logFile = Path.Combine(logPath, $"connection_{DateTime.Now:yyyyMMdd}.log");
+                    string logLine = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fffffff}] [{eventType}] {message}";
+                    
+                    if (exception != null)
+                    {
+                        logLine += $"\nException: {exception}";
+                    }
+                    
+                    File.AppendAllText(logFile, logLine + Environment.NewLine);
+                }
+                catch
+                {
+                    // Ignorer les erreurs de logging pour ne pas bloquer l'application
                 }
             }
             catch
             {
-                // Ignorer les erreurs de logging SQLite
+                // Ignorer les erreurs de logging pour ne pas bloquer l'application
             }
         }
 

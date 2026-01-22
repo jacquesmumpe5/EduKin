@@ -18,6 +18,13 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle14 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle15 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle16 = new DataGridViewCellStyle();
@@ -30,13 +37,6 @@
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle12 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle13 = new DataGridViewCellStyle();
             menuStrip1 = new MenuStrip();
             fichierToolStripMenuItem = new ToolStripMenuItem();
             menuItemDeconnexion = new ToolStripMenuItem();
@@ -57,6 +57,66 @@
             toolStripStatusTime = new ToolStripStatusLabel();
             panelMain = new Panel();
             panelNav = new Panel();
+            panelNavUtilisateurs = new Panel();
+            panelUtilisateursList = new Siticone.Desktop.UI.WinForms.SiticonePanel();
+            DgvUser = new Siticone.Desktop.UI.WinForms.SiticoneDataGridView();
+            colIdUser = new DataGridViewTextBoxColumn();
+            colNomUser = new DataGridViewTextBoxColumn();
+            colPostNomUser = new DataGridViewTextBoxColumn();
+            colPrenomUser = new DataGridViewTextBoxColumn();
+            colSexeUser = new DataGridViewTextBoxColumn();
+            colUsernameUser = new DataGridViewTextBoxColumn();
+            colTelephoneUser = new DataGridViewTextBoxColumn();
+            colRoleUser = new DataGridViewTextBoxColumn();
+            colProfilUser = new DataGridViewTextBoxColumn();
+            colDateCreationUser = new DataGridViewTextBoxColumn();
+            panelUtilisateursForm = new Siticone.Desktop.UI.WinForms.SiticonePanel();
+            btnResetPassword = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            BtnGererRoles = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            BtnDeleteUser = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            BtnDesactiveUser = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            BtnUpdateUser = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            BtnSaveUser = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            panelUtilisateursHeader = new Siticone.Desktop.UI.WinForms.SiticonePanel();
+            lblUtilisateursTitle = new Label();
+            panelUtilisateursContainer = new Siticone.Desktop.UI.WinForms.SiticonePanel();
+            label1 = new Label();
+            label40 = new Label();
+            TxtIdUser = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
+            lblNomUser = new Label();
+            txtNom = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
+            lblPostNomUser = new Label();
+            txtPostNom = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
+            lblPrenomUser = new Label();
+            txtPrenom = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
+            cmbRole = new Siticone.Desktop.UI.WinForms.SiticoneComboBox();
+            cmbSexe = new Siticone.Desktop.UI.WinForms.SiticoneComboBox();
+            lblRoleUser = new Label();
+            lblUsernameUser = new Label();
+            txtTelephone = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
+            lblTelephoneUser = new Label();
+            lblPasswordUser = new Label();
+            txtPassword = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
+            txtUsername = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
+            panelNavAccueil = new Panel();
+            panelTitulaires = new Siticone.Desktop.UI.WinForms.SiticonePanel();
+            lblTitulaires = new Label();
+            dataGridViewAccueil2 = new DataGridView();
+            colSection2 = new DataGridViewTextBoxColumn();
+            colOption2Accueil = new DataGridViewTextBoxColumn();
+            colPromotion2Accueil = new DataGridViewTextBoxColumn();
+            colTitulaireAccueil = new DataGridViewTextBoxColumn();
+            colTotal2Accueil = new DataGridViewTextBoxColumn();
+            panelStatistiques = new Siticone.Desktop.UI.WinForms.SiticonePanel();
+            lblStatistiquesUtilisateurs = new Label();
+            dataGridViewAccueil1 = new DataGridView();
+            colSection1 = new DataGridViewTextBoxColumn();
+            colOption1 = new DataGridViewTextBoxColumn();
+            colPromotion1 = new DataGridViewTextBoxColumn();
+            colGarcons = new DataGridViewTextBoxColumn();
+            colFilles = new DataGridViewTextBoxColumn();
+            colTotal1 = new DataGridViewTextBoxColumn();
+            lblDashboardTitle = new Label();
             panelNavSection_Cours = new Panel();
             panelCrudCours = new Siticone.Desktop.UI.WinForms.SiticonePanel();
             siticonePanel4 = new Siticone.Desktop.UI.WinForms.SiticonePanel();
@@ -67,6 +127,8 @@
             label11 = new Label();
             siticonePanel6 = new Siticone.Desktop.UI.WinForms.SiticonePanel();
             DgvCours = new Siticone.Desktop.UI.WinForms.SiticoneDataGridView();
+            ColCodeCours = new DataGridViewTextBoxColumn();
+            ColIntituleCours = new DataGridViewTextBoxColumn();
             TxtFiltreCours = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
             label15 = new Label();
             siticonePanel7 = new Siticone.Desktop.UI.WinForms.SiticonePanel();
@@ -89,6 +151,8 @@
             label3 = new Label();
             siticonePanel2 = new Siticone.Desktop.UI.WinForms.SiticonePanel();
             DgvSection = new Siticone.Desktop.UI.WinForms.SiticoneDataGridView();
+            ColCod_Sect = new DataGridViewTextBoxColumn();
+            ColDescriptSect = new DataGridViewTextBoxColumn();
             TxtFiltreSection = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
             label4 = new Label();
             siticonePanel5 = new Siticone.Desktop.UI.WinForms.SiticonePanel();
@@ -121,6 +185,10 @@
             siticonePanel12 = new Siticone.Desktop.UI.WinForms.SiticonePanel();
             TxtFiltrePromotion = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
             DgvPromotion = new Siticone.Desktop.UI.WinForms.SiticoneDataGridView();
+            ColIdPromotion = new DataGridViewTextBoxColumn();
+            ColDescriptionPromotion = new DataGridViewTextBoxColumn();
+            ColFkOptPromotion = new DataGridViewTextBoxColumn();
+            ColDescripOptPromotion = new DataGridViewTextBoxColumn();
             label32 = new Label();
             panel5 = new Panel();
             label23 = new Label();
@@ -150,57 +218,11 @@
             siticonePanel10 = new Siticone.Desktop.UI.WinForms.SiticonePanel();
             TxtFiltreOption = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
             DgvOption = new Siticone.Desktop.UI.WinForms.SiticoneDataGridView();
+            ColIdOption = new DataGridViewTextBoxColumn();
+            ColDescriptOption = new DataGridViewTextBoxColumn();
+            ColFkSectOption = new DataGridViewTextBoxColumn();
+            ColDescripSectOption = new DataGridViewTextBoxColumn();
             label28 = new Label();
-            panelNavUtilisateurs = new Panel();
-            panelUtilisateursList = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            DgvUser = new Siticone.Desktop.UI.WinForms.SiticoneDataGridView();
-            panelUtilisateursForm = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            this.btnResetPassword = new Siticone.Desktop.UI.WinForms.SiticoneButton();
-            BtnGererRoles = new Siticone.Desktop.UI.WinForms.SiticoneButton();
-            BtnDeleteUser = new Siticone.Desktop.UI.WinForms.SiticoneButton();
-            BtnDesactiveUser = new Siticone.Desktop.UI.WinForms.SiticoneButton();
-            BtnUpdateUser = new Siticone.Desktop.UI.WinForms.SiticoneButton();
-            BtnSaveUser = new Siticone.Desktop.UI.WinForms.SiticoneButton();
-            panelUtilisateursHeader = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            lblUtilisateursTitle = new Label();
-            panelUtilisateursContainer = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            label1 = new Label();
-            label40 = new Label();
-            TxtIdUser = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
-            lblNomUser = new Label();
-            txtNom = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
-            lblPostNomUser = new Label();
-            txtPostNom = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
-            lblPrenomUser = new Label();
-            txtPrenom = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
-            cmbRole = new Siticone.Desktop.UI.WinForms.SiticoneComboBox();
-            cmbSexe = new Siticone.Desktop.UI.WinForms.SiticoneComboBox();
-            lblRoleUser = new Label();
-            lblUsernameUser = new Label();
-            txtTelephone = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
-            txtUsername = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
-            lblTelephoneUser = new Label();
-            lblPasswordUser = new Label();
-            txtPassword = new Siticone.Desktop.UI.WinForms.SiticoneTextBox();
-            panelNavAccueil = new Panel();
-            panelTitulaires = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            lblTitulaires = new Label();
-            dataGridViewAccueil2 = new DataGridView();
-            colSection2 = new DataGridViewTextBoxColumn();
-            colOption2Accueil = new DataGridViewTextBoxColumn();
-            colPromotion2Accueil = new DataGridViewTextBoxColumn();
-            colTitulaireAccueil = new DataGridViewTextBoxColumn();
-            colTotal2Accueil = new DataGridViewTextBoxColumn();
-            panelStatistiques = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            lblStatistiquesUtilisateurs = new Label();
-            dataGridViewAccueil1 = new DataGridView();
-            colSection1 = new DataGridViewTextBoxColumn();
-            colOption1 = new DataGridViewTextBoxColumn();
-            colPromotion1 = new DataGridViewTextBoxColumn();
-            colGarcons = new DataGridViewTextBoxColumn();
-            colFilles = new DataGridViewTextBoxColumn();
-            colTotal1 = new DataGridViewTextBoxColumn();
-            lblDashboardTitle = new Label();
             panelNavBar = new Panel();
             btnFinance = new Siticone.Desktop.UI.WinForms.SiticoneButton();
             BtnExitAdmin = new Siticone.Desktop.UI.WinForms.SiticoneButton();
@@ -216,6 +238,17 @@
             statusStrip1.SuspendLayout();
             panelMain.SuspendLayout();
             panelNav.SuspendLayout();
+            panelNavUtilisateurs.SuspendLayout();
+            panelUtilisateursList.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)DgvUser).BeginInit();
+            panelUtilisateursForm.SuspendLayout();
+            panelUtilisateursHeader.SuspendLayout();
+            panelUtilisateursContainer.SuspendLayout();
+            panelNavAccueil.SuspendLayout();
+            panelTitulaires.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewAccueil2).BeginInit();
+            panelStatistiques.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridViewAccueil1).BeginInit();
             panelNavSection_Cours.SuspendLayout();
             panelCrudCours.SuspendLayout();
             siticonePanel4.SuspendLayout();
@@ -242,17 +275,6 @@
             panel4.SuspendLayout();
             siticonePanel10.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)DgvOption).BeginInit();
-            panelNavUtilisateurs.SuspendLayout();
-            panelUtilisateursList.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)DgvUser).BeginInit();
-            panelUtilisateursForm.SuspendLayout();
-            panelUtilisateursHeader.SuspendLayout();
-            panelUtilisateursContainer.SuspendLayout();
-            panelNavAccueil.SuspendLayout();
-            panelTitulaires.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewAccueil2).BeginInit();
-            panelStatistiques.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridViewAccueil1).BeginInit();
             panelNavBar.SuspendLayout();
             SuspendLayout();
             // 
@@ -414,7 +436,6 @@
             panelMain.Name = "panelMain";
             panelMain.Size = new Size(1813, 726);
             panelMain.TabIndex = 3;
-            panelMain.Paint += panelMain_Paint;
             // 
             // panelNav
             // 
@@ -427,6 +448,735 @@
             panelNav.Name = "panelNav";
             panelNav.Size = new Size(1573, 726);
             panelNav.TabIndex = 1;
+            // 
+            // panelNavUtilisateurs
+            // 
+            panelNavUtilisateurs.BackColor = Color.White;
+            panelNavUtilisateurs.Controls.Add(panelUtilisateursList);
+            panelNavUtilisateurs.Controls.Add(panelUtilisateursForm);
+            panelNavUtilisateurs.Controls.Add(panelUtilisateursHeader);
+            panelNavUtilisateurs.Controls.Add(panelUtilisateursContainer);
+            panelNavUtilisateurs.Dock = DockStyle.Fill;
+            panelNavUtilisateurs.Location = new Point(0, 0);
+            panelNavUtilisateurs.Name = "panelNavUtilisateurs";
+            panelNavUtilisateurs.Size = new Size(1573, 726);
+            panelNavUtilisateurs.TabIndex = 1;
+            panelNavUtilisateurs.Visible = false;
+            // 
+            // panelUtilisateursList
+            // 
+            panelUtilisateursList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelUtilisateursList.BackColor = Color.White;
+            panelUtilisateursList.BorderColor = Color.FromArgb(5, 21, 48);
+            panelUtilisateursList.BorderRadius = 14;
+            panelUtilisateursList.BorderThickness = 2;
+            panelUtilisateursList.Controls.Add(DgvUser);
+            panelUtilisateursList.Location = new Point(10, 67);
+            panelUtilisateursList.Name = "panelUtilisateursList";
+            panelUtilisateursList.Padding = new Padding(20);
+            panelUtilisateursList.Size = new Size(1553, 460);
+            panelUtilisateursList.TabIndex = 3;
+            // 
+            // DgvUser
+            // 
+            DgvUser.AllowUserToAddRows = false;
+            DgvUser.AllowUserToDeleteRows = false;
+            DgvUser.AllowUserToResizeColumns = false;
+            DgvUser.AllowUserToResizeRows = false;
+            dataGridViewCellStyle7.BackColor = Color.White;
+            DgvUser.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = Color.FromArgb(100, 88, 255);
+            dataGridViewCellStyle8.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle8.ForeColor = Color.White;
+            dataGridViewCellStyle8.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
+            DgvUser.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
+            DgvUser.ColumnHeadersHeight = 29;
+            DgvUser.Columns.AddRange(new DataGridViewColumn[] { colIdUser, colNomUser, colPostNomUser, colPrenomUser, colSexeUser, colUsernameUser, colTelephoneUser, colRoleUser, colProfilUser, colDateCreationUser });
+            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = Color.White;
+            dataGridViewCellStyle9.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle9.ForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle9.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dataGridViewCellStyle9.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.False;
+            DgvUser.DefaultCellStyle = dataGridViewCellStyle9;
+            DgvUser.GridColor = Color.FromArgb(231, 229, 255);
+            DgvUser.Location = new Point(17, 9);
+            DgvUser.Name = "DgvUser";
+            DgvUser.RowHeadersVisible = false;
+            DgvUser.RowHeadersWidth = 51;
+            DgvUser.Size = new Size(1519, 441);
+            DgvUser.TabIndex = 1;
+            DgvUser.ThemeStyle.AlternatingRowsStyle.BackColor = Color.White;
+            DgvUser.ThemeStyle.AlternatingRowsStyle.Font = null;
+            DgvUser.ThemeStyle.AlternatingRowsStyle.ForeColor = Color.Empty;
+            DgvUser.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = Color.Empty;
+            DgvUser.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = Color.Empty;
+            DgvUser.ThemeStyle.BackColor = Color.White;
+            DgvUser.ThemeStyle.GridColor = Color.FromArgb(231, 229, 255);
+            DgvUser.ThemeStyle.HeaderStyle.BackColor = Color.FromArgb(100, 88, 255);
+            DgvUser.ThemeStyle.HeaderStyle.BorderStyle = DataGridViewHeaderBorderStyle.None;
+            DgvUser.ThemeStyle.HeaderStyle.Font = new Font("Segoe UI", 9F);
+            DgvUser.ThemeStyle.HeaderStyle.ForeColor = Color.White;
+            DgvUser.ThemeStyle.HeaderStyle.HeaightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            DgvUser.ThemeStyle.HeaderStyle.Height = 29;
+            DgvUser.ThemeStyle.ReadOnly = false;
+            DgvUser.ThemeStyle.RowsStyle.BackColor = Color.White;
+            DgvUser.ThemeStyle.RowsStyle.BorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
+            DgvUser.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 9F);
+            DgvUser.ThemeStyle.RowsStyle.ForeColor = Color.FromArgb(71, 69, 94);
+            DgvUser.ThemeStyle.RowsStyle.Height = 29;
+            DgvUser.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            DgvUser.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            // 
+            // colIdUser
+            // 
+            colIdUser.DataPropertyName = "id_user";
+            colIdUser.HeaderText = "ID Utilisateur";
+            colIdUser.MinimumWidth = 6;
+            colIdUser.Name = "colIdUser";
+            // 
+            // colNomUser
+            // 
+            colNomUser.DataPropertyName = "nom";
+            colNomUser.HeaderText = "Nom";
+            colNomUser.MinimumWidth = 6;
+            colNomUser.Name = "colNomUser";
+            // 
+            // colPostNomUser
+            // 
+            colPostNomUser.DataPropertyName = "postnom";
+            colPostNomUser.HeaderText = "Post-nom";
+            colPostNomUser.MinimumWidth = 6;
+            colPostNomUser.Name = "colPostNomUser";
+            // 
+            // colPrenomUser
+            // 
+            colPrenomUser.DataPropertyName = "prenom";
+            colPrenomUser.HeaderText = "Prénom";
+            colPrenomUser.MinimumWidth = 6;
+            colPrenomUser.Name = "colPrenomUser";
+            // 
+            // colSexeUser
+            // 
+            colSexeUser.DataPropertyName = "sexe";
+            colSexeUser.HeaderText = "Sexe";
+            colSexeUser.MinimumWidth = 6;
+            colSexeUser.Name = "colSexeUser";
+            // 
+            // colUsernameUser
+            // 
+            colUsernameUser.DataPropertyName = "username";
+            colUsernameUser.HeaderText = "Nom d'utilisateur";
+            colUsernameUser.MinimumWidth = 6;
+            colUsernameUser.Name = "colUsernameUser";
+            // 
+            // colTelephoneUser
+            // 
+            colTelephoneUser.DataPropertyName = "telephone";
+            colTelephoneUser.HeaderText = "Téléphone";
+            colTelephoneUser.MinimumWidth = 6;
+            colTelephoneUser.Name = "colTelephoneUser";
+            // 
+            // colRoleUser
+            // 
+            colRoleUser.DataPropertyName = "role";
+            colRoleUser.HeaderText = "Rôle";
+            colRoleUser.MinimumWidth = 6;
+            colRoleUser.Name = "colRoleUser";
+            // 
+            // colProfilUser
+            // 
+            colProfilUser.DataPropertyName = "profil";
+            colProfilUser.HeaderText = "Profil";
+            colProfilUser.MinimumWidth = 6;
+            colProfilUser.Name = "colProfilUser";
+            // 
+            // colDateCreationUser
+            // 
+            colDateCreationUser.DataPropertyName = "date_creation";
+            colDateCreationUser.HeaderText = "Date Création";
+            colDateCreationUser.MinimumWidth = 6;
+            colDateCreationUser.Name = "colDateCreationUser";
+            // 
+            // panelUtilisateursForm
+            // 
+            panelUtilisateursForm.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            panelUtilisateursForm.BackColor = Color.FromArgb(248, 249, 250);
+            panelUtilisateursForm.BorderColor = Color.FromArgb(5, 21, 48);
+            panelUtilisateursForm.BorderRadius = 14;
+            panelUtilisateursForm.BorderThickness = 2;
+            panelUtilisateursForm.Controls.Add(btnResetPassword);
+            panelUtilisateursForm.Controls.Add(BtnGererRoles);
+            panelUtilisateursForm.Controls.Add(BtnDeleteUser);
+            panelUtilisateursForm.Controls.Add(BtnDesactiveUser);
+            panelUtilisateursForm.Controls.Add(BtnUpdateUser);
+            panelUtilisateursForm.Controls.Add(BtnSaveUser);
+            panelUtilisateursForm.Location = new Point(1204, 533);
+            panelUtilisateursForm.Name = "panelUtilisateursForm";
+            panelUtilisateursForm.Padding = new Padding(20);
+            panelUtilisateursForm.Size = new Size(359, 182);
+            panelUtilisateursForm.TabIndex = 1;
+            // 
+            // btnResetPassword
+            // 
+            btnResetPassword.BorderRadius = 14;
+            btnResetPassword.BorderThickness = 2;
+            btnResetPassword.FillColor = Color.FromArgb(5, 21, 48);
+            btnResetPassword.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnResetPassword.ForeColor = Color.White;
+            btnResetPassword.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
+            btnResetPassword.HoverState.FillColor = Color.White;
+            btnResetPassword.HoverState.Image = Properties.Resources.Ann_Dark;
+            btnResetPassword.Image = Properties.Resources.Ann_light;
+            btnResetPassword.ImageSize = new Size(32, 32);
+            btnResetPassword.Location = new Point(245, 105);
+            btnResetPassword.Name = "btnResetPassword";
+            btnResetPassword.Size = new Size(102, 50);
+            btnResetPassword.TabIndex = 20;
+            btnResetPassword.Click += btnResetPassword_Click;
+            // 
+            // BtnGererRoles
+            // 
+            BtnGererRoles.BorderRadius = 14;
+            BtnGererRoles.BorderThickness = 2;
+            BtnGererRoles.FillColor = Color.FromArgb(5, 21, 48);
+            BtnGererRoles.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            BtnGererRoles.ForeColor = Color.White;
+            BtnGererRoles.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
+            BtnGererRoles.HoverState.FillColor = Color.White;
+            BtnGererRoles.HoverState.Image = Properties.Resources.affect_Dark;
+            BtnGererRoles.Image = Properties.Resources.affect_Light;
+            BtnGererRoles.ImageSize = new Size(32, 32);
+            BtnGererRoles.Location = new Point(12, 105);
+            BtnGererRoles.Name = "BtnGererRoles";
+            BtnGererRoles.Size = new Size(102, 50);
+            BtnGererRoles.TabIndex = 20;
+            BtnGererRoles.Click += BtnManageRoles_Click;
+            // 
+            // BtnDeleteUser
+            // 
+            BtnDeleteUser.BorderRadius = 14;
+            BtnDeleteUser.BorderThickness = 2;
+            BtnDeleteUser.FillColor = Color.FromArgb(5, 21, 48);
+            BtnDeleteUser.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            BtnDeleteUser.ForeColor = Color.White;
+            BtnDeleteUser.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
+            BtnDeleteUser.HoverState.FillColor = Color.White;
+            BtnDeleteUser.HoverState.Image = Properties.Resources.delete_dark;
+            BtnDeleteUser.Image = Properties.Resources.delete_lighr;
+            BtnDeleteUser.ImageSize = new Size(32, 32);
+            BtnDeleteUser.Location = new Point(245, 27);
+            BtnDeleteUser.Name = "BtnDeleteUser";
+            BtnDeleteUser.Size = new Size(102, 50);
+            BtnDeleteUser.TabIndex = 19;
+            BtnDeleteUser.Click += BtnDeleteUser_Click;
+            // 
+            // BtnDesactiveUser
+            // 
+            BtnDesactiveUser.BorderRadius = 14;
+            BtnDesactiveUser.BorderThickness = 2;
+            BtnDesactiveUser.FillColor = Color.FromArgb(5, 21, 48);
+            BtnDesactiveUser.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            BtnDesactiveUser.ForeColor = Color.White;
+            BtnDesactiveUser.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
+            BtnDesactiveUser.HoverState.FillColor = Color.White;
+            BtnDesactiveUser.HoverState.Image = Properties.Resources.update_dark;
+            BtnDesactiveUser.Image = Properties.Resources.update_light;
+            BtnDesactiveUser.ImageSize = new Size(32, 32);
+            BtnDesactiveUser.Location = new Point(128, 105);
+            BtnDesactiveUser.Name = "BtnDesactiveUser";
+            BtnDesactiveUser.Size = new Size(102, 50);
+            BtnDesactiveUser.TabIndex = 18;
+            // 
+            // BtnUpdateUser
+            // 
+            BtnUpdateUser.BorderRadius = 14;
+            BtnUpdateUser.BorderThickness = 2;
+            BtnUpdateUser.FillColor = Color.FromArgb(5, 21, 48);
+            BtnUpdateUser.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            BtnUpdateUser.ForeColor = Color.White;
+            BtnUpdateUser.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
+            BtnUpdateUser.HoverState.FillColor = Color.White;
+            BtnUpdateUser.HoverState.Image = Properties.Resources.update_dark;
+            BtnUpdateUser.Image = Properties.Resources.update_light;
+            BtnUpdateUser.ImageSize = new Size(32, 32);
+            BtnUpdateUser.Location = new Point(128, 27);
+            BtnUpdateUser.Name = "BtnUpdateUser";
+            BtnUpdateUser.Size = new Size(102, 50);
+            BtnUpdateUser.TabIndex = 18;
+            BtnUpdateUser.Click += BtnUpdateUser_Click;
+            // 
+            // BtnSaveUser
+            // 
+            BtnSaveUser.BorderRadius = 14;
+            BtnSaveUser.BorderThickness = 2;
+            BtnSaveUser.FillColor = Color.FromArgb(5, 21, 48);
+            BtnSaveUser.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            BtnSaveUser.ForeColor = Color.White;
+            BtnSaveUser.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
+            BtnSaveUser.HoverState.FillColor = Color.White;
+            BtnSaveUser.HoverState.Image = Properties.Resources.save_dark;
+            BtnSaveUser.Image = Properties.Resources.save_light;
+            BtnSaveUser.ImageSize = new Size(32, 32);
+            BtnSaveUser.Location = new Point(12, 27);
+            BtnSaveUser.Name = "BtnSaveUser";
+            BtnSaveUser.Size = new Size(102, 50);
+            BtnSaveUser.TabIndex = 17;
+            BtnSaveUser.Click += BtnSaveUser_Click;
+            // 
+            // panelUtilisateursHeader
+            // 
+            panelUtilisateursHeader.BackColor = Color.FromArgb(5, 21, 48);
+            panelUtilisateursHeader.Controls.Add(lblUtilisateursTitle);
+            panelUtilisateursHeader.Dock = DockStyle.Top;
+            panelUtilisateursHeader.Location = new Point(0, 0);
+            panelUtilisateursHeader.Name = "panelUtilisateursHeader";
+            panelUtilisateursHeader.Size = new Size(1573, 60);
+            panelUtilisateursHeader.TabIndex = 1;
+            // 
+            // lblUtilisateursTitle
+            // 
+            lblUtilisateursTitle.AutoSize = true;
+            lblUtilisateursTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            lblUtilisateursTitle.ForeColor = Color.White;
+            lblUtilisateursTitle.Location = new Point(10, 11);
+            lblUtilisateursTitle.Name = "lblUtilisateursTitle";
+            lblUtilisateursTitle.Size = new Size(320, 37);
+            lblUtilisateursTitle.TabIndex = 0;
+            lblUtilisateursTitle.Text = "Gestion des Utilisateurs";
+            // 
+            // panelUtilisateursContainer
+            // 
+            panelUtilisateursContainer.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelUtilisateursContainer.BackColor = Color.White;
+            panelUtilisateursContainer.BorderColor = Color.FromArgb(5, 21, 48);
+            panelUtilisateursContainer.BorderRadius = 14;
+            panelUtilisateursContainer.BorderThickness = 2;
+            panelUtilisateursContainer.Controls.Add(label1);
+            panelUtilisateursContainer.Controls.Add(label40);
+            panelUtilisateursContainer.Controls.Add(TxtIdUser);
+            panelUtilisateursContainer.Controls.Add(lblNomUser);
+            panelUtilisateursContainer.Controls.Add(txtNom);
+            panelUtilisateursContainer.Controls.Add(lblPostNomUser);
+            panelUtilisateursContainer.Controls.Add(txtPostNom);
+            panelUtilisateursContainer.Controls.Add(lblPrenomUser);
+            panelUtilisateursContainer.Controls.Add(txtPrenom);
+            panelUtilisateursContainer.Controls.Add(cmbRole);
+            panelUtilisateursContainer.Controls.Add(cmbSexe);
+            panelUtilisateursContainer.Controls.Add(lblRoleUser);
+            panelUtilisateursContainer.Controls.Add(lblUsernameUser);
+            panelUtilisateursContainer.Controls.Add(txtTelephone);
+            panelUtilisateursContainer.Controls.Add(lblTelephoneUser);
+            panelUtilisateursContainer.Controls.Add(lblPasswordUser);
+            panelUtilisateursContainer.Controls.Add(txtPassword);
+            panelUtilisateursContainer.Controls.Add(txtUsername);
+            panelUtilisateursContainer.Location = new Point(10, 533);
+            panelUtilisateursContainer.Name = "panelUtilisateursContainer";
+            panelUtilisateursContainer.Padding = new Padding(20);
+            panelUtilisateursContainer.Size = new Size(1188, 182);
+            panelUtilisateursContainer.TabIndex = 0;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            label1.Location = new Point(497, 105);
+            label1.Name = "label1";
+            label1.Size = new Size(41, 20);
+            label1.TabIndex = 18;
+            label1.Text = "Sexe";
+            // 
+            // label40
+            // 
+            label40.AutoSize = true;
+            label40.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            label40.Location = new Point(18, 19);
+            label40.Name = "label40";
+            label40.Size = new Size(59, 20);
+            label40.TabIndex = 0;
+            label40.Text = "Id User";
+            // 
+            // TxtIdUser
+            // 
+            TxtIdUser.BorderRadius = 14;
+            TxtIdUser.DefaultText = "";
+            TxtIdUser.Font = new Font("Segoe UI", 9F);
+            TxtIdUser.Location = new Point(23, 47);
+            TxtIdUser.Margin = new Padding(3, 4, 3, 4);
+            TxtIdUser.Name = "TxtIdUser";
+            TxtIdUser.PasswordChar = '\0';
+            TxtIdUser.PlaceholderText = "IdUser";
+            TxtIdUser.ReadOnly = true;
+            TxtIdUser.SelectedText = "";
+            TxtIdUser.Size = new Size(217, 36);
+            TxtIdUser.TabIndex = 1;
+            TxtIdUser.Enter += TxtIdUser_Enter;
+            // 
+            // lblNomUser
+            // 
+            lblNomUser.AutoSize = true;
+            lblNomUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblNomUser.Location = new Point(258, 19);
+            lblNomUser.Name = "lblNomUser";
+            lblNomUser.Size = new Size(48, 20);
+            lblNomUser.TabIndex = 0;
+            lblNomUser.Text = "Nom:";
+            // 
+            // txtNom
+            // 
+            txtNom.BorderRadius = 14;
+            txtNom.DefaultText = "";
+            txtNom.Font = new Font("Segoe UI", 9F);
+            txtNom.Location = new Point(258, 47);
+            txtNom.Margin = new Padding(3, 4, 3, 4);
+            txtNom.Name = "txtNom";
+            txtNom.PasswordChar = '\0';
+            txtNom.PlaceholderText = "Nom de famille";
+            txtNom.SelectedText = "";
+            txtNom.Size = new Size(217, 36);
+            txtNom.TabIndex = 1;
+            txtNom.Enter += TxtIdUser_Enter;
+            // 
+            // lblPostNomUser
+            // 
+            lblPostNomUser.AutoSize = true;
+            lblPostNomUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblPostNomUser.Location = new Point(497, 19);
+            lblPostNomUser.Name = "lblPostNomUser";
+            lblPostNomUser.Size = new Size(81, 20);
+            lblPostNomUser.TabIndex = 2;
+            lblPostNomUser.Text = "Post-nom:";
+            // 
+            // txtPostNom
+            // 
+            txtPostNom.BorderRadius = 14;
+            txtPostNom.DefaultText = "";
+            txtPostNom.Font = new Font("Segoe UI", 9F);
+            txtPostNom.Location = new Point(497, 47);
+            txtPostNom.Margin = new Padding(3, 4, 3, 4);
+            txtPostNom.Name = "txtPostNom";
+            txtPostNom.PasswordChar = '\0';
+            txtPostNom.PlaceholderText = "Post-nom";
+            txtPostNom.SelectedText = "";
+            txtPostNom.Size = new Size(217, 36);
+            txtPostNom.TabIndex = 3;
+            // 
+            // lblPrenomUser
+            // 
+            lblPrenomUser.AutoSize = true;
+            lblPrenomUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblPrenomUser.Location = new Point(731, 19);
+            lblPrenomUser.Name = "lblPrenomUser";
+            lblPrenomUser.Size = new Size(68, 20);
+            lblPrenomUser.TabIndex = 4;
+            lblPrenomUser.Text = "Prénom:";
+            // 
+            // txtPrenom
+            // 
+            txtPrenom.BorderRadius = 14;
+            txtPrenom.DefaultText = "";
+            txtPrenom.Font = new Font("Segoe UI", 9F);
+            txtPrenom.Location = new Point(731, 47);
+            txtPrenom.Margin = new Padding(3, 4, 3, 4);
+            txtPrenom.Name = "txtPrenom";
+            txtPrenom.PasswordChar = '\0';
+            txtPrenom.PlaceholderText = "Prénom";
+            txtPrenom.SelectedText = "";
+            txtPrenom.Size = new Size(217, 36);
+            txtPrenom.TabIndex = 5;
+            // 
+            // cmbRole
+            // 
+            cmbRole.BackColor = Color.Transparent;
+            cmbRole.BorderRadius = 14;
+            cmbRole.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbRole.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbRole.FocusedColor = Color.Empty;
+            cmbRole.Font = new Font("Segoe UI", 10F);
+            cmbRole.ForeColor = Color.FromArgb(68, 88, 112);
+            cmbRole.ItemHeight = 30;
+            cmbRole.Items.AddRange(new object[] { "Super Administrateur", "Administrateur", "Directeur", "Enseignant", "Comptable", "Secrétaire" });
+            cmbRole.Location = new Point(731, 139);
+            cmbRole.Name = "cmbRole";
+            cmbRole.Size = new Size(217, 36);
+            cmbRole.TabIndex = 15;
+            // 
+            // cmbSexe
+            // 
+            cmbSexe.BackColor = Color.Transparent;
+            cmbSexe.BorderRadius = 14;
+            cmbSexe.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbSexe.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbSexe.FocusedColor = Color.Empty;
+            cmbSexe.Font = new Font("Segoe UI", 10F);
+            cmbSexe.ForeColor = Color.FromArgb(68, 88, 112);
+            cmbSexe.ItemHeight = 30;
+            cmbSexe.Items.AddRange(new object[] { "M", "F" });
+            cmbSexe.Location = new Point(497, 139);
+            cmbSexe.Name = "cmbSexe";
+            cmbSexe.Size = new Size(217, 36);
+            cmbSexe.TabIndex = 7;
+            // 
+            // lblRoleUser
+            // 
+            lblRoleUser.AutoSize = true;
+            lblRoleUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblRoleUser.Location = new Point(731, 105);
+            lblRoleUser.Name = "lblRoleUser";
+            lblRoleUser.Size = new Size(44, 20);
+            lblRoleUser.TabIndex = 14;
+            lblRoleUser.Text = "Rôle:";
+            // 
+            // lblUsernameUser
+            // 
+            lblUsernameUser.AutoSize = true;
+            lblUsernameUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblUsernameUser.Location = new Point(23, 105);
+            lblUsernameUser.Name = "lblUsernameUser";
+            lblUsernameUser.Size = new Size(137, 20);
+            lblUsernameUser.TabIndex = 8;
+            lblUsernameUser.Text = "Nom d'utilisateur:";
+            // 
+            // txtTelephone
+            // 
+            txtTelephone.BorderRadius = 14;
+            txtTelephone.DefaultText = "";
+            txtTelephone.Font = new Font("Segoe UI", 9F);
+            txtTelephone.Location = new Point(961, 47);
+            txtTelephone.Margin = new Padding(3, 4, 3, 4);
+            txtTelephone.Name = "txtTelephone";
+            txtTelephone.PasswordChar = '\0';
+            txtTelephone.PlaceholderText = "Numéro de téléphone";
+            txtTelephone.SelectedText = "";
+            txtTelephone.Size = new Size(217, 36);
+            txtTelephone.TabIndex = 13;
+            // 
+            // lblTelephoneUser
+            // 
+            lblTelephoneUser.AutoSize = true;
+            lblTelephoneUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblTelephoneUser.Location = new Point(961, 19);
+            lblTelephoneUser.Name = "lblTelephoneUser";
+            lblTelephoneUser.Size = new Size(85, 20);
+            lblTelephoneUser.TabIndex = 12;
+            lblTelephoneUser.Text = "Téléphone:";
+            // 
+            // lblPasswordUser
+            // 
+            lblPasswordUser.AutoSize = true;
+            lblPasswordUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblPasswordUser.Location = new Point(258, 105);
+            lblPasswordUser.Name = "lblPasswordUser";
+            lblPasswordUser.Size = new Size(106, 20);
+            lblPasswordUser.TabIndex = 10;
+            lblPasswordUser.Text = "Mot de passe:";
+            // 
+            // txtPassword
+            // 
+            txtPassword.BorderRadius = 14;
+            txtPassword.DefaultText = "";
+            txtPassword.Font = new Font("Segoe UI", 9F);
+            txtPassword.Location = new Point(258, 139);
+            txtPassword.Margin = new Padding(3, 4, 3, 4);
+            txtPassword.Name = "txtPassword";
+            txtPassword.PasswordChar = '●';
+            txtPassword.PlaceholderText = "Mot de passe";
+            txtPassword.SelectedText = "";
+            txtPassword.Size = new Size(217, 36);
+            txtPassword.TabIndex = 11;
+            // 
+            // txtUsername
+            // 
+            txtUsername.BorderRadius = 14;
+            txtUsername.DefaultText = "";
+            txtUsername.Font = new Font("Segoe UI", 9F);
+            txtUsername.Location = new Point(23, 139);
+            txtUsername.Margin = new Padding(3, 4, 3, 4);
+            txtUsername.Name = "txtUsername";
+            txtUsername.PasswordChar = '\0';
+            txtUsername.PlaceholderText = "Nom d'utilisateur unique";
+            txtUsername.SelectedText = "";
+            txtUsername.Size = new Size(217, 36);
+            txtUsername.TabIndex = 9;
+            txtUsername.Enter += TxtIdUser_Enter;
+            // 
+            // panelNavAccueil
+            // 
+            panelNavAccueil.BackColor = Color.White;
+            panelNavAccueil.Controls.Add(panelTitulaires);
+            panelNavAccueil.Controls.Add(panelStatistiques);
+            panelNavAccueil.Controls.Add(lblDashboardTitle);
+            panelNavAccueil.Dock = DockStyle.Fill;
+            panelNavAccueil.Location = new Point(0, 0);
+            panelNavAccueil.Name = "panelNavAccueil";
+            panelNavAccueil.Size = new Size(1573, 726);
+            panelNavAccueil.TabIndex = 0;
+            panelNavAccueil.Visible = false;
+            panelNavAccueil.Paint += panelNavAccueil_Paint;
+            // 
+            // panelTitulaires
+            // 
+            panelTitulaires.Controls.Add(lblTitulaires);
+            panelTitulaires.Controls.Add(dataGridViewAccueil2);
+            panelTitulaires.Location = new Point(18, 372);
+            panelTitulaires.Name = "panelTitulaires";
+            panelTitulaires.Size = new Size(750, 300);
+            panelTitulaires.TabIndex = 2;
+            // 
+            // lblTitulaires
+            // 
+            lblTitulaires.Location = new Point(15, 15);
+            lblTitulaires.Name = "lblTitulaires";
+            lblTitulaires.Size = new Size(400, 25);
+            lblTitulaires.TabIndex = 0;
+            lblTitulaires.Text = "Informations des Titulaires par Promotion";
+            // 
+            // dataGridViewAccueil2
+            // 
+            dataGridViewAccueil2.ColumnHeadersHeight = 29;
+            dataGridViewAccueil2.Columns.AddRange(new DataGridViewColumn[] { colSection2, colOption2Accueil, colPromotion2Accueil, colTitulaireAccueil, colTotal2Accueil });
+            dataGridViewAccueil2.Location = new Point(15, 50);
+            dataGridViewAccueil2.Name = "dataGridViewAccueil2";
+            dataGridViewAccueil2.RowHeadersWidth = 51;
+            dataGridViewAccueil2.Size = new Size(720, 235);
+            dataGridViewAccueil2.TabIndex = 1;
+            // 
+            // colSection2
+            // 
+            colSection2.DataPropertyName = "Section";
+            colSection2.HeaderText = "Section";
+            colSection2.MinimumWidth = 6;
+            colSection2.Name = "colSection2";
+            colSection2.Width = 140;
+            // 
+            // colOption2Accueil
+            // 
+            colOption2Accueil.DataPropertyName = "Option";
+            colOption2Accueil.HeaderText = "Option";
+            colOption2Accueil.MinimumWidth = 6;
+            colOption2Accueil.Name = "colOption2Accueil";
+            colOption2Accueil.Width = 140;
+            // 
+            // colPromotion2Accueil
+            // 
+            colPromotion2Accueil.DataPropertyName = "Promotion";
+            colPromotion2Accueil.HeaderText = "Promotion";
+            colPromotion2Accueil.MinimumWidth = 6;
+            colPromotion2Accueil.Name = "colPromotion2Accueil";
+            colPromotion2Accueil.Width = 140;
+            // 
+            // colTitulaireAccueil
+            // 
+            colTitulaireAccueil.DataPropertyName = "NomTitulaire";
+            colTitulaireAccueil.HeaderText = "Nom Titulaire";
+            colTitulaireAccueil.MinimumWidth = 6;
+            colTitulaireAccueil.Name = "colTitulaireAccueil";
+            colTitulaireAccueil.Width = 200;
+            // 
+            // colTotal2Accueil
+            // 
+            colTotal2Accueil.DataPropertyName = "TotalNbreUtilisateurs";
+            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle10.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            colTotal2Accueil.DefaultCellStyle = dataGridViewCellStyle10;
+            colTotal2Accueil.HeaderText = "Total Nbre Élèves";
+            colTotal2Accueil.MinimumWidth = 6;
+            colTotal2Accueil.Name = "colTotal2Accueil";
+            colTotal2Accueil.Width = 125;
+            // 
+            // panelStatistiques
+            // 
+            panelStatistiques.Controls.Add(lblStatistiquesUtilisateurs);
+            panelStatistiques.Controls.Add(dataGridViewAccueil1);
+            panelStatistiques.Location = new Point(18, 48);
+            panelStatistiques.Name = "panelStatistiques";
+            panelStatistiques.Size = new Size(750, 300);
+            panelStatistiques.TabIndex = 1;
+            // 
+            // lblStatistiquesUtilisateurs
+            // 
+            lblStatistiquesUtilisateurs.Location = new Point(15, 15);
+            lblStatistiquesUtilisateurs.Name = "lblStatistiquesUtilisateurs";
+            lblStatistiquesUtilisateurs.Size = new Size(500, 25);
+            lblStatistiquesUtilisateurs.TabIndex = 0;
+            lblStatistiquesUtilisateurs.Text = "Statistiques des Élèves par Section, Option et Promotion";
+            // 
+            // dataGridViewAccueil1
+            // 
+            dataGridViewAccueil1.ColumnHeadersHeight = 29;
+            dataGridViewAccueil1.Columns.AddRange(new DataGridViewColumn[] { colSection1, colOption1, colPromotion1, colGarcons, colFilles, colTotal1 });
+            dataGridViewAccueil1.Location = new Point(15, 50);
+            dataGridViewAccueil1.Name = "dataGridViewAccueil1";
+            dataGridViewAccueil1.RowHeadersWidth = 51;
+            dataGridViewAccueil1.Size = new Size(720, 235);
+            dataGridViewAccueil1.TabIndex = 1;
+            // 
+            // colSection1
+            // 
+            colSection1.DataPropertyName = "Section";
+            colSection1.HeaderText = "Section";
+            colSection1.MinimumWidth = 6;
+            colSection1.Name = "colSection1";
+            colSection1.Width = 120;
+            // 
+            // colOption1
+            // 
+            colOption1.DataPropertyName = "Option";
+            colOption1.HeaderText = "Option";
+            colOption1.MinimumWidth = 6;
+            colOption1.Name = "colOption1";
+            colOption1.Width = 120;
+            // 
+            // colPromotion1
+            // 
+            colPromotion1.DataPropertyName = "Promotion";
+            colPromotion1.HeaderText = "Promotion";
+            colPromotion1.MinimumWidth = 6;
+            colPromotion1.Name = "colPromotion1";
+            colPromotion1.Width = 120;
+            // 
+            // colGarcons
+            // 
+            colGarcons.DataPropertyName = "NbreEleveGarcons";
+            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            colGarcons.DefaultCellStyle = dataGridViewCellStyle11;
+            colGarcons.HeaderText = "Nbre Élèves Garçons";
+            colGarcons.MinimumWidth = 6;
+            colGarcons.Name = "colGarcons";
+            colGarcons.Width = 125;
+            // 
+            // colFilles
+            // 
+            colFilles.DataPropertyName = "NbreUtilisateursFilles";
+            dataGridViewCellStyle12.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            colFilles.DefaultCellStyle = dataGridViewCellStyle12;
+            colFilles.HeaderText = "Nbre Élèves Filles";
+            colFilles.MinimumWidth = 6;
+            colFilles.Name = "colFilles";
+            colFilles.Width = 125;
+            // 
+            // colTotal1
+            // 
+            colTotal1.DataPropertyName = "TotalNbreUtilisateurs";
+            dataGridViewCellStyle13.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle13.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            colTotal1.DefaultCellStyle = dataGridViewCellStyle13;
+            colTotal1.HeaderText = "Total Nbre Élèves";
+            colTotal1.MinimumWidth = 6;
+            colTotal1.Name = "colTotal1";
+            colTotal1.Width = 110;
+            // 
+            // lblDashboardTitle
+            // 
+            lblDashboardTitle.Location = new Point(42, 15);
+            lblDashboardTitle.Name = "lblDashboardTitle";
+            lblDashboardTitle.Size = new Size(600, 30);
+            lblDashboardTitle.TabIndex = 0;
+            lblDashboardTitle.Text = "Tableau de Bord - Statistiques de l'École";
             // 
             // panelNavSection_Cours
             // 
@@ -554,18 +1304,19 @@
             dataGridViewCellStyle14.BackColor = Color.White;
             DgvCours.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle14;
             DgvCours.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle15.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle15.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle15.BackColor = Color.FromArgb(100, 88, 255);
-            dataGridViewCellStyle15.Font = new Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle15.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
             dataGridViewCellStyle15.ForeColor = Color.White;
             dataGridViewCellStyle15.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle15.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle15.WrapMode = DataGridViewTriState.True;
             DgvCours.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle15;
             DgvCours.ColumnHeadersHeight = 29;
+            DgvCours.Columns.AddRange(new DataGridViewColumn[] { ColCodeCours, ColIntituleCours });
             dataGridViewCellStyle16.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle16.BackColor = Color.White;
-            dataGridViewCellStyle16.Font = new Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle16.Font = new Font("Segoe UI", 9F);
             dataGridViewCellStyle16.ForeColor = Color.FromArgb(71, 69, 94);
             dataGridViewCellStyle16.SelectionBackColor = Color.FromArgb(231, 229, 255);
             dataGridViewCellStyle16.SelectionForeColor = Color.FromArgb(71, 69, 94);
@@ -599,6 +1350,20 @@
             DgvCours.ThemeStyle.RowsStyle.Height = 29;
             DgvCours.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
             DgvCours.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            // 
+            // ColCodeCours
+            // 
+            ColCodeCours.DataPropertyName = "id_cours";
+            ColCodeCours.HeaderText = "Code Cours";
+            ColCodeCours.MinimumWidth = 6;
+            ColCodeCours.Name = "ColCodeCours";
+            // 
+            // ColIntituleCours
+            // 
+            ColIntituleCours.DataPropertyName = "intitule";
+            ColIntituleCours.HeaderText = "Intitulé";
+            ColIntituleCours.MinimumWidth = 6;
+            ColIntituleCours.Name = "ColIntituleCours";
             // 
             // TxtFiltreCours
             // 
@@ -888,19 +1653,20 @@
             DgvSection.AllowUserToDeleteRows = false;
             DgvSection.AllowUserToResizeColumns = false;
             DgvSection.AllowUserToResizeRows = false;
-            dataGridViewCellStyle17.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle17.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle17.BackColor = Color.White;
             DgvSection.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle17;
             DgvSection.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle18.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle18.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle18.BackColor = Color.FromArgb(100, 88, 255);
-            dataGridViewCellStyle18.Font = new Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle18.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
             dataGridViewCellStyle18.ForeColor = Color.White;
             dataGridViewCellStyle18.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle18.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle18.WrapMode = DataGridViewTriState.True;
             DgvSection.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle18;
             DgvSection.ColumnHeadersHeight = 29;
+            DgvSection.Columns.AddRange(new DataGridViewColumn[] { ColCod_Sect, ColDescriptSect });
             dataGridViewCellStyle19.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle19.BackColor = Color.White;
             dataGridViewCellStyle19.Font = new Font("Segoe UI", 10.5F);
@@ -937,6 +1703,20 @@
             DgvSection.ThemeStyle.RowsStyle.Height = 29;
             DgvSection.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
             DgvSection.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            // 
+            // ColCod_Sect
+            // 
+            ColCod_Sect.DataPropertyName = "cod_sect";
+            ColCod_Sect.HeaderText = "Code Section";
+            ColCod_Sect.MinimumWidth = 6;
+            ColCod_Sect.Name = "ColCod_Sect";
+            // 
+            // ColDescriptSect
+            // 
+            ColDescriptSect.DataPropertyName = "description";
+            ColDescriptSect.HeaderText = "Intitule";
+            ColDescriptSect.MinimumWidth = 6;
+            ColDescriptSect.Name = "ColDescriptSect";
             // 
             // TxtFiltreSection
             // 
@@ -1385,19 +2165,20 @@
             DgvPromotion.AllowUserToDeleteRows = false;
             DgvPromotion.AllowUserToResizeColumns = false;
             DgvPromotion.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = Color.White;
             DgvPromotion.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             DgvPromotion.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle2.BackColor = Color.FromArgb(100, 88, 255);
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
             dataGridViewCellStyle2.ForeColor = Color.White;
             dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
             DgvPromotion.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             DgvPromotion.ColumnHeadersHeight = 29;
+            DgvPromotion.Columns.AddRange(new DataGridViewColumn[] { ColIdPromotion, ColDescriptionPromotion, ColFkOptPromotion, ColDescripOptPromotion });
             dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = Color.White;
             dataGridViewCellStyle3.Font = new Font("Segoe UI", 10.5F);
@@ -1406,9 +2187,11 @@
             dataGridViewCellStyle3.SelectionForeColor = Color.FromArgb(71, 69, 94);
             dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
             DgvPromotion.DefaultCellStyle = dataGridViewCellStyle3;
+            DgvPromotion.EditMode = DataGridViewEditMode.EditOnEnter;
             DgvPromotion.GridColor = Color.FromArgb(231, 229, 255);
             DgvPromotion.Location = new Point(12, 74);
             DgvPromotion.Name = "DgvPromotion";
+            DgvPromotion.ReadOnly = true;
             DgvPromotion.RowHeadersVisible = false;
             DgvPromotion.RowHeadersWidth = 51;
             DgvPromotion.Size = new Size(725, 326);
@@ -1426,7 +2209,7 @@
             DgvPromotion.ThemeStyle.HeaderStyle.ForeColor = Color.White;
             DgvPromotion.ThemeStyle.HeaderStyle.HeaightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             DgvPromotion.ThemeStyle.HeaderStyle.Height = 29;
-            DgvPromotion.ThemeStyle.ReadOnly = false;
+            DgvPromotion.ThemeStyle.ReadOnly = true;
             DgvPromotion.ThemeStyle.RowsStyle.BackColor = Color.White;
             DgvPromotion.ThemeStyle.RowsStyle.BorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             DgvPromotion.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 9F);
@@ -1434,6 +2217,37 @@
             DgvPromotion.ThemeStyle.RowsStyle.Height = 29;
             DgvPromotion.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
             DgvPromotion.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            // 
+            // ColIdPromotion
+            // 
+            ColIdPromotion.HeaderText = "Id Promotion";
+            ColIdPromotion.MinimumWidth = 6;
+            ColIdPromotion.Name = "ColIdPromotion";
+            ColIdPromotion.ReadOnly = true;
+            // 
+            // ColDescriptionPromotion
+            // 
+            ColDescriptionPromotion.DataPropertyName = "description";
+            ColDescriptionPromotion.HeaderText = "Description";
+            ColDescriptionPromotion.MinimumWidth = 6;
+            ColDescriptionPromotion.Name = "ColDescriptionPromotion";
+            ColDescriptionPromotion.ReadOnly = true;
+            // 
+            // ColFkOptPromotion
+            // 
+            ColFkOptPromotion.HeaderText = "Fk Option";
+            ColFkOptPromotion.MinimumWidth = 6;
+            ColFkOptPromotion.Name = "ColFkOptPromotion";
+            ColFkOptPromotion.ReadOnly = true;
+            ColFkOptPromotion.Visible = false;
+            // 
+            // ColDescripOptPromotion
+            // 
+            ColDescripOptPromotion.DataPropertyName = "cod_opt";
+            ColDescripOptPromotion.HeaderText = "Option";
+            ColDescripOptPromotion.MinimumWidth = 6;
+            ColDescripOptPromotion.Name = "ColDescripOptPromotion";
+            ColDescripOptPromotion.ReadOnly = true;
             // 
             // label32
             // 
@@ -1821,22 +2635,23 @@
             DgvOption.AllowUserToDeleteRows = false;
             DgvOption.AllowUserToResizeColumns = false;
             DgvOption.AllowUserToResizeRows = false;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = Color.White;
             DgvOption.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             DgvOption.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle5.BackColor = Color.FromArgb(100, 88, 255);
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
             dataGridViewCellStyle5.ForeColor = Color.White;
             dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
             dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
             DgvOption.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             DgvOption.ColumnHeadersHeight = 29;
+            DgvOption.Columns.AddRange(new DataGridViewColumn[] { ColIdOption, ColDescriptOption, ColFkSectOption, ColDescripSectOption });
             dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle6.BackColor = Color.White;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle6.Font = new Font("Segoe UI", 9F);
             dataGridViewCellStyle6.ForeColor = Color.FromArgb(71, 69, 94);
             dataGridViewCellStyle6.SelectionBackColor = Color.FromArgb(231, 229, 255);
             dataGridViewCellStyle6.SelectionForeColor = Color.FromArgb(71, 69, 94);
@@ -1873,6 +2688,38 @@
             DgvOption.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
             DgvOption.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
             // 
+            // ColIdOption
+            // 
+            ColIdOption.DataPropertyName = "cod_opt";
+            ColIdOption.HeaderText = "Id Option";
+            ColIdOption.MinimumWidth = 6;
+            ColIdOption.Name = "ColIdOption";
+            ColIdOption.ReadOnly = true;
+            // 
+            // ColDescriptOption
+            // 
+            ColDescriptOption.DataPropertyName = "description";
+            ColDescriptOption.HeaderText = "Description";
+            ColDescriptOption.MinimumWidth = 6;
+            ColDescriptOption.Name = "ColDescriptOption";
+            ColDescriptOption.ReadOnly = true;
+            // 
+            // ColFkSectOption
+            // 
+            ColFkSectOption.HeaderText = "Fk Section";
+            ColFkSectOption.MinimumWidth = 6;
+            ColFkSectOption.Name = "ColFkSectOption";
+            ColFkSectOption.ReadOnly = true;
+            ColFkSectOption.Visible = false;
+            // 
+            // ColDescripSectOption
+            // 
+            ColDescripSectOption.DataPropertyName = "cod_sect";
+            ColDescripSectOption.HeaderText = "Section";
+            ColDescripSectOption.MinimumWidth = 6;
+            ColDescripSectOption.Name = "ColDescripSectOption";
+            ColDescripSectOption.ReadOnly = true;
+            // 
             // label28
             // 
             label28.Location = new Point(15, 6);
@@ -1880,666 +2727,6 @@
             label28.Size = new Size(231, 25);
             label28.TabIndex = 0;
             label28.Text = "Affichage des données";
-            // 
-            // panelNavUtilisateurs
-            // 
-            panelNavUtilisateurs.BackColor = Color.White;
-            panelNavUtilisateurs.Controls.Add(panelUtilisateursList);
-            panelNavUtilisateurs.Controls.Add(panelUtilisateursForm);
-            panelNavUtilisateurs.Controls.Add(panelUtilisateursHeader);
-            panelNavUtilisateurs.Controls.Add(panelUtilisateursContainer);
-            panelNavUtilisateurs.Dock = DockStyle.Fill;
-            panelNavUtilisateurs.Location = new Point(0, 0);
-            panelNavUtilisateurs.Name = "panelNavUtilisateurs";
-            panelNavUtilisateurs.Size = new Size(1573, 726);
-            panelNavUtilisateurs.TabIndex = 1;
-            panelNavUtilisateurs.Visible = false;
-            // 
-            // panelUtilisateursList
-            // 
-            panelUtilisateursList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panelUtilisateursList.BackColor = Color.White;
-            panelUtilisateursList.BorderColor = Color.FromArgb(5, 21, 48);
-            panelUtilisateursList.BorderRadius = 14;
-            panelUtilisateursList.BorderThickness = 2;
-            panelUtilisateursList.Controls.Add(DgvUser);
-            panelUtilisateursList.Location = new Point(10, 67);
-            panelUtilisateursList.Name = "panelUtilisateursList";
-            panelUtilisateursList.Padding = new Padding(20);
-            panelUtilisateursList.Size = new Size(1553, 460);
-            panelUtilisateursList.TabIndex = 3;
-            // 
-            // DgvUser
-            // 
-            DgvUser.AllowUserToAddRows = false;
-            DgvUser.AllowUserToDeleteRows = false;
-            DgvUser.AllowUserToResizeColumns = false;
-            DgvUser.AllowUserToResizeRows = false;
-            dataGridViewCellStyle7.BackColor = Color.White;
-            DgvUser.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
-            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle8.BackColor = Color.FromArgb(100, 88, 255);
-            dataGridViewCellStyle8.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle8.ForeColor = Color.White;
-            dataGridViewCellStyle8.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle8.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.True;
-            DgvUser.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
-            DgvUser.ColumnHeadersHeight = 29;
-            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = Color.White;
-            dataGridViewCellStyle9.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle9.ForeColor = Color.FromArgb(71, 69, 94);
-            dataGridViewCellStyle9.SelectionBackColor = Color.FromArgb(231, 229, 255);
-            dataGridViewCellStyle9.SelectionForeColor = Color.FromArgb(71, 69, 94);
-            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.False;
-            DgvUser.DefaultCellStyle = dataGridViewCellStyle9;
-            DgvUser.GridColor = Color.FromArgb(231, 229, 255);
-            DgvUser.Location = new Point(17, 9);
-            DgvUser.Name = "DgvUser";
-            DgvUser.RowHeadersVisible = false;
-            DgvUser.RowHeadersWidth = 51;
-            DgvUser.Size = new Size(1519, 441);
-            DgvUser.TabIndex = 1;
-            DgvUser.ThemeStyle.AlternatingRowsStyle.BackColor = Color.White;
-            DgvUser.ThemeStyle.AlternatingRowsStyle.Font = null;
-            DgvUser.ThemeStyle.AlternatingRowsStyle.ForeColor = Color.Empty;
-            DgvUser.ThemeStyle.AlternatingRowsStyle.SelectionBackColor = Color.Empty;
-            DgvUser.ThemeStyle.AlternatingRowsStyle.SelectionForeColor = Color.Empty;
-            DgvUser.ThemeStyle.BackColor = Color.White;
-            DgvUser.ThemeStyle.GridColor = Color.FromArgb(231, 229, 255);
-            DgvUser.ThemeStyle.HeaderStyle.BackColor = Color.FromArgb(100, 88, 255);
-            DgvUser.ThemeStyle.HeaderStyle.BorderStyle = DataGridViewHeaderBorderStyle.None;
-            DgvUser.ThemeStyle.HeaderStyle.Font = new Font("Segoe UI", 9F);
-            DgvUser.ThemeStyle.HeaderStyle.ForeColor = Color.White;
-            DgvUser.ThemeStyle.HeaderStyle.HeaightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            DgvUser.ThemeStyle.HeaderStyle.Height = 29;
-            DgvUser.ThemeStyle.ReadOnly = false;
-            DgvUser.ThemeStyle.RowsStyle.BackColor = Color.White;
-            DgvUser.ThemeStyle.RowsStyle.BorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
-            DgvUser.ThemeStyle.RowsStyle.Font = new Font("Segoe UI", 9F);
-            DgvUser.ThemeStyle.RowsStyle.ForeColor = Color.FromArgb(71, 69, 94);
-            DgvUser.ThemeStyle.RowsStyle.Height = 29;
-            DgvUser.ThemeStyle.RowsStyle.SelectionBackColor = Color.FromArgb(231, 229, 255);
-            DgvUser.ThemeStyle.RowsStyle.SelectionForeColor = Color.FromArgb(71, 69, 94);
-            // 
-            // panelUtilisateursForm
-            // 
-            panelUtilisateursForm.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            panelUtilisateursForm.BackColor = Color.FromArgb(248, 249, 250);
-            panelUtilisateursForm.BorderColor = Color.FromArgb(5, 21, 48);
-            panelUtilisateursForm.BorderRadius = 14;
-            panelUtilisateursForm.BorderThickness = 2;
-            panelUtilisateursForm.Controls.Add(this.btnResetPassword);
-            panelUtilisateursForm.Controls.Add(BtnGererRoles);
-            panelUtilisateursForm.Controls.Add(BtnDeleteUser);
-            panelUtilisateursForm.Controls.Add(BtnDesactiveUser);
-            panelUtilisateursForm.Controls.Add(BtnUpdateUser);
-            panelUtilisateursForm.Controls.Add(BtnSaveUser);
-            panelUtilisateursForm.Location = new Point(1204, 533);
-            panelUtilisateursForm.Name = "panelUtilisateursForm";
-            panelUtilisateursForm.Padding = new Padding(20);
-            panelUtilisateursForm.Size = new Size(359, 182);
-            panelUtilisateursForm.TabIndex = 1;
-            // 
-            // this.btnResetPassword
-            // 
-            this.btnResetPassword.BorderRadius = 14;
-            this.btnResetPassword.BorderThickness = 2;
-            this.btnResetPassword.FillColor = Color.FromArgb(5, 21, 48);
-            this.btnResetPassword.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            this.btnResetPassword.ForeColor = Color.White;
-            this.btnResetPassword.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
-            this.btnResetPassword.HoverState.FillColor = Color.White;
-            this.btnResetPassword.HoverState.Image = Properties.Resources.Ann_Dark;
-            this.btnResetPassword.Image = Properties.Resources.Ann_light;
-            this.btnResetPassword.ImageSize = new Size(32, 32);
-            this.btnResetPassword.Location = new Point(245, 105);
-            this.btnResetPassword.Name = "btnResetPassword";
-            this.btnResetPassword.Size = new Size(102, 50);
-            this.btnResetPassword.TabIndex = 20;
-            this.btnResetPassword.Click += this.btnResetPassword_Click;
-            // 
-            // BtnGererRoles
-            // 
-            BtnGererRoles.BorderRadius = 14;
-            BtnGererRoles.BorderThickness = 2;
-            BtnGererRoles.FillColor = Color.FromArgb(5, 21, 48);
-            BtnGererRoles.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            BtnGererRoles.ForeColor = Color.White;
-            BtnGererRoles.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
-            BtnGererRoles.HoverState.FillColor = Color.White;
-            BtnGererRoles.HoverState.Image = Properties.Resources.affect_Dark;
-            BtnGererRoles.Image = Properties.Resources.affect_Light;
-            BtnGererRoles.ImageSize = new Size(32, 32);
-            BtnGererRoles.Location = new Point(12, 105);
-            BtnGererRoles.Name = "BtnGererRoles";
-            BtnGererRoles.Size = new Size(102, 50);
-            BtnGererRoles.TabIndex = 20;
-            BtnGererRoles.Click += BtnManageRoles_Click;
-            // 
-            // BtnDeleteUser
-            // 
-            BtnDeleteUser.BorderRadius = 14;
-            BtnDeleteUser.BorderThickness = 2;
-            BtnDeleteUser.FillColor = Color.FromArgb(5, 21, 48);
-            BtnDeleteUser.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            BtnDeleteUser.ForeColor = Color.White;
-            BtnDeleteUser.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
-            BtnDeleteUser.HoverState.FillColor = Color.White;
-            BtnDeleteUser.HoverState.Image = Properties.Resources.delete_dark;
-            BtnDeleteUser.Image = Properties.Resources.delete_lighr;
-            BtnDeleteUser.ImageSize = new Size(32, 32);
-            BtnDeleteUser.Location = new Point(245, 27);
-            BtnDeleteUser.Name = "BtnDeleteUser";
-            BtnDeleteUser.Size = new Size(102, 50);
-            BtnDeleteUser.TabIndex = 19;
-            BtnDeleteUser.Click += BtnDeleteUser_Click;
-            // 
-            // BtnDesactiveUser
-            // 
-            BtnDesactiveUser.BorderRadius = 14;
-            BtnDesactiveUser.BorderThickness = 2;
-            BtnDesactiveUser.FillColor = Color.FromArgb(5, 21, 48);
-            BtnDesactiveUser.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            BtnDesactiveUser.ForeColor = Color.White;
-            BtnDesactiveUser.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
-            BtnDesactiveUser.HoverState.FillColor = Color.White;
-            BtnDesactiveUser.HoverState.Image = Properties.Resources.update_dark;
-            BtnDesactiveUser.Image = Properties.Resources.update_light;
-            BtnDesactiveUser.ImageSize = new Size(32, 32);
-            BtnDesactiveUser.Location = new Point(128, 105);
-            BtnDesactiveUser.Name = "BtnDesactiveUser";
-            BtnDesactiveUser.Size = new Size(102, 50);
-            BtnDesactiveUser.TabIndex = 18;
-            // 
-            // BtnUpdateUser
-            // 
-            BtnUpdateUser.BorderRadius = 14;
-            BtnUpdateUser.BorderThickness = 2;
-            BtnUpdateUser.FillColor = Color.FromArgb(5, 21, 48);
-            BtnUpdateUser.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            BtnUpdateUser.ForeColor = Color.White;
-            BtnUpdateUser.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
-            BtnUpdateUser.HoverState.FillColor = Color.White;
-            BtnUpdateUser.HoverState.Image = Properties.Resources.update_dark;
-            BtnUpdateUser.Image = Properties.Resources.update_light;
-            BtnUpdateUser.ImageSize = new Size(32, 32);
-            BtnUpdateUser.Location = new Point(128, 27);
-            BtnUpdateUser.Name = "BtnUpdateUser";
-            BtnUpdateUser.Size = new Size(102, 50);
-            BtnUpdateUser.TabIndex = 18;
-            BtnUpdateUser.Click += BtnUpdateUser_Click;
-            // 
-            // BtnSaveUser
-            // 
-            BtnSaveUser.BorderRadius = 14;
-            BtnSaveUser.BorderThickness = 2;
-            BtnSaveUser.FillColor = Color.FromArgb(5, 21, 48);
-            BtnSaveUser.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            BtnSaveUser.ForeColor = Color.White;
-            BtnSaveUser.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
-            BtnSaveUser.HoverState.FillColor = Color.White;
-            BtnSaveUser.HoverState.Image = Properties.Resources.save_dark;
-            BtnSaveUser.Image = Properties.Resources.save_light;
-            BtnSaveUser.ImageSize = new Size(32, 32);
-            BtnSaveUser.Location = new Point(12, 27);
-            BtnSaveUser.Name = "BtnSaveUser";
-            BtnSaveUser.Size = new Size(102, 50);
-            BtnSaveUser.TabIndex = 17;
-            BtnSaveUser.Click += BtnSaveUser_Click;
-            // 
-            // panelUtilisateursHeader
-            // 
-            panelUtilisateursHeader.BackColor = Color.FromArgb(5, 21, 48);
-            panelUtilisateursHeader.Controls.Add(lblUtilisateursTitle);
-            panelUtilisateursHeader.Dock = DockStyle.Top;
-            panelUtilisateursHeader.Location = new Point(0, 0);
-            panelUtilisateursHeader.Name = "panelUtilisateursHeader";
-            panelUtilisateursHeader.Size = new Size(1573, 60);
-            panelUtilisateursHeader.TabIndex = 1;
-            // 
-            // lblUtilisateursTitle
-            // 
-            lblUtilisateursTitle.AutoSize = true;
-            lblUtilisateursTitle.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            lblUtilisateursTitle.ForeColor = Color.White;
-            lblUtilisateursTitle.Location = new Point(10, 11);
-            lblUtilisateursTitle.Name = "lblUtilisateursTitle";
-            lblUtilisateursTitle.Size = new Size(320, 37);
-            lblUtilisateursTitle.TabIndex = 0;
-            lblUtilisateursTitle.Text = "Gestion des Utilisateurs";
-            // 
-            // panelUtilisateursContainer
-            // 
-            panelUtilisateursContainer.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panelUtilisateursContainer.BackColor = Color.White;
-            panelUtilisateursContainer.BorderColor = Color.FromArgb(5, 21, 48);
-            panelUtilisateursContainer.BorderRadius = 14;
-            panelUtilisateursContainer.BorderThickness = 2;
-            panelUtilisateursContainer.Controls.Add(label1);
-            panelUtilisateursContainer.Controls.Add(label40);
-            panelUtilisateursContainer.Controls.Add(TxtIdUser);
-            panelUtilisateursContainer.Controls.Add(lblNomUser);
-            panelUtilisateursContainer.Controls.Add(txtNom);
-            panelUtilisateursContainer.Controls.Add(lblPostNomUser);
-            panelUtilisateursContainer.Controls.Add(txtPostNom);
-            panelUtilisateursContainer.Controls.Add(lblPrenomUser);
-            panelUtilisateursContainer.Controls.Add(txtPrenom);
-            panelUtilisateursContainer.Controls.Add(cmbRole);
-            panelUtilisateursContainer.Controls.Add(cmbSexe);
-            panelUtilisateursContainer.Controls.Add(lblRoleUser);
-            panelUtilisateursContainer.Controls.Add(lblUsernameUser);
-            panelUtilisateursContainer.Controls.Add(PictureBoxProfilUser);
-            panelUtilisateursContainer.Controls.Add(btnLoadPicUser);
-            panelUtilisateursContainer.Controls.Add(btnCapturePicUser);
-            panelUtilisateursContainer.Controls.Add(txtTelephone);
-            panelUtilisateursContainer.Controls.Add(lblTelephoneUser);
-            panelUtilisateursContainer.Controls.Add(lblPasswordUser);
-            panelUtilisateursContainer.Controls.Add(txtPassword);
-            panelUtilisateursContainer.Controls.Add(txtUsername);
-            panelUtilisateursContainer.Location = new Point(10, 533);
-            panelUtilisateursContainer.Name = "panelUtilisateursContainer";
-            panelUtilisateursContainer.Padding = new Padding(20);
-            panelUtilisateursContainer.Size = new Size(1188, 182);
-            panelUtilisateursContainer.TabIndex = 0;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            label1.Location = new Point(497, 105);
-            label1.Name = "label1";
-            label1.Size = new Size(41, 20);
-            label1.TabIndex = 18;
-            label1.Text = "Sexe";
-            // 
-            // label40
-            // 
-            label40.AutoSize = true;
-            label40.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            label40.Location = new Point(18, 19);
-            label40.Name = "label40";
-            label40.Size = new Size(59, 20);
-            label40.TabIndex = 0;
-            label40.Text = "Id User";
-            // 
-            // TxtIdUser
-            // 
-            TxtIdUser.BorderRadius = 14;
-            TxtIdUser.DefaultText = "";
-            TxtIdUser.Font = new Font("Segoe UI", 9F);
-            TxtIdUser.Location = new Point(23, 47);
-            TxtIdUser.Margin = new Padding(3, 4, 3, 4);
-            TxtIdUser.Name = "TxtIdUser";
-            TxtIdUser.PasswordChar = '\0';
-            TxtIdUser.PlaceholderText = "IdUser";
-            TxtIdUser.ReadOnly = true;
-            TxtIdUser.SelectedText = "";
-            TxtIdUser.Size = new Size(217, 36);
-            TxtIdUser.TabIndex = 1;
-            TxtIdUser.Enter += TxtIdUser_Enter;
-            // 
-            // lblNomUser
-            // 
-            lblNomUser.AutoSize = true;
-            lblNomUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblNomUser.Location = new Point(258, 19);
-            lblNomUser.Name = "lblNomUser";
-            lblNomUser.Size = new Size(48, 20);
-            lblNomUser.TabIndex = 0;
-            lblNomUser.Text = "Nom:";
-            // 
-            // txtNom
-            // 
-            txtNom.BorderRadius = 14;
-            txtNom.DefaultText = "";
-            txtNom.Font = new Font("Segoe UI", 9F);
-            txtNom.Location = new Point(258, 47);
-            txtNom.Margin = new Padding(3, 4, 3, 4);
-            txtNom.Name = "txtNom";
-            txtNom.PasswordChar = '\0';
-            txtNom.PlaceholderText = "Nom de famille";
-            txtNom.SelectedText = "";
-            txtNom.Size = new Size(217, 36);
-            txtNom.TabIndex = 1;
-            txtNom.Enter += TxtIdUser_Enter;
-            // 
-            // lblPostNomUser
-            // 
-            lblPostNomUser.AutoSize = true;
-            lblPostNomUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblPostNomUser.Location = new Point(497, 19);
-            lblPostNomUser.Name = "lblPostNomUser";
-            lblPostNomUser.Size = new Size(81, 20);
-            lblPostNomUser.TabIndex = 2;
-            lblPostNomUser.Text = "Post-nom:";
-            // 
-            // txtPostNom
-            // 
-            txtPostNom.BorderRadius = 14;
-            txtPostNom.DefaultText = "";
-            txtPostNom.Font = new Font("Segoe UI", 9F);
-            txtPostNom.Location = new Point(497, 47);
-            txtPostNom.Margin = new Padding(3, 4, 3, 4);
-            txtPostNom.Name = "txtPostNom";
-            txtPostNom.PasswordChar = '\0';
-            txtPostNom.PlaceholderText = "Post-nom";
-            txtPostNom.SelectedText = "";
-            txtPostNom.Size = new Size(217, 36);
-            txtPostNom.TabIndex = 3;
-            // 
-            // lblPrenomUser
-            // 
-            lblPrenomUser.AutoSize = true;
-            lblPrenomUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblPrenomUser.Location = new Point(731, 19);
-            lblPrenomUser.Name = "lblPrenomUser";
-            lblPrenomUser.Size = new Size(68, 20);
-            lblPrenomUser.TabIndex = 4;
-            lblPrenomUser.Text = "Prénom:";
-            // 
-            // txtPrenom
-            // 
-            txtPrenom.BorderRadius = 14;
-            txtPrenom.DefaultText = "";
-            txtPrenom.Font = new Font("Segoe UI", 9F);
-            txtPrenom.Location = new Point(731, 47);
-            txtPrenom.Margin = new Padding(3, 4, 3, 4);
-            txtPrenom.Name = "txtPrenom";
-            txtPrenom.PasswordChar = '\0';
-            txtPrenom.PlaceholderText = "Prénom";
-            txtPrenom.SelectedText = "";
-            txtPrenom.Size = new Size(217, 36);
-            txtPrenom.TabIndex = 5;
-            // 
-            // cmbRole
-            // 
-            cmbRole.BackColor = Color.Transparent;
-            cmbRole.BorderRadius = 14;
-            cmbRole.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbRole.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbRole.FocusedColor = Color.Empty;
-            cmbRole.Font = new Font("Segoe UI", 10F);
-            cmbRole.ForeColor = Color.FromArgb(68, 88, 112);
-            cmbRole.ItemHeight = 30;
-            cmbRole.Items.AddRange(new object[] { "Super Administrateur", "Administrateur", "Directeur", "Enseignant", "Comptable", "Secrétaire" });
-            cmbRole.Location = new Point(731, 139);
-            cmbRole.Name = "cmbRole";
-            cmbRole.Size = new Size(217, 36);
-            cmbRole.TabIndex = 15;
-            // 
-            // cmbSexe
-            // 
-            cmbSexe.BackColor = Color.Transparent;
-            cmbSexe.BorderRadius = 14;
-            cmbSexe.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbSexe.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbSexe.FocusedColor = Color.Empty;
-            cmbSexe.Font = new Font("Segoe UI", 10F);
-            cmbSexe.ForeColor = Color.FromArgb(68, 88, 112);
-            cmbSexe.ItemHeight = 30;
-            cmbSexe.Items.AddRange(new object[] { "M", "F" });
-            cmbSexe.Location = new Point(497, 139);
-            cmbSexe.Name = "cmbSexe";
-            cmbSexe.Size = new Size(217, 36);
-            cmbSexe.TabIndex = 7;
-            // 
-            // lblRoleUser
-            // 
-            lblRoleUser.AutoSize = true;
-            lblRoleUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblRoleUser.Location = new Point(731, 105);
-            lblRoleUser.Name = "lblRoleUser";
-            lblRoleUser.Size = new Size(44, 20);
-            lblRoleUser.TabIndex = 14;
-            lblRoleUser.Text = "Rôle:";
-            // 
-            // lblUsernameUser
-            // 
-            lblUsernameUser.AutoSize = true;
-            lblUsernameUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblUsernameUser.Location = new Point(23, 105);
-            lblUsernameUser.Name = "lblUsernameUser";
-            lblUsernameUser.Size = new Size(137, 20);
-            lblUsernameUser.TabIndex = 8;
-            lblUsernameUser.Text = "Nom d'utilisateur:";
-            // 
-            // txtTelephone
-            // 
-            txtTelephone.BorderRadius = 14;
-            txtTelephone.DefaultText = "";
-            txtTelephone.Font = new Font("Segoe UI", 9F);
-            txtTelephone.Location = new Point(961, 47);
-            txtTelephone.Margin = new Padding(3, 4, 3, 4);
-            txtTelephone.Name = "txtTelephone";
-            txtTelephone.PasswordChar = '\0';
-            txtTelephone.PlaceholderText = "Numéro de téléphone";
-            txtTelephone.SelectedText = "";
-            txtTelephone.Size = new Size(217, 36);
-            txtTelephone.TabIndex = 13;
-            // 
-            // txtUsername
-            // 
-            txtUsername.BorderRadius = 14;
-            txtUsername.DefaultText = "";
-            txtUsername.Font = new Font("Segoe UI", 9F);
-            txtUsername.Location = new Point(23, 139);
-            txtUsername.Margin = new Padding(3, 4, 3, 4);
-            txtUsername.Name = "txtUsername";
-            txtUsername.PasswordChar = '\0';
-            txtUsername.PlaceholderText = "Nom d'utilisateur unique";
-            txtUsername.SelectedText = "";
-            txtUsername.Size = new Size(217, 36);
-            txtUsername.TabIndex = 9;
-            txtUsername.Enter += TxtIdUser_Enter;
-            // 
-            // lblTelephoneUser
-            // 
-            lblTelephoneUser.AutoSize = true;
-            lblTelephoneUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblTelephoneUser.Location = new Point(961, 19);
-            lblTelephoneUser.Name = "lblTelephoneUser";
-            lblTelephoneUser.Size = new Size(85, 20);
-            lblTelephoneUser.TabIndex = 12;
-            lblTelephoneUser.Text = "Téléphone:";
-            // 
-            // lblPasswordUser
-            // 
-            lblPasswordUser.AutoSize = true;
-            lblPasswordUser.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblPasswordUser.Location = new Point(258, 105);
-            lblPasswordUser.Name = "lblPasswordUser";
-            lblPasswordUser.Size = new Size(106, 20);
-            lblPasswordUser.TabIndex = 10;
-            lblPasswordUser.Text = "Mot de passe:";
-            // 
-            // txtPassword
-            // 
-            txtPassword.BorderRadius = 14;
-            txtPassword.DefaultText = "";
-            txtPassword.Font = new Font("Segoe UI", 9F);
-            txtPassword.Location = new Point(258, 139);
-            txtPassword.Margin = new Padding(3, 4, 3, 4);
-            txtPassword.Name = "txtPassword";
-            txtPassword.PasswordChar = '●';
-            txtPassword.PlaceholderText = "Mot de passe";
-            txtPassword.SelectedText = "";
-            txtPassword.Size = new Size(217, 36);
-            txtPassword.TabIndex = 11;
-            // 
-            // panelNavAccueil
-            // 
-            panelNavAccueil.BackColor = Color.White;
-            panelNavAccueil.Controls.Add(panelTitulaires);
-            panelNavAccueil.Controls.Add(panelStatistiques);
-            panelNavAccueil.Controls.Add(lblDashboardTitle);
-            panelNavAccueil.Dock = DockStyle.Fill;
-            panelNavAccueil.Location = new Point(0, 0);
-            panelNavAccueil.Name = "panelNavAccueil";
-            panelNavAccueil.Size = new Size(1573, 726);
-            panelNavAccueil.TabIndex = 0;
-            panelNavAccueil.Visible = false;
-            // 
-            // panelTitulaires
-            // 
-            panelTitulaires.Controls.Add(lblTitulaires);
-            panelTitulaires.Controls.Add(dataGridViewAccueil2);
-            panelTitulaires.Location = new Point(18, 372);
-            panelTitulaires.Name = "panelTitulaires";
-            panelTitulaires.Size = new Size(750, 300);
-            panelTitulaires.TabIndex = 2;
-            // 
-            // lblTitulaires
-            // 
-            lblTitulaires.Location = new Point(15, 15);
-            lblTitulaires.Name = "lblTitulaires";
-            lblTitulaires.Size = new Size(400, 25);
-            lblTitulaires.TabIndex = 0;
-            lblTitulaires.Text = "Informations des Titulaires par Promotion";
-            // 
-            // dataGridViewAccueil2
-            // 
-            dataGridViewAccueil2.ColumnHeadersHeight = 29;
-            dataGridViewAccueil2.Columns.AddRange(new DataGridViewColumn[] { colSection2, colOption2Accueil, colPromotion2Accueil, colTitulaireAccueil, colTotal2Accueil });
-            dataGridViewAccueil2.Location = new Point(15, 50);
-            dataGridViewAccueil2.Name = "dataGridViewAccueil2";
-            dataGridViewAccueil2.RowHeadersWidth = 51;
-            dataGridViewAccueil2.Size = new Size(720, 235);
-            dataGridViewAccueil2.TabIndex = 1;
-            // 
-            // colSection2
-            // 
-            colSection2.DataPropertyName = "Section";
-            colSection2.HeaderText = "Section";
-            colSection2.MinimumWidth = 6;
-            colSection2.Name = "colSection2";
-            colSection2.Width = 140;
-            // 
-            // colOption2Accueil
-            // 
-            colOption2Accueil.DataPropertyName = "Option";
-            colOption2Accueil.HeaderText = "Option";
-            colOption2Accueil.MinimumWidth = 6;
-            colOption2Accueil.Name = "colOption2Accueil";
-            colOption2Accueil.Width = 140;
-            // 
-            // colPromotion2Accueil
-            // 
-            colPromotion2Accueil.DataPropertyName = "Promotion";
-            colPromotion2Accueil.HeaderText = "Promotion";
-            colPromotion2Accueil.MinimumWidth = 6;
-            colPromotion2Accueil.Name = "colPromotion2Accueil";
-            colPromotion2Accueil.Width = 140;
-            // 
-            // colTitulaireAccueil
-            // 
-            colTitulaireAccueil.DataPropertyName = "NomTitulaire";
-            colTitulaireAccueil.HeaderText = "Nom Titulaire";
-            colTitulaireAccueil.MinimumWidth = 6;
-            colTitulaireAccueil.Name = "colTitulaireAccueil";
-            colTitulaireAccueil.Width = 200;
-            // 
-            // colTotal2Accueil
-            // 
-            colTotal2Accueil.DataPropertyName = "TotalNbreUtilisateurs";
-            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle10.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            colTotal2Accueil.DefaultCellStyle = dataGridViewCellStyle10;
-            colTotal2Accueil.HeaderText = "Total Nbre Élèves";
-            colTotal2Accueil.MinimumWidth = 6;
-            colTotal2Accueil.Name = "colTotal2Accueil";
-            colTotal2Accueil.Width = 125;
-            // 
-            // panelStatistiques
-            // 
-            panelStatistiques.Controls.Add(lblStatistiquesUtilisateurs);
-            panelStatistiques.Controls.Add(dataGridViewAccueil1);
-            panelStatistiques.Location = new Point(18, 48);
-            panelStatistiques.Name = "panelStatistiques";
-            panelStatistiques.Size = new Size(750, 300);
-            panelStatistiques.TabIndex = 1;
-            // 
-            // lblStatistiquesUtilisateurs
-            // 
-            lblStatistiquesUtilisateurs.Location = new Point(15, 15);
-            lblStatistiquesUtilisateurs.Name = "lblStatistiquesUtilisateurs";
-            lblStatistiquesUtilisateurs.Size = new Size(500, 25);
-            lblStatistiquesUtilisateurs.TabIndex = 0;
-            lblStatistiquesUtilisateurs.Text = "Statistiques des Élèves par Section, Option et Promotion";
-            // 
-            // dataGridViewAccueil1
-            // 
-            dataGridViewAccueil1.ColumnHeadersHeight = 29;
-            dataGridViewAccueil1.Columns.AddRange(new DataGridViewColumn[] { colSection1, colOption1, colPromotion1, colGarcons, colFilles, colTotal1 });
-            dataGridViewAccueil1.Location = new Point(15, 50);
-            dataGridViewAccueil1.Name = "dataGridViewAccueil1";
-            dataGridViewAccueil1.RowHeadersWidth = 51;
-            dataGridViewAccueil1.Size = new Size(720, 235);
-            dataGridViewAccueil1.TabIndex = 1;
-            // 
-            // colSection1
-            // 
-            colSection1.DataPropertyName = "Section";
-            colSection1.HeaderText = "Section";
-            colSection1.MinimumWidth = 6;
-            colSection1.Name = "colSection1";
-            colSection1.Width = 120;
-            // 
-            // colOption1
-            // 
-            colOption1.DataPropertyName = "Option";
-            colOption1.HeaderText = "Option";
-            colOption1.MinimumWidth = 6;
-            colOption1.Name = "colOption1";
-            colOption1.Width = 120;
-            // 
-            // colPromotion1
-            // 
-            colPromotion1.DataPropertyName = "Promotion";
-            colPromotion1.HeaderText = "Promotion";
-            colPromotion1.MinimumWidth = 6;
-            colPromotion1.Name = "colPromotion1";
-            colPromotion1.Width = 120;
-            // 
-            // colGarcons
-            // 
-            colGarcons.DataPropertyName = "NbreEleveGarcons";
-            dataGridViewCellStyle11.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            colGarcons.DefaultCellStyle = dataGridViewCellStyle11;
-            colGarcons.HeaderText = "Nbre Élèves Garçons";
-            colGarcons.MinimumWidth = 6;
-            colGarcons.Name = "colGarcons";
-            colGarcons.Width = 125;
-            // 
-            // colFilles
-            // 
-            colFilles.DataPropertyName = "NbreUtilisateursFilles";
-            dataGridViewCellStyle12.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            colFilles.DefaultCellStyle = dataGridViewCellStyle12;
-            colFilles.HeaderText = "Nbre Élèves Filles";
-            colFilles.MinimumWidth = 6;
-            colFilles.Name = "colFilles";
-            colFilles.Width = 125;
-            // 
-            // colTotal1
-            // 
-            colTotal1.DataPropertyName = "TotalNbreUtilisateurs";
-            dataGridViewCellStyle13.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle13.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            colTotal1.DefaultCellStyle = dataGridViewCellStyle13;
-            colTotal1.HeaderText = "Total Nbre Élèves";
-            colTotal1.MinimumWidth = 6;
-            colTotal1.Name = "colTotal1";
-            colTotal1.Width = 110;
-            // 
-            // lblDashboardTitle
-            // 
-            lblDashboardTitle.Location = new Point(42, 15);
-            lblDashboardTitle.Name = "lblDashboardTitle";
-            lblDashboardTitle.Size = new Size(600, 30);
-            lblDashboardTitle.TabIndex = 0;
-            lblDashboardTitle.Text = "Tableau de Bord - Statistiques de l'École";
             // 
             // panelNavBar
             // 
@@ -2752,6 +2939,19 @@
             statusStrip1.PerformLayout();
             panelMain.ResumeLayout(false);
             panelNav.ResumeLayout(false);
+            panelNavUtilisateurs.ResumeLayout(false);
+            panelUtilisateursList.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)DgvUser).EndInit();
+            panelUtilisateursForm.ResumeLayout(false);
+            panelUtilisateursHeader.ResumeLayout(false);
+            panelUtilisateursHeader.PerformLayout();
+            panelUtilisateursContainer.ResumeLayout(false);
+            panelUtilisateursContainer.PerformLayout();
+            panelNavAccueil.ResumeLayout(false);
+            panelTitulaires.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridViewAccueil2).EndInit();
+            panelStatistiques.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dataGridViewAccueil1).EndInit();
             panelNavSection_Cours.ResumeLayout(false);
             panelCrudCours.ResumeLayout(false);
             siticonePanel4.ResumeLayout(false);
@@ -2782,19 +2982,6 @@
             panel4.PerformLayout();
             siticonePanel10.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)DgvOption).EndInit();
-            panelNavUtilisateurs.ResumeLayout(false);
-            panelUtilisateursList.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)DgvUser).EndInit();
-            panelUtilisateursForm.ResumeLayout(false);
-            panelUtilisateursHeader.ResumeLayout(false);
-            panelUtilisateursHeader.PerformLayout();
-            panelUtilisateursContainer.ResumeLayout(false);
-            panelUtilisateursContainer.PerformLayout();
-            panelNavAccueil.ResumeLayout(false);
-            panelTitulaires.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridViewAccueil2).EndInit();
-            panelStatistiques.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dataGridViewAccueil1).EndInit();
             panelNavBar.ResumeLayout(false);
             panelNavBar.PerformLayout();
             ResumeLayout(false);
@@ -2997,5 +3184,42 @@
         private Label label36;
         private Label label39;
         private Siticone.Desktop.UI.WinForms.SiticoneComboBox CmbSectionOption;
+        private DataGridViewTextBoxColumn colIdUser;
+        private DataGridViewTextBoxColumn colNomUser;
+        private DataGridViewTextBoxColumn colPostNomUser;
+        private DataGridViewTextBoxColumn colPrenomUser;
+        private DataGridViewTextBoxColumn colSexeUser;
+        private DataGridViewTextBoxColumn colUsernameUser;
+        private DataGridViewTextBoxColumn colTelephoneUser;
+        private DataGridViewTextBoxColumn colRoleUser;
+        private DataGridViewTextBoxColumn colProfilUser;
+        private DataGridViewTextBoxColumn colDateCreationUser;
+        private DataGridViewTextBoxColumn colCodeCours;
+        private DataGridViewTextBoxColumn colIntituleCours;
+        private DataGridViewTextBoxColumn colDescriptionCours;
+        private DataGridViewTextBoxColumn colDateCreationCours;
+        private DataGridViewTextBoxColumn colCodeSection;
+        private DataGridViewTextBoxColumn colIntituleSection;
+        private DataGridViewTextBoxColumn colDescriptionSection;
+        private DataGridViewTextBoxColumn colDateCreationSection;
+        private DataGridViewTextBoxColumn colCodePromotion;
+        private DataGridViewTextBoxColumn colIntitulePromotion;
+        private DataGridViewTextBoxColumn colDateCreationPromotion;
+        private DataGridViewTextBoxColumn colCodeOption;
+        private DataGridViewTextBoxColumn colIntituleOption;
+        private DataGridViewTextBoxColumn colDateCreationOption;
+        private DataGridViewTextBoxColumn ColCod_Sect;
+        private DataGridViewTextBoxColumn ColDescriptSect;
+        // Colonnes pour DgvCours
+        private DataGridViewTextBoxColumn ColCodeCours;
+        private DataGridViewTextBoxColumn ColIntituleCours;
+        private DataGridViewTextBoxColumn ColIdPromotion;
+        private DataGridViewTextBoxColumn ColDescriptionPromotion;
+        private DataGridViewTextBoxColumn ColFkOptPromotion;
+        private DataGridViewTextBoxColumn ColDescripOptPromotion;
+        private DataGridViewTextBoxColumn ColIdOption;
+        private DataGridViewTextBoxColumn ColDescriptOption;
+        private DataGridViewTextBoxColumn ColFkSectOption;
+        private DataGridViewTextBoxColumn ColDescripSectOption;
     }
 }

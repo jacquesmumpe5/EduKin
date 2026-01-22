@@ -3,6 +3,7 @@ using Dapper;
 using EduKin.DataSets;
 using EduKin.Csharp.Admins;
 using EduKin.Inits;
+using System.Threading.Tasks;
 
 namespace EduKin.Csharp.Admins
 {
@@ -12,10 +13,12 @@ namespace EduKin.Csharp.Admins
     public class Eleves : BaseService
     {
         private readonly Administrations _admin;
+        private readonly PictureManager _pictureManager;
 
         public Eleves()
         {
             _admin = new Administrations();
+            _pictureManager = new PictureManager();
         }
 
         #region CRUD Élèves avec Isolation par École
@@ -39,7 +42,7 @@ namespace EduKin.Csharp.Admins
                     { "sexe", sexe },
                     { "nom_tuteur", nomTuteur },
                     { "lieu_naiss", lieuNaiss },
-                    { "FkAvenue", fkAvenue },
+                    { "fk_avenue", fkAvenue },
                     { "numero", numero },
                     { "date_naiss", dateNaiss },
                     { "tel_tuteur", telTuteur },
@@ -60,13 +63,21 @@ namespace EduKin.Csharp.Admins
                     var matricule = GenerateUniqueMatricule(conn, userIndex);
                     eleveData["matricule"] = matricule;
 
+                    // Gérer la photo : si c'est un chemin local, la copier vers l'emplacement sécurisé
+                    string? photoPath = profil;
+                    if (!string.IsNullOrEmpty(profil) && !profil.StartsWith("http"))
+                    {
+                        photoPath = CopyPhotoToSecureLocation(profil, matricule);
+                    }
+                    eleveData["profil"] = photoPath;
+
                     // Ajouter les timestamps
                     AddTimestamps(eleveData, isUpdate: false);
 
                     // Adapter la requête selon le type de base de données
                     var insertQuery = @"INSERT INTO t_eleves 
-                        (matricule, nom, postnom, prenom, sexe, date_naiss, lieu_naiss, nom_tuteur, tel_tuteur, FkAvenue, numero, ecole_prov, profil, created_at, updated_at)
-                        VALUES (@matricule, @nom, @postnom, @prenom, @sexe, @date_naiss, @lieu_naiss, @nom_tuteur, @tel_tuteur, @FkAvenue, @numero, @ecole_prov, @profil, @created_at, @updated_at)";
+                        (matricule, nom, postnom, prenom, sexe, date_naiss, lieu_naiss, nom_tuteur, tel_tuteur, fk_avenue, numero, ecole_prov, profil, created_at, updated_at)
+                        VALUES (@matricule, @nom, @postnom, @prenom, @sexe, @date_naiss, @lieu_naiss, @nom_tuteur, @tel_tuteur, @fk_avenue, @numero, @ecole_prov, @profil, @created_at, @updated_at)";
 
                     var adaptedQuery = SqlCompatibilityAdapter.GetAdaptedQuery(insertQuery, _connexion.IsOnline);
                     var result = conn.Execute(adaptedQuery, eleveData);
@@ -146,7 +157,7 @@ namespace EduKin.Csharp.Admins
             return ExecuteWithErrorHandling(() =>
             {
                 var query = @"SELECT e.*, 
-                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.FkAvenue) as avenue_nom
+                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.fk_avenue) as avenue_nom
                               FROM t_eleves e 
                               WHERE e.matricule = @Matricule";
                 
@@ -164,19 +175,18 @@ namespace EduKin.Csharp.Admins
             {
                 var query = @"SELECT DISTINCT e.*, 
                               a.annee_scol,
-                              a.cod_promo,
                               a.indice_promo,
                               p.description as promotion_nom,
                               o.description as option_nom,
                               s.description as section_nom,
-                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.FkAvenue) as avenue_nom
+                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.fk_avenue) as avenue_nom
                               FROM t_eleves e 
-                              INNER JOIN t_affectation a ON e.matricule = a.matricule
-                              INNER JOIN t_promotions p ON a.cod_promo = p.cod_promo
-                              INNER JOIN t_options o ON p.cod_opt = o.cod_opt
-                              INNER JOIN t_sections s ON o.cod_sect = s.cod_sect
-                              INNER JOIN t_affect_sect afs ON s.cod_sect = afs.cod_sect
-                              WHERE afs.id_ecole = @IdEcole
+                              INNER JOIN t_affectation a ON e.matricule = a.fk_matricule_eleve
+                              INNER JOIN t_promotions p ON a.fk_promotion = p.id_promotion
+                              INNER JOIN t_options o ON p.fk_option = o.id_option
+                              INNER JOIN t_sections s ON o.fk_section = s.id_section
+                              INNER JOIN t_affect_sect afs ON s.id_section = afs.fk_section
+                              WHERE afs.fk_ecole = @IdEcole
                               ORDER BY e.nom, e.prenom";
                 
                 using (var conn = GetSecureConnection())
@@ -194,7 +204,7 @@ namespace EduKin.Csharp.Admins
             return ExecuteWithErrorHandling(() =>
             {
                 var query = @"SELECT e.*, 
-                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.FkAvenue) as avenue_nom
+                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.fk_avenue) as avenue_nom
                               FROM t_eleves e 
                               WHERE e.nom LIKE @Search OR e.prenom LIKE @Search 
                               OR e.matricule LIKE @Search OR e.nom_tuteur LIKE @Search
@@ -212,7 +222,7 @@ namespace EduKin.Csharp.Admins
             return ExecuteWithErrorHandling(() =>
             {
                 var query = @"SELECT e.*, 
-                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.FkAvenue) as avenue_nom
+                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.fk_avenue) as avenue_nom
                               FROM t_eleves e 
                               WHERE e.sexe = @Sexe 
                               ORDER BY e.nom";
@@ -230,7 +240,7 @@ namespace EduKin.Csharp.Admins
             {
                 var query = @"SELECT e.*, 
                               (YEAR(CURDATE()) - YEAR(e.date_naiss)) as age,
-                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.FkAvenue) as avenue_nom
+                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.fk_avenue) as avenue_nom
                               FROM t_eleves e 
                               WHERE (YEAR(CURDATE()) - YEAR(e.date_naiss)) BETWEEN @MinAge AND @MaxAge
                               ORDER BY e.date_naiss DESC";
@@ -257,12 +267,12 @@ namespace EduKin.Csharp.Admins
                     sexe = sexe,
                     date_naiss = dateNaiss,
                     lieu_naiss = lieuNaiss,
-                    FkAvenue = fkAvenue,
+                    fk_avenue = fkAvenue,
                     nom_tuteur = nomTuteur,
                     tel_tuteur = telTuteur,
                     ecole_prov = ecoleProv,
                     numero = numero,
-                    profil = profil
+                    profil = HandlePhotoUpdate(profil, matricule)
                 };
 
                 var result = UpdateWithIsolation("t_eleves", updateData, "matricule = @Matricule", new { Matricule = matricule });
@@ -280,6 +290,174 @@ namespace EduKin.Csharp.Admins
                 var result = DeleteWithIsolation("t_eleves", "matricule = @Matricule", new { Matricule = matricule });
                 return result > 0;
             }, "DeleteEleve");
+        }
+
+        #endregion
+
+        #region Gestion des Photos
+
+        /// <summary>
+        /// Copie une photo vers l'emplacement sécurisé
+        /// </summary>
+        /// <param name="localPath">Chemin local de l'image</param>
+        /// <param name="matricule">Matricule de l'élève pour le nommage</param>
+        /// <returns>Chemin sécurisé de l'image ou null</returns>
+        private string? CopyPhotoToSecureLocation(string localPath, string matricule)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(localPath) || !File.Exists(localPath))
+                {
+                    return null;
+                }
+
+                // Copier vers l'emplacement sécurisé avec le PictureManager
+                var securePath = _pictureManager.CopyToSecureLocation(localPath, matricule);
+                
+                if (!string.IsNullOrEmpty(securePath))
+                {
+                    LogOperation("COPY_PHOTO", $"Photo copiée pour {matricule}: {securePath}");
+                    
+                    // Supprimer le fichier original après la copie réussie
+                    try
+                    {
+                        File.Delete(localPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        LogOperation("DELETE_LOCAL_PHOTO", $"Impossible de supprimer le fichier local {localPath}: {ex.Message}");
+                    }
+                }
+                
+                return securePath;
+            }
+            catch (Exception ex)
+            {
+                LogOperation("COPY_PHOTO_ERROR", $"Erreur copie photo pour {matricule}: {ex.Message}");
+                return localPath; // Fallback vers le chemin local en cas d'erreur
+            }
+        }
+
+        /// <summary>
+        /// Gère la mise à jour de photo lors d'une modification
+        /// </summary>
+        /// <param name="newProfil">Nouveau chemin/URL de photo</param>
+        /// <param name="matricule">Matricule de l'élève</param>
+        /// <returns>Chemin final de la photo</returns>
+        private string? HandlePhotoUpdate(string? newProfil, string matricule)
+        {
+            try
+            {
+                // Récupérer le chemin actuel de la photo
+                var currentEleve = GetEleve(matricule);
+                var currentPhotoPath = currentEleve?.profil;
+
+                // Si la photo n'a pas changé, retourner le chemin actuel
+                if (string.IsNullOrEmpty(newProfil) || newProfil == currentPhotoPath)
+                {
+                    return currentPhotoPath;
+                }
+
+                // Si nouvelle photo est un chemin local, la copier vers l'emplacement sécurisé
+                if (!string.IsNullOrEmpty(newProfil) && !newProfil.StartsWith("http"))
+                {
+                    var newPhotoPath = CopyPhotoToSecureLocation(newProfil, matricule);
+                    
+                    // Supprimer l'ancienne photo si elle existe et est différente
+                    if (!string.IsNullOrEmpty(currentPhotoPath) && currentPhotoPath != newPhotoPath && File.Exists(currentPhotoPath))
+                    {
+                        _pictureManager.DeletePicture(currentPhotoPath);
+                    }
+                    
+                    return newPhotoPath;
+                }
+
+                // Si nouvelle photo est une URL (ancien système), la retourner directement
+                // mais avec un avertissement
+                if (!string.IsNullOrEmpty(newProfil) && newProfil.StartsWith("http"))
+                {
+                    LogOperation("LEGACY_PHOTO_URL", $"Photo URL détectée pour {matricule}: {newProfil}");
+                    return newProfil;
+                }
+
+                return newProfil;
+            }
+            catch (Exception ex)
+            {
+                LogOperation("PHOTO_UPDATE_ERROR", $"Erreur mise à jour photo pour {matricule}: {ex.Message}");
+                return newProfil; // Fallback
+            }
+        }
+
+        /// <summary>
+        /// Charge une photo depuis un chemin local
+        /// </summary>
+        /// <param name="photoPath">Chemin de la photo</param>
+        /// <returns>Image chargée ou null</returns>
+        public System.Drawing.Image? LoadPhoto(string photoPath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(photoPath))
+                {
+                    return null;
+                }
+
+                // Si c'est une URL (ancien système), ne pas charger
+                if (photoPath.StartsWith("http"))
+                {
+                    LogOperation("LEGACY_PHOTO_URL", $"Tentative de chargement d'URL photo ignorée: {photoPath}");
+                    return null;
+                }
+
+                // Charger depuis le chemin local
+                if (File.Exists(photoPath))
+                {
+                    return Image.FromFile(photoPath);
+                }
+                
+                return null;
+            }
+            catch (Exception ex)
+            {
+                LogOperation("LOAD_PHOTO_ERROR", $"Erreur chargement photo {photoPath}: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Supprime une photo du disque
+        /// </summary>
+        /// <param name="photoPath">Chemin de la photo à supprimer</param>
+        /// <returns>True si succès</returns>
+        public bool DeletePhoto(string photoPath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(photoPath))
+                {
+                    return false;
+                }
+
+                // Si c'est une URL (ancien système), ne pas supprimer
+                if (photoPath.StartsWith("http"))
+                {
+                    LogOperation("LEGACY_PHOTO_URL", $"Tentative de suppression d'URL photo ignorée: {photoPath}");
+                    return false;
+                }
+
+                var result = _pictureManager.DeletePicture(photoPath);
+                if (result)
+                {
+                    LogOperation("DELETE_PHOTO", $"Photo supprimée: {photoPath}");
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                LogOperation("DELETE_PHOTO_ERROR", $"Erreur suppression photo {photoPath}: {ex.Message}");
+                return false;
+            }
         }
 
         #endregion
@@ -356,8 +534,8 @@ namespace EduKin.Csharp.Admins
 
             using (var conn = GetSecureConnection())
             {
-                var query = "SELECT * FROM vue_avenue_hierarchie WHERE id_avenue = @IdAvenue";
-                var adresse = conn.QueryFirstOrDefault(query, new { IdAvenue = fkAvenue });
+                var query = "SELECT * FROM vue_avenue_hierarchie WHERE id_avenue = @fk_avenue";
+                var adresse = conn.QueryFirstOrDefault(query, new { fk_avenue = fkAvenue });
 
                 if (adresse == null)
                     return "Adresse non trouvée";
@@ -560,10 +738,10 @@ namespace EduKin.Csharp.Admins
             return ExecuteWithErrorHandling(() =>
             {
                 var query = @"SELECT e.*, a.indice_promo,
-                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.FkAvenue) as avenue_nom
+                              (SELECT IntituleEntite FROM t_entite_administrative WHERE IdEntite = e.fk_avenue) as avenue_nom
                               FROM t_eleves e 
-                              INNER JOIN t_affectation a ON e.matricule = a.matricule 
-                              WHERE a.cod_promo = @CodPromo AND a.annee_scol = @AnneeScol 
+                              INNER JOIN t_affectation a ON e.matricule = a.fk_matricule_eleve 
+                              WHERE a.fk_promotion = @CodPromo AND a.annee_scol = @AnneeScol 
                               ORDER BY e.nom, e.prenom";
                 
                 return QueryWithIsolation(query, new { CodPromo = codPromo, AnneeScol = anneeScol }, "e");
@@ -789,7 +967,7 @@ namespace EduKin.Csharp.Admins
 
                 // Élèves sans adresse
                 var missingAddress = await conn.ExecuteScalarAsync<int>(
-                    "SELECT COUNT(*) FROM t_eleves WHERE FkAvenue IS NULL OR FkAvenue = ''");
+                    "SELECT COUNT(*) FROM t_eleves WHERE fk_avenue IS NULL OR fk_avenue = ''");
                 if (missingAddress > 0)
                     issues.Add($"{missingAddress} élèves sans adresse");
 
@@ -901,7 +1079,7 @@ namespace EduKin.Csharp.Admins
                     AND prenom IS NOT NULL AND prenom != ''
                     AND date_naiss IS NOT NULL
                     AND nom_tuteur IS NOT NULL AND nom_tuteur != ''
-                    AND FkAvenue IS NOT NULL AND FkAvenue != ''");
+                    AND fk_avenue IS NOT NULL AND fk_avenue != ''");
             }
             catch
             {

@@ -20,20 +20,6 @@ namespace EduKin.Layouts
             panelMain = new Siticone.Desktop.UI.WinForms.SiticonePanel();
             btnToggleMode = new Siticone.Desktop.UI.WinForms.SiticoneButton();
             lblTitle = new Label();
-            panelSelection = new Siticone.Desktop.UI.WinForms.SiticonePanel();
-            btnCancel = new Siticone.Desktop.UI.WinForms.SiticoneButton();
-            btnSelectSchool = new Siticone.Desktop.UI.WinForms.SiticoneButton();
-            lblNoSchool = new Label();
-            lstEcoles = new ListView();
-            colEcole = new ColumnHeader();
-            colAvenue = new ColumnHeader();
-            colNumero = new ColumnHeader();
-            lblEcoles = new Label();
-            lstAvenues = new ListView();
-            colAvenueHierarchy = new ColumnHeader();
-            txtAvenue = new TextBox();
-            lblAvenue = new Label();
-            lblSelectionTitle = new Label();
             panelCreation = new Siticone.Desktop.UI.WinForms.SiticonePanel();
             siticoneButton1 = new Siticone.Desktop.UI.WinForms.SiticoneButton();
             btnCreateSchool = new Siticone.Desktop.UI.WinForms.SiticoneButton();
@@ -48,15 +34,31 @@ namespace EduKin.Layouts
             txtNewAvenue = new TextBox();
             lblNewAvenue = new Label();
             lblCreationTitle = new Label();
+            panelSelection = new Siticone.Desktop.UI.WinForms.SiticonePanel();
+            btnCancel = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            btnSelectSchool = new Siticone.Desktop.UI.WinForms.SiticoneButton();
+            lblNoSchool = new Label();
+            lstEcoles = new ListView();
+            colEcole = new ColumnHeader();
+            colAvenue = new ColumnHeader();
+            colNumero = new ColumnHeader();
+            lblEcoles = new Label();
+            lstAvenues = new ListView();
+            colAvenueHierarchy = new ColumnHeader();
+            txtAvenue = new TextBox();
+            lblAvenue = new Label();
+            lblSelectionTitle = new Label();
+            btnNewAdresse = new Siticone.Desktop.UI.WinForms.SiticoneButton();
             panelMain.SuspendLayout();
-            panelSelection.SuspendLayout();
             panelCreation.SuspendLayout();
+            panelSelection.SuspendLayout();
             SuspendLayout();
             // 
             // panelMain
             // 
             panelMain.BackColor = Color.Transparent;
             panelMain.BorderRadius = 15;
+            panelMain.Controls.Add(btnNewAdresse);
             panelMain.Controls.Add(btnToggleMode);
             panelMain.Controls.Add(lblTitle);
             panelMain.Controls.Add(panelCreation);
@@ -67,7 +69,7 @@ namespace EduKin.Layouts
             panelMain.ShadowDecoration.BorderRadius = 15;
             panelMain.ShadowDecoration.Depth = 20;
             panelMain.ShadowDecoration.Enabled = true;
-            panelMain.Size = new Size(740, 688);
+            panelMain.Size = new Size(740, 705);
             panelMain.TabIndex = 0;
             // 
             // btnToggleMode
@@ -94,160 +96,6 @@ namespace EduKin.Layouts
             lblTitle.Text = "Configuration de l'École";
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // panelSelection
-            // 
-            panelSelection.BackColor = Color.Transparent;
-            panelSelection.BorderColor = Color.FromArgb(213, 218, 223);
-            panelSelection.BorderRadius = 10;
-            panelSelection.BorderThickness = 1;
-            panelSelection.Controls.Add(btnCancel);
-            panelSelection.Controls.Add(btnSelectSchool);
-            panelSelection.Controls.Add(lblNoSchool);
-            panelSelection.Controls.Add(lstEcoles);
-            panelSelection.Controls.Add(lblEcoles);
-            panelSelection.Controls.Add(lstAvenues);
-            panelSelection.Controls.Add(txtAvenue);
-            panelSelection.Controls.Add(lblAvenue);
-            panelSelection.Controls.Add(lblSelectionTitle);
-            panelSelection.Location = new Point(20, 120);
-            panelSelection.Name = "panelSelection";
-            panelSelection.Size = new Size(700, 515);
-            panelSelection.TabIndex = 2;
-            // 
-            // btnCancel
-            // 
-            btnCancel.BorderRadius = 14;
-            btnCancel.BorderThickness = 2;
-            btnCancel.FillColor = Color.FromArgb(5, 21, 48);
-            btnCancel.Font = new Font("Segoe UI", 10F);
-            btnCancel.ForeColor = Color.White;
-            btnCancel.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
-            btnCancel.HoverState.FillColor = Color.White;
-            btnCancel.HoverState.Image = Properties.Resources.Ann_Dark;
-            btnCancel.Image = Properties.Resources.Ann_light;
-            btnCancel.ImageSize = new Size(32, 32);
-            btnCancel.Location = new Point(374, 449);
-            btnCancel.Name = "btnCancel";
-            btnCancel.Size = new Size(113, 50);
-            btnCancel.TabIndex = 4;
-            btnCancel.Click += btnCancel_Click;
-            // 
-            // btnSelectSchool
-            // 
-            btnSelectSchool.BorderRadius = 14;
-            btnSelectSchool.BorderThickness = 2;
-            btnSelectSchool.FillColor = Color.FromArgb(5, 21, 48);
-            btnSelectSchool.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-            btnSelectSchool.ForeColor = Color.White;
-            btnSelectSchool.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
-            btnSelectSchool.HoverState.FillColor = Color.White;
-            btnSelectSchool.HoverState.Image = Properties.Resources.save_dark;
-            btnSelectSchool.Image = Properties.Resources.save_light;
-            btnSelectSchool.ImageSize = new Size(32, 32);
-            btnSelectSchool.Location = new Point(194, 449);
-            btnSelectSchool.Name = "btnSelectSchool";
-            btnSelectSchool.Size = new Size(113, 50);
-            btnSelectSchool.TabIndex = 12;
-            btnSelectSchool.Click += btnSelectSchool_Click;
-            // 
-            // lblNoSchool
-            // 
-            lblNoSchool.Font = new Font("Segoe UI", 10F, FontStyle.Italic);
-            lblNoSchool.ForeColor = Color.FromArgb(255, 140, 0);
-            lblNoSchool.Location = new Point(20, 420);
-            lblNoSchool.Name = "lblNoSchool";
-            lblNoSchool.Size = new Size(660, 20);
-            lblNoSchool.TabIndex = 11;
-            lblNoSchool.Text = "Aucune école trouvée sur cette avenue. Cliquez sur \"Créer une nouvelle école\".";
-            lblNoSchool.TextAlign = ContentAlignment.MiddleCenter;
-            lblNoSchool.Visible = false;
-            // 
-            // lstEcoles
-            // 
-            lstEcoles.Columns.AddRange(new ColumnHeader[] { colEcole, colAvenue, colNumero });
-            lstEcoles.FullRowSelect = true;
-            lstEcoles.GridLines = true;
-            lstEcoles.Location = new Point(20, 260);
-            lstEcoles.MultiSelect = false;
-            lstEcoles.Name = "lstEcoles";
-            lstEcoles.Size = new Size(660, 150);
-            lstEcoles.TabIndex = 10;
-            lstEcoles.UseCompatibleStateImageBehavior = false;
-            lstEcoles.View = View.Details;
-            lstEcoles.SelectedIndexChanged += lstEcoles_SelectedIndexChanged;
-            // 
-            // colEcole
-            // 
-            colEcole.Text = "École";
-            colEcole.Width = 350;
-            // 
-            // colAvenue
-            // 
-            colAvenue.Text = "Avenue";
-            colAvenue.Width = 200;
-            // 
-            // colNumero
-            // 
-            colNumero.Text = "N°";
-            colNumero.Width = 80;
-            // 
-            // lblEcoles
-            // 
-            lblEcoles.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            lblEcoles.Location = new Point(20, 235);
-            lblEcoles.Name = "lblEcoles";
-            lblEcoles.Size = new Size(200, 20);
-            lblEcoles.TabIndex = 9;
-            lblEcoles.Text = "Écoles disponibles:";
-            // 
-            // lstAvenues
-            // 
-            lstAvenues.Columns.AddRange(new ColumnHeader[] { colAvenueHierarchy });
-            lstAvenues.FullRowSelect = true;
-            lstAvenues.GridLines = true;
-            lstAvenues.Location = new Point(20, 95);
-            lstAvenues.MultiSelect = false;
-            lstAvenues.Name = "lstAvenues";
-            lstAvenues.Size = new Size(660, 130);
-            lstAvenues.TabIndex = 3;
-            lstAvenues.UseCompatibleStateImageBehavior = false;
-            lstAvenues.View = View.Details;
-            lstAvenues.SelectedIndexChanged += lstAvenues_SelectedIndexChanged;
-            // 
-            // colAvenueHierarchy
-            // 
-            colAvenueHierarchy.Text = "Avenue → Quartier → Commune → Ville → Province";
-            colAvenueHierarchy.Width = 640;
-            // 
-            // txtAvenue
-            // 
-            txtAvenue.Font = new Font("Segoe UI", 10F);
-            txtAvenue.Location = new Point(130, 53);
-            txtAvenue.Name = "txtAvenue";
-            txtAvenue.PlaceholderText = "Tapez le nom de l'avenue...";
-            txtAvenue.Size = new Size(550, 30);
-            txtAvenue.TabIndex = 2;
-            txtAvenue.TextChanged += txtAvenue_TextChanged;
-            // 
-            // lblAvenue
-            // 
-            lblAvenue.Font = new Font("Segoe UI", 10F);
-            lblAvenue.Location = new Point(20, 56);
-            lblAvenue.Name = "lblAvenue";
-            lblAvenue.Size = new Size(100, 20);
-            lblAvenue.TabIndex = 1;
-            lblAvenue.Text = "Avenue:";
-            // 
-            // lblSelectionTitle
-            // 
-            lblSelectionTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            lblSelectionTitle.ForeColor = Color.FromArgb(33, 37, 41);
-            lblSelectionTitle.Location = new Point(20, 15);
-            lblSelectionTitle.Name = "lblSelectionTitle";
-            lblSelectionTitle.Size = new Size(660, 25);
-            lblSelectionTitle.TabIndex = 0;
-            lblSelectionTitle.Text = "Sélectionner une école existante";
-            // 
             // panelCreation
             // 
             panelCreation.BackColor = Color.Transparent;
@@ -268,7 +116,7 @@ namespace EduKin.Layouts
             panelCreation.Controls.Add(lblCreationTitle);
             panelCreation.Location = new Point(20, 120);
             panelCreation.Name = "panelCreation";
-            panelCreation.Size = new Size(700, 502);
+            panelCreation.Size = new Size(700, 515);
             panelCreation.TabIndex = 3;
             panelCreation.Visible = false;
             // 
@@ -433,12 +281,185 @@ namespace EduKin.Layouts
             lblCreationTitle.TabIndex = 0;
             lblCreationTitle.Text = "Créer une nouvelle école";
             // 
+            // panelSelection
+            // 
+            panelSelection.BackColor = Color.Transparent;
+            panelSelection.BorderColor = Color.FromArgb(213, 218, 223);
+            panelSelection.BorderRadius = 10;
+            panelSelection.BorderThickness = 1;
+            panelSelection.Controls.Add(btnCancel);
+            panelSelection.Controls.Add(btnSelectSchool);
+            panelSelection.Controls.Add(lblNoSchool);
+            panelSelection.Controls.Add(lstEcoles);
+            panelSelection.Controls.Add(lblEcoles);
+            panelSelection.Controls.Add(lstAvenues);
+            panelSelection.Controls.Add(txtAvenue);
+            panelSelection.Controls.Add(lblAvenue);
+            panelSelection.Controls.Add(lblSelectionTitle);
+            panelSelection.Location = new Point(20, 120);
+            panelSelection.Name = "panelSelection";
+            panelSelection.Size = new Size(700, 515);
+            panelSelection.TabIndex = 2;
+            // 
+            // btnCancel
+            // 
+            btnCancel.BorderRadius = 14;
+            btnCancel.BorderThickness = 2;
+            btnCancel.FillColor = Color.FromArgb(5, 21, 48);
+            btnCancel.Font = new Font("Segoe UI", 10F);
+            btnCancel.ForeColor = Color.White;
+            btnCancel.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
+            btnCancel.HoverState.FillColor = Color.White;
+            btnCancel.HoverState.Image = Properties.Resources.Ann_Dark;
+            btnCancel.Image = Properties.Resources.Ann_light;
+            btnCancel.ImageSize = new Size(32, 32);
+            btnCancel.Location = new Point(374, 449);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(113, 50);
+            btnCancel.TabIndex = 4;
+            btnCancel.Click += btnCancel_Click;
+            // 
+            // btnSelectSchool
+            // 
+            btnSelectSchool.BorderRadius = 14;
+            btnSelectSchool.BorderThickness = 2;
+            btnSelectSchool.FillColor = Color.FromArgb(5, 21, 48);
+            btnSelectSchool.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnSelectSchool.ForeColor = Color.White;
+            btnSelectSchool.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
+            btnSelectSchool.HoverState.FillColor = Color.White;
+            btnSelectSchool.HoverState.Image = Properties.Resources.save_dark;
+            btnSelectSchool.Image = Properties.Resources.save_light;
+            btnSelectSchool.ImageSize = new Size(32, 32);
+            btnSelectSchool.Location = new Point(194, 449);
+            btnSelectSchool.Name = "btnSelectSchool";
+            btnSelectSchool.Size = new Size(113, 50);
+            btnSelectSchool.TabIndex = 12;
+            btnSelectSchool.Click += btnSelectSchool_Click;
+            // 
+            // lblNoSchool
+            // 
+            lblNoSchool.Font = new Font("Segoe UI", 10F, FontStyle.Italic);
+            lblNoSchool.ForeColor = Color.FromArgb(255, 140, 0);
+            lblNoSchool.Location = new Point(20, 420);
+            lblNoSchool.Name = "lblNoSchool";
+            lblNoSchool.Size = new Size(660, 20);
+            lblNoSchool.TabIndex = 11;
+            lblNoSchool.Text = "Aucune école trouvée sur cette avenue. Cliquez sur \"Créer une nouvelle école\".";
+            lblNoSchool.TextAlign = ContentAlignment.MiddleCenter;
+            lblNoSchool.Visible = false;
+            // 
+            // lstEcoles
+            // 
+            lstEcoles.Columns.AddRange(new ColumnHeader[] { colEcole, colAvenue, colNumero });
+            lstEcoles.FullRowSelect = true;
+            lstEcoles.GridLines = true;
+            lstEcoles.Location = new Point(20, 260);
+            lstEcoles.MultiSelect = false;
+            lstEcoles.Name = "lstEcoles";
+            lstEcoles.Size = new Size(660, 150);
+            lstEcoles.TabIndex = 10;
+            lstEcoles.UseCompatibleStateImageBehavior = false;
+            lstEcoles.View = View.Details;
+            lstEcoles.SelectedIndexChanged += lstEcoles_SelectedIndexChanged;
+            // 
+            // colEcole
+            // 
+            colEcole.Text = "École";
+            colEcole.Width = 350;
+            // 
+            // colAvenue
+            // 
+            colAvenue.Text = "Avenue";
+            colAvenue.Width = 200;
+            // 
+            // colNumero
+            // 
+            colNumero.Text = "N°";
+            colNumero.Width = 80;
+            // 
+            // lblEcoles
+            // 
+            lblEcoles.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            lblEcoles.Location = new Point(20, 235);
+            lblEcoles.Name = "lblEcoles";
+            lblEcoles.Size = new Size(200, 20);
+            lblEcoles.TabIndex = 9;
+            lblEcoles.Text = "Écoles disponibles:";
+            // 
+            // lstAvenues
+            // 
+            lstAvenues.Columns.AddRange(new ColumnHeader[] { colAvenueHierarchy });
+            lstAvenues.FullRowSelect = true;
+            lstAvenues.GridLines = true;
+            lstAvenues.Location = new Point(20, 95);
+            lstAvenues.MultiSelect = false;
+            lstAvenues.Name = "lstAvenues";
+            lstAvenues.Size = new Size(660, 130);
+            lstAvenues.TabIndex = 3;
+            lstAvenues.UseCompatibleStateImageBehavior = false;
+            lstAvenues.View = View.Details;
+            lstAvenues.SelectedIndexChanged += lstAvenues_SelectedIndexChanged;
+            // 
+            // colAvenueHierarchy
+            // 
+            colAvenueHierarchy.Text = "Avenue → Quartier → Commune → Ville → Province";
+            colAvenueHierarchy.Width = 640;
+            // 
+            // txtAvenue
+            // 
+            txtAvenue.Font = new Font("Segoe UI", 10F);
+            txtAvenue.Location = new Point(130, 53);
+            txtAvenue.Name = "txtAvenue";
+            txtAvenue.PlaceholderText = "Tapez le nom de l'avenue...";
+            txtAvenue.Size = new Size(550, 30);
+            txtAvenue.TabIndex = 2;
+            txtAvenue.TextChanged += txtAvenue_TextChanged;
+            // 
+            // lblAvenue
+            // 
+            lblAvenue.Font = new Font("Segoe UI", 10F);
+            lblAvenue.Location = new Point(20, 56);
+            lblAvenue.Name = "lblAvenue";
+            lblAvenue.Size = new Size(100, 20);
+            lblAvenue.TabIndex = 1;
+            lblAvenue.Text = "Avenue:";
+            // 
+            // lblSelectionTitle
+            // 
+            lblSelectionTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblSelectionTitle.ForeColor = Color.FromArgb(33, 37, 41);
+            lblSelectionTitle.Location = new Point(20, 15);
+            lblSelectionTitle.Name = "lblSelectionTitle";
+            lblSelectionTitle.Size = new Size(660, 25);
+            lblSelectionTitle.TabIndex = 0;
+            lblSelectionTitle.Text = "Sélectionner une école existante";
+            // 
+            // btnNewAdresse
+            // 
+            btnNewAdresse.BorderColor = Color.FromArgb(5, 21, 48);
+            btnNewAdresse.BorderRadius = 14;
+            btnNewAdresse.BorderThickness = 1;
+            btnNewAdresse.FillColor = Color.FromArgb(5, 21, 48);
+            btnNewAdresse.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            btnNewAdresse.ForeColor = Color.White;
+            btnNewAdresse.HoverState.BorderColor = Color.FromArgb(5, 21, 48);
+            btnNewAdresse.HoverState.FillColor = Color.White;
+            btnNewAdresse.HoverState.Image = Properties.Resources.save_dark;
+            btnNewAdresse.Image = Properties.Resources.save_light;
+            btnNewAdresse.ImageSize = new Size(32, 32);
+            btnNewAdresse.Location = new Point(587, 644);
+            btnNewAdresse.Name = "btnNewAdresse";
+            btnNewAdresse.Size = new Size(113, 50);
+            btnNewAdresse.TabIndex = 18;
+            btnNewAdresse.Click += btnNewAdresse_Click;
+            // 
             // FormConfig
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(240, 242, 245);
-            ClientSize = new Size(800, 730);
+            ClientSize = new Size(800, 747);
             Controls.Add(panelMain);
             FormBorderStyle = FormBorderStyle.None;
             Name = "FormConfig";
@@ -446,10 +467,10 @@ namespace EduKin.Layouts
             Text = "Configuration École - EduKin";
             Load += FormConfig_Load;
             panelMain.ResumeLayout(false);
-            panelSelection.ResumeLayout(false);
-            panelSelection.PerformLayout();
             panelCreation.ResumeLayout(false);
             panelCreation.PerformLayout();
+            panelSelection.ResumeLayout(false);
+            panelSelection.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -486,5 +507,6 @@ namespace EduKin.Layouts
         private Siticone.Desktop.UI.WinForms.SiticoneTextBox txtNumero;
         private Siticone.Desktop.UI.WinForms.SiticoneButton btnCreateSchool;
         private Siticone.Desktop.UI.WinForms.SiticoneButton siticoneButton1;
+        private Siticone.Desktop.UI.WinForms.SiticoneButton btnNewAdresse;
     }
 }

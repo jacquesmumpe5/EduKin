@@ -2,18 +2,14 @@ using System;
 using System.Data;
 using System.Windows.Forms;
 using EduKin.DataSets;
+using EduKin.Inits;
+using EduKin.Csharp.Admins;
 
 namespace EduKin.Layouts
 {
     public partial class FormNewAddress : Form
     {
         private readonly Connexion _connexion;
-
-        private const string TYPE_PROVINCE = "TEA00000000022019";
-        private const string TYPE_VILLE = "TEA00000000032019";
-        private const string TYPE_COMMUNE = "TEA00000000072019";
-        private const string TYPE_QUARTIER = "TEA00000000092019";
-        private const string TYPE_AVENUE = "TEA00000000132019";
 
         public FormNewAddress()
         {
@@ -55,7 +51,7 @@ namespace EduKin.Layouts
                               WHERE Fk_TypeEntite = @TypeEntite AND Etat = 1
                               ORDER BY IntituleEntite";
 
-                var dt = ExecuteQueryWithParameter(query, "@TypeEntite", TYPE_PROVINCE);
+                var dt = ExecuteQueryWithParameter(query, "@TypeEntite", GetTypeId("province"));
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -85,10 +81,10 @@ namespace EduKin.Layouts
 
                 var query = @"SELECT IdEntite, IntituleEntite 
                               FROM t_entite_administrative 
-                              WHERE Fk_EntiteMere = @IdParent AND Fk_TypeEntite = @TypeEntite AND Etat = 1
+                              WHERE fk_entite_mere = @IdParent AND fk_type_entite = @TypeEntite AND etat = 1
                               ORDER BY IntituleEntite";
 
-                var dt = ExecuteQueryWithTwoParameters(query, "@IdParent", idProvince, "@TypeEntite", TYPE_VILLE);
+                var dt = ExecuteQueryWithTwoParameters(query, "@IdParent", idProvince, "@TypeEntite", GetTypeId("ville"));
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -117,10 +113,10 @@ namespace EduKin.Layouts
 
                 var query = @"SELECT IdEntite, IntituleEntite 
                               FROM t_entite_administrative 
-                              WHERE Fk_EntiteMere = @IdParent AND Fk_TypeEntite = @TypeEntite AND Etat = 1
+                              WHERE fk_entite_mere = @IdParent AND fk_type_entite = @TypeEntite AND etat = 1
                               ORDER BY IntituleEntite";
 
-                var dt = ExecuteQueryWithTwoParameters(query, "@IdParent", idVille, "@TypeEntite", TYPE_COMMUNE);
+                var dt = ExecuteQueryWithTwoParameters(query, "@IdParent", idVille, "@TypeEntite", GetTypeId("commune"));
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -148,10 +144,10 @@ namespace EduKin.Layouts
 
                 var query = @"SELECT IdEntite, IntituleEntite 
                               FROM t_entite_administrative 
-                              WHERE Fk_EntiteMere = @IdParent AND Fk_TypeEntite = @TypeEntite AND Etat = 1
+                              WHERE fk_entite_mere = @IdParent AND fk_type_entite = @TypeEntite AND etat = 1
                               ORDER BY IntituleEntite";
 
-                var dt = ExecuteQueryWithTwoParameters(query, "@IdParent", idCommune, "@TypeEntite", TYPE_QUARTIER);
+                var dt = ExecuteQueryWithTwoParameters(query, "@IdParent", idCommune, "@TypeEntite", GetTypeId("quartier"));
 
                 foreach (DataRow row in dt.Rows)
                 {
@@ -241,7 +237,7 @@ namespace EduKin.Layouts
             return dt;
         }
 
-        private string GenerateAvenueId()
+        private string GenerateEntityId()
         {
             try
             {
@@ -250,23 +246,76 @@ namespace EduKin.Layouts
                     conn.Open();
                     if (_connexion.IsOnline)
                     {
-                        using (var cmd = conn.CreateCommand())
-                        {
-                            cmd.CommandText = "SELECT sp_generate_id('AV')";
-                            var result = cmd.ExecuteScalar();
-                            return result?.ToString() ?? $"AV{DateTime.Now:yyyyMMddHHmmss}";
-                        }
+                        // ✅ Utiliser le userIndex depuis le contexte comme pour les élèves
+                        var userIndex = EduKinContext.CurrentUserIndex;
+                        
+                        // Utiliser la méthode standard GenerateId
+                        var admin = new Administrations();
+                        return admin.GenerateId("t_entite_administrative", "IdEntite", "ENA", userIndex);
                     }
                     else
                     {
-                        return $"AV{DateTime.Now:yyyyMMddHHmmss}";
+                        return $"ENA{DateTime.Now:yyyyMMddHHmmss}";
                     }
                 }
             }
             catch
             {
-                return $"AV{DateTime.Now:yyyyMMddHHmmss}";
+                return $"ENA{DateTime.Now:yyyyMMddHHmmss}";
             }
+        }
+
+        /// <summary>
+        /// Obtient l'ID du type d'entité par son nom (chargé dynamiquement depuis la base de données)
+        /// </summary>
+        private string GetTypeId(string typeName)
+        {
+            // Mapper les noms simples vers les noms exacts dans la base de données
+            var dbTypeName = typeName.ToLower() switch
+            {
+                "avenue" => "Avenue/Rue",
+                "province" => "Province",
+                "ville" => "Ville",
+                "commune" => "Commune",
+                "quartier" => "Quartier",
+                "secteur" => "Secteur",
+                "territoire" => "Territoire",
+                "village" => "Village",
+                "cite" => "Cité",
+                "groupement" => "Groupement",
+                "pays" => "Pays",
+                "district" => "District",
+                "continent" => "Continent",
+                "cheffrerie" => "Cheffrerie",
+                _ => typeName
+            };
+
+            var query = @"SELECT IdTypeEntite 
+                          FROM t_type_entite_administrative 
+                          WHERE IntituleTypeEntite = @TypeName AND Etat = '1'";
+
+            using (var conn = _connexion.GetConnection())
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = query;
+                    var parameter = cmd.CreateParameter();
+                    parameter.ParameterName = "@TypeName";
+                    parameter.Value = dbTypeName;
+                    cmd.Parameters.Add(parameter);
+
+                    var result = cmd.ExecuteScalar();
+                    var id = result?.ToString();
+
+                    if (!string.IsNullOrEmpty(id))
+                    {
+                        return id;
+                    }
+                }
+            }
+
+            throw new InvalidOperationException($"Type d'entité '{dbTypeName}' (demandé: '{typeName}') non trouvé dans la base de données. Veuillez vérifier que le type existe dans la table t_type_entite_administrative.");
         }
 
         #endregion
@@ -328,8 +377,8 @@ namespace EduKin.Layouts
 
                     var checkQuery = @"SELECT COUNT(*) FROM t_entite_administrative 
                                        WHERE IntituleEntite = @Intitule 
-                                       AND Fk_EntiteMere = @IdQuartier 
-                                       AND Fk_TypeEntite = @TypeEntite";
+                                       AND fk_entite_mere = @IdQuartier 
+                                       AND fk_type_entite = @TypeEntite";
 
                     using (var cmd = conn.CreateCommand())
                     {
@@ -347,7 +396,7 @@ namespace EduKin.Layouts
 
                         var p3 = cmd.CreateParameter();
                         p3.ParameterName = "@TypeEntite";
-                        p3.Value = TYPE_AVENUE;
+                        p3.Value = GetTypeId("avenue");
                         cmd.Parameters.Add(p3);
 
                         var count = Convert.ToInt32(cmd.ExecuteScalar());
@@ -359,9 +408,9 @@ namespace EduKin.Layouts
                         }
                     }
 
-                    var newId = GenerateAvenueId();
+                    var newId = GenerateEntityId();
                     var insertQuery = @"INSERT INTO t_entite_administrative 
-                                        (IdEntite, IntituleEntite, Fk_EntiteMere, Fk_TypeEntite, Etat) 
+                                        (IdEntite, IntituleEntite, fk_entite_mere, fk_type_entite, etat) 
                                         VALUES (@IdEntite, @Intitule, @IdQuartier, @TypeEntite, 1)";
 
                     using (var cmd = conn.CreateCommand())
@@ -385,7 +434,7 @@ namespace EduKin.Layouts
 
                         var p4 = cmd.CreateParameter();
                         p4.ParameterName = "@TypeEntite";
-                        p4.Value = TYPE_AVENUE;
+                        p4.Value = GetTypeId("avenue");
                         cmd.Parameters.Add(p4);
 
                         var rowsAffected = cmd.ExecuteNonQuery();
@@ -449,10 +498,10 @@ namespace EduKin.Layouts
                 if (success)
                 {
                     Avenue = txtAvenue.Text.Trim();
-                    Quartier = ((ComboItem)cmbQuartier.SelectedItem).Text;
-                    Commune = ((ComboItem)cmbCommune.SelectedItem).Text;
-                    Ville = ((ComboItem)cmbVille.SelectedItem).Text;
-                    Province = ((ComboItem)cmbProvince.SelectedItem).Text;
+                    Quartier = cmbQuartier.SelectedItem is ComboItem quartierItem ? quartierItem.Text : string.Empty;
+                    Commune = cmbCommune.SelectedItem is ComboItem communeItem ? communeItem.Text : string.Empty;
+                    Ville = cmbVille.SelectedItem is ComboItem villeItem ? villeItem.Text : string.Empty;
+                    Province = cmbProvince.SelectedItem is ComboItem provinceItem ? provinceItem.Text : string.Empty;
 
                     this.DialogResult = DialogResult.OK;
                     this.Close();

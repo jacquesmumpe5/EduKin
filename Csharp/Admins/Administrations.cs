@@ -116,17 +116,20 @@ namespace EduKin.Csharp.Admins
                     // Utilisez QueryFirstOrDefault pour gérer le cas où l'utilisateur n'existe pas ou l'index est null
                     var index = conn.QueryFirstOrDefault<int?>(query, new { UserId = userId });
                     
-                    // Si null ou 0, retourner "001" par défaut, sinon retourner la valeur sous forme de chaîne
-                    return index.HasValue && index.Value > 0 ? index.Value.ToString() : "001";
+                    // ✅ Le userIndex sera toujours disponible - pas de fallback "001" inutile
+                    if (!index.HasValue || index.Value <= 0)
+                    {
+                        throw new InvalidOperationException($"L'utilisateur {userId} n'a pas de user_index valide dans la base de données.");
+                    }
+                    
+                    return index.Value.ToString();
                 }
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"[GetUserIndex] Erreur: {ex.Message}");
-                // Si erreur, on retourne "001" (ce qui cause des doublons si l'index réel est "003")
-                // Il faudrait peut-être lancer une exception pour alerter l'utilisateur ?
-                // throw; 
-                return "001"; 
+                // ✅ Propager l'erreur pour identifier le vrai problème au lieu de masquer avec "001"
+                throw new InvalidOperationException($"Impossible de récupérer le user_index pour l'utilisateur {userId}: {ex.Message}", ex); 
             }
         }
 
@@ -337,16 +340,16 @@ namespace EduKin.Csharp.Admins
 
         #region CRUD Promotions
 
-        public bool CreatePromotion(string codPromo, string intitule, string codSect, string codOption)
+        public bool CreatePromotion(string IdPromo, string intitule, string codOption)
         {
             try
             {
                 using (var conn = GetSecureConnection())
                 {
-                    var query = @"INSERT INTO t_promotions (cod_promo, description, cod_opt) 
-                                  VALUES (@CodPromo, @Description, @CodOpt)";
+                    var query = @"INSERT INTO t_promotions (id_promotion, description, fk_option) 
+                                  VALUES (@IdPromo, @Description, @CodOpt)";
                     
-                    conn.Execute(query, new { CodPromo = codPromo, Description = intitule, CodOpt = codOption });
+                    conn.Execute(query, new { IdPromo = IdPromo, Description = intitule, CodOpt = codOption });
                     return true;
                 }
             }
@@ -356,12 +359,18 @@ namespace EduKin.Csharp.Admins
             }
         }
 
-        public dynamic? GetPromotion(string codPromo)
+        public dynamic? GetPromotion(string idPromo)
         {
             using (var conn = GetSecureConnection())
             {
-                var query = "SELECT * FROM t_promotions WHERE cod_promo = @CodPromo";
-                return conn.QueryFirstOrDefault(query, new { CodPromo = codPromo });
+                var query = @"SELECT 
+                    id_promotion,
+                    intitule,
+                    id_option,
+                    options
+                FROM vue_promotions
+                WHERE id_promotion = @IdPromo AND id_ecole = @IdEcole";
+                return conn.QueryFirstOrDefault(query, new { IdPromo = idPromo, IdEcole = EduKinContext.CurrentIdEcole });
             }
         }
 
@@ -369,21 +378,29 @@ namespace EduKin.Csharp.Admins
         {
             using (var conn = GetSecureConnection())
             {
-                return conn.Query("SELECT * FROM t_promotions");
+                var query = @"SELECT 
+                    id_promotion,
+                    intitule,
+                    id_option,
+                    options
+                FROM vue_promotions
+                WHERE id_ecole = @IdEcole
+                ORDER BY intitule";
+                return conn.Query(query, new { IdEcole = EduKinContext.CurrentIdEcole });
             }
         }
 
-        public bool UpdatePromotion(string codPromo, string intitule, string codSect, string codOption)
+        public bool UpdatePromotion(string IdPromo, string intitule, string codSect, string codOption)
         {
             try
             {
                 using (var conn = GetSecureConnection())
                 {
                     var query = @"UPDATE t_promotions 
-                                  SET description = @Description, cod_opt = @CodOpt 
-                                  WHERE cod_promo = @CodPromo";
+                                  SET description = @Description, fk_option = @CodOpt 
+                                  WHERE id_promotion = @IdPromo";
                     
-                    conn.Execute(query, new { CodPromo = codPromo, Description = intitule, CodOpt = codOption });
+                    conn.Execute(query, new { IdPromo = IdPromo, Description = intitule, CodOpt = codOption });
                     return true;
                 }
             }
@@ -393,14 +410,14 @@ namespace EduKin.Csharp.Admins
             }
         }
 
-        public bool DeletePromotion(string codPromo)
+        public bool DeletePromotion(string IdPromo)
         {
             try
             {
                 using (var conn = GetSecureConnection())
                 {
-                    var query = "DELETE FROM t_promotions WHERE cod_promo = @CodPromo";
-                    conn.Execute(query, new { CodPromo = codPromo });
+                    var query = "DELETE FROM t_promotions WHERE id_promotion = @IdPromo";
+                    conn.Execute(query, new { IdPromo = IdPromo });
                     return true;
                 }
             }
@@ -420,7 +437,7 @@ namespace EduKin.Csharp.Admins
             {
                 using (var conn = GetSecureConnection())
                 {
-                    var query = @"INSERT INTO t_options (cod_opt, description, cod_sect, code_epst) 
+                    var query = @"INSERT INTO t_options (id_option, description, fk_section, code_epst) 
                                   VALUES (@CodOpt, @Description, @CodSect, @CodeEpst)";
                     
                     conn.Execute(query, new { CodOpt = codOption, Description = intitule, CodSect = codSect, CodeEpst = codeEpst });
@@ -464,8 +481,8 @@ namespace EduKin.Csharp.Admins
                 using (var conn = GetSecureConnection())
                 {
                     var query = @"UPDATE t_options 
-                                  SET description = @Description, cod_sect = @CodSect 
-                                  WHERE cod_opt = @CodOpt";
+                                  SET description = @Description, fk_section = @CodSect 
+                                  WHERE id_option = @CodOpt";
                     
                     conn.Execute(query, new { CodOpt = codOption, Description = intitule, CodSect = codSect });
                     return true;
@@ -483,7 +500,7 @@ namespace EduKin.Csharp.Admins
             {
                 using (var conn = GetSecureConnection())
                 {
-                    conn.Execute("DELETE FROM t_options WHERE cod_opt = @CodOpt", new { CodOpt = codOption });
+                    conn.Execute("DELETE FROM t_options WHERE id_option = @CodOpt", new { CodOpt = codOption });
                     return true;
                 }
             }
@@ -503,7 +520,7 @@ namespace EduKin.Csharp.Admins
             {
                 using (var conn = GetSecureConnection())
                 {
-                    var query = "INSERT INTO t_sections (cod_sect, description) VALUES (@CodSect, @Description)";
+                    var query = "INSERT INTO t_sections (id_section, description) VALUES (@CodSect, @Description)";
                     conn.Execute(query, new { CodSect = codSect, Description = intitule });
                     return true;
                 }
@@ -528,7 +545,7 @@ namespace EduKin.Csharp.Admins
             {
                 using (var conn = GetSecureConnection())
                 {
-                    var query = "UPDATE t_sections SET description = @Description WHERE cod_sect = @CodSect";
+                    var query = "UPDATE t_sections SET description = @Description WHERE id_section = @CodSect";
                     conn.Execute(query, new { CodSect = codSect, Description = intitule });
                     return true;
                 }
@@ -545,7 +562,7 @@ namespace EduKin.Csharp.Admins
             {
                 using (var conn = GetSecureConnection())
                 {
-                    conn.Execute("DELETE FROM t_sections WHERE cod_sect = @CodSect", new { CodSect = codSect });
+                    conn.Execute("DELETE FROM t_sections WHERE id_section = @CodSect", new { CodSect = codSect });
                     return true;
                 }
             }
@@ -566,7 +583,7 @@ namespace EduKin.Csharp.Admins
                 using (var conn = GetSecureConnection())
                 {
                     // Vérifier si cette section est déjà affectée à cette école
-                    var checkQuery = "SELECT COUNT(*) FROM t_affect_sect WHERE id_ecole = @IdEcole AND cod_sect = @CodSect";
+                    var checkQuery = "SELECT COUNT(*) FROM t_affect_sect WHERE fk_ecole = @IdEcole AND fk_section = @CodSect";
                     var exists = conn.ExecuteScalar<int>(checkQuery, new { IdEcole = idEcole, CodSect = codSect });
                     
                     if (exists > 0)
@@ -574,7 +591,7 @@ namespace EduKin.Csharp.Admins
                         throw new InvalidOperationException("Cette section est déjà affectée à cette école.");
                     }
                     
-                    var query = "INSERT INTO t_affect_sect (id_ecole, cod_sect) VALUES (@IdEcole, @CodSect)";
+                    var query = "INSERT INTO t_affect_sect (fk_ecole, fk_section) VALUES (@IdEcole, @CodSect)";
                     conn.Execute(query, new { IdEcole = idEcole, CodSect = codSect });
                     return true;
                 }
@@ -591,8 +608,8 @@ namespace EduKin.Csharp.Admins
             {
                 var query = @"SELECT a.*, s.description as section_description 
                               FROM t_affect_sect a 
-                              INNER JOIN t_sections s ON a.cod_sect = s.cod_sect 
-                              WHERE a.id_ecole = @IdEcole";
+                              INNER JOIN t_sections s ON a.fk_section = s.id_section 
+                              WHERE a.fk_ecole = @IdEcole";
                 return conn.Query(query, new { IdEcole = idEcole });
             }
         }
@@ -620,7 +637,7 @@ namespace EduKin.Csharp.Admins
         /// <summary>
         /// Crée une nouvelle affectation avec isolation automatique par école
         /// </summary>
-        public bool CreateAffectation(string matricule, string codPromo, string anneeScol, string indicePromo)
+        public bool CreateAffectation(string matricule, string IdPromo, string anneeScol, string indicePromo)
         {
             return ExecuteWithErrorHandling(() =>
             {
@@ -628,13 +645,13 @@ namespace EduKin.Csharp.Admins
                 {
                     // Note: t_affectation n'a pas de colonnes created_at/updated_at
                     // donc on fait une insertion directe sans utiliser InsertWithIsolation
-                    var query = @"INSERT INTO t_affectation (matricule, cod_promo, annee_scol, indice_promo) 
+                    var query = @"INSERT INTO t_affectation (fk_matricule_eleve, fk_promotion, annee_scol, indice_promo) 
                                   VALUES (@matricule, @cod_promo, @annee_scol, @indice_promo)";
                     
                     var parameters = new
                     {
                         matricule = matricule,
-                        cod_promo = codPromo,
+                        cod_promo = IdPromo,
                         annee_scol = anneeScol,
                         indice_promo = indicePromo
                     };
@@ -648,16 +665,16 @@ namespace EduKin.Csharp.Admins
         /// <summary>
         /// Récupère les affectations par promotion avec isolation automatique
         /// </summary>
-        public IEnumerable<dynamic> GetAffectationsByPromotion(string codPromo, string anneeScol)
+        public IEnumerable<dynamic> GetAffectationsByPromotion(string IdPromo, string anneeScol)
         {
             return ExecuteWithErrorHandling(() =>
             {
                 var query = @"SELECT a.*, e.nom, e.postnom, e.prenom, e.sexe 
                               FROM t_affectation a 
-                              INNER JOIN t_eleves e ON a.matricule = e.matricule 
-                              WHERE a.cod_promo = @CodPromo AND a.annee_scol = @AnneeScol";
+                              INNER JOIN t_eleves e ON a.fk_matricule_eleve = e.matricule 
+                              WHERE a.fk_promotion = @IdPromo AND a.annee_scol = @AnneeScol";
                 
-                return QueryWithIsolation(query, new { CodPromo = codPromo, AnneeScol = anneeScol }, "a");
+                return QueryWithIsolation(query, new { IdPromo = IdPromo, AnneeScol = anneeScol }, "a");
             }, "GetAffectationsByPromotion");
         }
 
@@ -696,7 +713,7 @@ namespace EduKin.Csharp.Admins
                 {
                     conn.Open();
                     
-                    var query = @"INSERT INTO t_ecoles (id_ecole, denomination, FkAvenue, numero, logo) 
+                    var query = @"INSERT INTO t_ecoles (id_ecole, denomination, fk_avenue, numero, logo) 
                                   VALUES (@IdEcole, @Denomination, @FkAvenue, @Numero, @Logo)";
                     
                     conn.Execute(query, new 
@@ -722,7 +739,7 @@ namespace EduKin.Csharp.Admins
             {
                 using (var conn = GetSecureConnection())
                 {
-                    var query = @"INSERT INTO t_ecoles (id_ecole, denomination, FkAvenue, numero, logo) 
+                    var query = @"INSERT INTO t_ecoles (id_ecole, denomination, fk_avenue, numero, logo) 
                                   VALUES (@IdEcole, @Denomination, @FkAvenue, @Numero, @Logo)";
                     
                     conn.Execute(query, new 
@@ -793,7 +810,7 @@ namespace EduKin.Csharp.Admins
                 {
                     var query = @"UPDATE t_ecoles 
                                   SET denomination = @Denomination, 
-                                      FkAvenue = @FkAvenue, numero = @Numero, logo = @Logo 
+                                      fk_avenue = @FkAvenue, numero = @Numero, logo = @Logo 
                                   WHERE id_ecole = @IdEcole";
                     
                     conn.Execute(query, new 
@@ -857,7 +874,7 @@ namespace EduKin.Csharp.Admins
                 using (var conn = GetSecureConnection())
                 {
                     var query = @"INSERT INTO t_entite_administrative 
-                                  (IdEntite, IntituleEntite, DenominationHabitant, Fk_EntiteMere, Fk_TypeEntite) 
+                                  (IdEntite, IntituleEntite, DenominationHabitant, fk_entite_mere, fk_type_entite) 
                                   VALUES (@IdEntite, @IntituleEntite, @DenominationHabitant, @FkEntiteMere, @FkTypeEntite)";
                     
                     conn.Execute(query, new 
@@ -889,7 +906,7 @@ namespace EduKin.Csharp.Admins
         {
             using (var conn = GetSecureConnection())
             {
-                var query = "SELECT * FROM t_entite_administrative WHERE Fk_EntiteMere = @FkEntiteMere AND Etat = 1";
+                var query = "SELECT * FROM t_entite_administrative WHERE fk_entite_mere = @FkEntiteMere AND etat = 1";
                 return conn.Query(query, new { FkEntiteMere = fkEntiteMere });
             }
         }
@@ -923,7 +940,7 @@ namespace EduKin.Csharp.Admins
                         SELECT IdEntite 
                         FROM t_entite_administrative 
                         WHERE IntituleEntite = @Avenue 
-                        AND Fk_EntiteMere IN (
+                        AND fk_entite_mere IN (
                             SELECT IdEntite FROM t_entite_administrative WHERE IntituleEntite = @Quartier
                         )
                         LIMIT 1";
@@ -1000,14 +1017,11 @@ namespace EduKin.Csharp.Admins
                 var query = @"SELECT 
                                 ec.id_ecole as Id,
                                 ec.denomination as Denomination,
-                                ec.annee_scol as AnneeScolaire,
-                                COUNT(DISTINCT a.id_affect) as TotalAffectations,
-                                COUNT(DISTINCT o.id_orientation) as TotalOrientations
+                                COUNT(DISTINCT a.id_affect) as TotalAffectations
                               FROM t_ecoles ec
-                              LEFT JOIN t_affectation a ON ec.id_ecole = a.id_ecole
-                              LEFT JOIN t_orientation o ON ec.id_ecole = o.id_ecole
+                              LEFT JOIN t_affectation a ON ec.id_ecole = a.fk_ecole
                               WHERE ec.id_ecole = @SchoolId
-                              GROUP BY ec.id_ecole, ec.denomination, ec.annee_scol";
+                              GROUP BY ec.id_ecole, ec.denomination";
                 
                 return conn.QueryFirstOrDefault(query, new { SchoolId = schoolId });
             }
@@ -1023,13 +1037,10 @@ namespace EduKin.Csharp.Admins
                 var query = @"SELECT 
                                 ec.id_ecole as Id,
                                 ec.denomination as Denomination,
-                                ec.annee_scol as AnneeScolaire,
-                                COUNT(DISTINCT a.id_affect) as TotalAffectations,
-                                COUNT(DISTINCT o.id_orientation) as TotalOrientations
+                                COUNT(DISTINCT a.id_affect) as TotalAffectations
                               FROM t_ecoles ec
-                              LEFT JOIN t_affectation a ON ec.id_ecole = a.id_ecole
-                              LEFT JOIN t_orientation o ON ec.id_ecole = o.id_ecole
-                              GROUP BY ec.id_ecole, ec.denomination, ec.annee_scol
+                              LEFT JOIN t_affectation a ON ec.id_ecole = a.fk_ecole
+                              GROUP BY ec.id_ecole, ec.denomination
                               ORDER BY ec.denomination";
                 
                 return conn.Query(query);
@@ -1045,25 +1056,25 @@ namespace EduKin.Csharp.Admins
             {
                 var query = @"SELECT 
                                 't_affectation' as TableName,
-                                a.id_ecole,
+                                a.fk_ecole as id_ecole,
                                 ec.denomination as EcoleName,
                                 COUNT(*) as RecordCount,
                                 CASE WHEN ec.id_ecole IS NULL THEN 1 ELSE 0 END as HasOrphanedData
                               FROM t_affectation a
-                              LEFT JOIN t_ecoles ec ON a.id_ecole = ec.id_ecole
-                              GROUP BY a.id_ecole, ec.denomination
+                              LEFT JOIN t_ecoles ec ON a.fk_ecole = ec.id_ecole
+                              GROUP BY a.fk_ecole, ec.denomination
                               
                               UNION ALL
                               
                               SELECT 
-                                't_orientation' as TableName,
-                                o.id_ecole,
+                                't_affect_sect' as TableName,
+                                afs.fk_ecole as id_ecole,
                                 ec.denomination as EcoleName,
                                 COUNT(*) as RecordCount,
                                 CASE WHEN ec.id_ecole IS NULL THEN 1 ELSE 0 END as HasOrphanedData
-                              FROM t_orientation o
-                              LEFT JOIN t_ecoles ec ON o.id_ecole = ec.id_ecole
-                              GROUP BY o.id_ecole, ec.denomination
+                              FROM t_affect_sect afs
+                              LEFT JOIN t_ecoles ec ON afs.fk_ecole = ec.id_ecole
+                              GROUP BY afs.fk_ecole, ec.denomination
                               
                               ORDER BY TableName, id_ecole";
                 
@@ -1096,15 +1107,15 @@ namespace EduKin.Csharp.Admins
                         {
                             // Migrer les affectations
                             var updateAffectationsQuery = sourceSchoolId == null 
-                                ? "UPDATE t_affectation SET id_ecole = @SchoolId WHERE id_ecole IS NULL OR id_ecole = ''"
-                                : "UPDATE t_affectation SET id_ecole = @SchoolId WHERE id_ecole = @SourceSchoolId";
+                                ? "UPDATE t_affectation SET fk_ecole = @SchoolId WHERE fk_ecole IS NULL OR fk_ecole = ''"
+                                : "UPDATE t_affectation SET fk_ecole = @SchoolId WHERE fk_ecole = @SourceSchoolId";
                             
                             conn.Execute(updateAffectationsQuery, new { SchoolId = schoolId, SourceSchoolId = sourceSchoolId }, transaction);
 
                             // Migrer les orientations
                             var updateOrientationsQuery = sourceSchoolId == null 
-                                ? "UPDATE t_orientation SET id_ecole = @SchoolId WHERE id_ecole IS NULL OR id_ecole = ''"
-                                : "UPDATE t_orientation SET id_ecole = @SchoolId WHERE id_ecole = @SourceSchoolId";
+                                ? "UPDATE t_orientation SET fk_ecole = @SchoolId WHERE fk_ecole IS NULL OR fk_ecole = ''"
+                                : "UPDATE t_orientation SET fk_ecole = @SchoolId WHERE fk_ecole = @SourceSchoolId";
                             
                             conn.Execute(updateOrientationsQuery, new { SchoolId = schoolId, SourceSchoolId = sourceSchoolId }, transaction);
 
@@ -1139,8 +1150,8 @@ namespace EduKin.Csharp.Admins
                 using (var conn = GetSecureConnection())
                 {
                     var query = @"SELECT COUNT(*) FROM t_affectation a
-                                  LEFT JOIN t_ecoles e ON a.id_ecole = e.id_ecole 
-                                  WHERE a.id_ecole != @SchoolId OR e.id_ecole IS NULL";
+                                  LEFT JOIN t_ecoles e ON a.fk_ecole = e.id_ecole 
+                                  WHERE a.fk_ecole != @SchoolId OR e.id_ecole IS NULL";
                     var wrongSchoolCount = conn.ExecuteScalar<int>(query, new { SchoolId = schoolId });
                     
                     // Si des données d'autres écoles sont présentes, l'isolation ne fonctionne pas

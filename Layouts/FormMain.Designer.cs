@@ -18,16 +18,16 @@ namespace EduKin.Layouts
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle6 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle7 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle8 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle9 = new DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle10 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             menuStrip1 = new MenuStrip();
             fichierToolStripMenuItem = new ToolStripMenuItem();
             menuItemDeconnexion = new ToolStripMenuItem();
@@ -411,11 +411,11 @@ namespace EduKin.Layouts
             // 
             // panelNav
             // 
+            panelNav.Controls.Add(panelNavAgents);
             panelNav.Controls.Add(panelNavEleves);
             panelNav.Controls.Add(panelNavAccueil);
             panelNav.Controls.Add(panelNavDelib);
             panelNav.Controls.Add(panelNavPedag);
-            panelNav.Controls.Add(panelNavAgents);
             panelNav.Dock = DockStyle.Fill;
             panelNav.Location = new Point(240, 0);
             panelNav.Name = "panelNav";
@@ -737,7 +737,6 @@ namespace EduKin.Layouts
             siticonePanel1.Name = "siticonePanel1";
             siticonePanel1.Size = new Size(1014, 250);
             siticonePanel1.TabIndex = 2;
-          
             // 
             // TxtEcoleProvenanceEleve
             // 
@@ -1256,26 +1255,26 @@ namespace EduKin.Layouts
             DataGridViewEleve.AllowUserToDeleteRows = false;
             DataGridViewEleve.AllowUserToResizeColumns = false;
             DataGridViewEleve.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = Color.White;
-            DataGridViewEleve.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = Color.FromArgb(100, 88, 255);
-            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle2.ForeColor = Color.White;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            DataGridViewEleve.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.BackColor = Color.White;
+            DataGridViewEleve.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = Color.FromArgb(100, 88, 255);
+            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle5.ForeColor = Color.White;
+            dataGridViewCellStyle5.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.True;
+            DataGridViewEleve.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             DataGridViewEleve.ColumnHeadersHeight = 29;
             DataGridViewEleve.Columns.AddRange(new DataGridViewColumn[] { colMatricule, colNom, colPostNom, colPrenom, colSexe, Column1, colDateNaiss, colTuteur, colTelTuteur, colAdresse, colEcoleProv });
-            dataGridViewCellStyle5.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = Color.White;
-            dataGridViewCellStyle5.Font = new Font("Segoe UI", 9F);
-            dataGridViewCellStyle5.ForeColor = Color.FromArgb(71, 69, 94);
-            dataGridViewCellStyle5.SelectionBackColor = Color.FromArgb(231, 229, 255);
-            dataGridViewCellStyle5.SelectionForeColor = Color.FromArgb(71, 69, 94);
-            dataGridViewCellStyle5.WrapMode = DataGridViewTriState.False;
-            DataGridViewEleve.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = Color.White;
+            dataGridViewCellStyle8.Font = new Font("Segoe UI", 9F);
+            dataGridViewCellStyle8.ForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle8.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dataGridViewCellStyle8.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle8.WrapMode = DataGridViewTriState.False;
+            DataGridViewEleve.DefaultCellStyle = dataGridViewCellStyle8;
             DataGridViewEleve.Dock = DockStyle.Fill;
             DataGridViewEleve.GridColor = Color.FromArgb(231, 229, 255);
             DataGridViewEleve.Location = new Point(0, 0);
@@ -1337,8 +1336,8 @@ namespace EduKin.Layouts
             // colSexe
             // 
             colSexe.DataPropertyName = "sexe";
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            colSexe.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            colSexe.DefaultCellStyle = dataGridViewCellStyle6;
             colSexe.HeaderText = "Sexe";
             colSexe.MinimumWidth = 6;
             colSexe.Name = "colSexe";
@@ -1352,8 +1351,8 @@ namespace EduKin.Layouts
             // colDateNaiss
             // 
             colDateNaiss.DataPropertyName = "date_naiss";
-            dataGridViewCellStyle4.Format = "dd/MM/yyyy";
-            colDateNaiss.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle7.Format = "dd/MM/yyyy";
+            colDateNaiss.DefaultCellStyle = dataGridViewCellStyle7;
             colDateNaiss.HeaderText = "Date Naissance";
             colDateNaiss.MinimumWidth = 6;
             colDateNaiss.Name = "colDateNaiss";
@@ -1465,9 +1464,9 @@ namespace EduKin.Layouts
             // colTotal2Accueil
             // 
             colTotal2Accueil.DataPropertyName = "TotalNbreEleves";
-            dataGridViewCellStyle6.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            colTotal2Accueil.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle9.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            colTotal2Accueil.DefaultCellStyle = dataGridViewCellStyle9;
             colTotal2Accueil.HeaderText = "Total Nbre Élèves";
             colTotal2Accueil.MinimumWidth = 6;
             colTotal2Accueil.Name = "colTotal2Accueil";
@@ -1550,9 +1549,9 @@ namespace EduKin.Layouts
             // colTotal1
             // 
             colTotal1.DataPropertyName = "TotalNbreEleves";
-            dataGridViewCellStyle7.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            colTotal1.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle10.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            colTotal1.DefaultCellStyle = dataGridViewCellStyle10;
             colTotal1.HeaderText = "Total Nbre Élèves";
             colTotal1.MinimumWidth = 6;
             colTotal1.Name = "colTotal1";
@@ -2145,27 +2144,27 @@ namespace EduKin.Layouts
             DataGridViewAgent.AllowUserToDeleteRows = false;
             DataGridViewAgent.AllowUserToResizeColumns = false;
             DataGridViewAgent.AllowUserToResizeRows = false;
-            dataGridViewCellStyle8.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle8.BackColor = Color.White;
-            DataGridViewAgent.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle8;
-            dataGridViewCellStyle9.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle9.BackColor = Color.FromArgb(100, 88, 255);
-            dataGridViewCellStyle9.Font = new Font("Segoe UI", 10.5F);
-            dataGridViewCellStyle9.ForeColor = Color.White;
-            dataGridViewCellStyle9.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle9.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle9.WrapMode = DataGridViewTriState.True;
-            DataGridViewAgent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = Color.White;
+            DataGridViewAgent.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.FromArgb(100, 88, 255);
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            DataGridViewAgent.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             DataGridViewAgent.ColumnHeadersHeight = 29;
             DataGridViewAgent.Columns.AddRange(new DataGridViewColumn[] { colMatriculeAgent, colNomAgent, colPostNomAgent, colPrenomAgent, colSexeAgent, colServiceAgent, colRoleAgent, colTelAgent, colEmailAgent });
-            dataGridViewCellStyle10.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = Color.White;
-            dataGridViewCellStyle10.Font = new Font("Segoe UI", 10.5F);
-            dataGridViewCellStyle10.ForeColor = Color.FromArgb(71, 69, 94);
-            dataGridViewCellStyle10.SelectionBackColor = Color.FromArgb(231, 229, 255);
-            dataGridViewCellStyle10.SelectionForeColor = Color.FromArgb(71, 69, 94);
-            dataGridViewCellStyle10.WrapMode = DataGridViewTriState.False;
-            DataGridViewAgent.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = Color.White;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 10.5F);
+            dataGridViewCellStyle3.ForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle3.SelectionBackColor = Color.FromArgb(231, 229, 255);
+            dataGridViewCellStyle3.SelectionForeColor = Color.FromArgb(71, 69, 94);
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.False;
+            DataGridViewAgent.DefaultCellStyle = dataGridViewCellStyle3;
             DataGridViewAgent.Dock = DockStyle.Fill;
             DataGridViewAgent.GridColor = Color.FromArgb(231, 229, 255);
             DataGridViewAgent.Location = new Point(0, 0);
@@ -2544,7 +2543,6 @@ namespace EduKin.Layouts
             btnFinance.TabIndex = 4;
             btnFinance.Text = "Finance";
             btnFinance.TextAlign = HorizontalAlignment.Left;
-         
             // 
             // btnAdministration
             // 

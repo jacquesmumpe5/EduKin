@@ -276,7 +276,7 @@ namespace EduKin.Layouts
         /// <summary>
         /// Ajoute une nouvelle adresse
         /// </summary>
-        private void btnAjouterAdresse_Click(object sender, EventArgs e)
+        private async void btnAjouterAdresse_Click(object sender, EventArgs e)
         {
             try
             {
@@ -289,8 +289,8 @@ namespace EduKin.Layouts
                 if (formNewAddress.ShowDialog() == DialogResult.OK)
                 {
                     // L'avenue a été ajoutée avec succès
-                    // Rafraîchir la recherche
-                    SearchAvenues(txtAvenue.Text).Wait();
+                    // Rafraîchir la recherche de manière asynchrone
+                    await SearchAvenues(txtAvenue.Text);
                     
                     // Sélectionner automatiquement la nouvelle avenue si elle correspond
                     SelectNewlyAddedAvenue(formNewAddress.Avenue, formNewAddress.Quartier, formNewAddress.Commune);
@@ -311,32 +311,50 @@ namespace EduKin.Layouts
         /// </summary>
         private void SelectNewlyAddedAvenue(string avenue, string quartier, string commune)
         {
-            foreach (ListViewItem item in lstAvenues.Items)
+            try
             {
-                if (item.Tag is AvenueInfo info && 
-                    info.Avenue.Equals(avenue, StringComparison.OrdinalIgnoreCase) &&
-                    info.Quartier.Equals(quartier, StringComparison.OrdinalIgnoreCase) &&
-                    info.Commune.Equals(commune, StringComparison.OrdinalIgnoreCase))
+                if (string.IsNullOrEmpty(avenue) || lstAvenues.Items.Count == 0)
+                    return;
+
+                for (int i = 0; i < lstAvenues.Items.Count; i++)
                 {
-                    item.Selected = true;
-                    lstAvenues.EnsureVisible(item.Index);
-                    
-                    // Mettre à jour les champs
-                    txtQuartier.Text = info.Quartier;
-                    txtCommune.Text = info.Commune;
-                    txtVille.Text = info.Ville;
-                    txtProvince.Text = info.Province;
-                    
-                    // Mettre à jour les propriétés
-                    SelectedAvenue = info.Avenue;
-                    SelectedQuartier = info.Quartier;
-                    SelectedCommune = info.Commune;
-                    SelectedVille = info.Ville;
-                    SelectedProvince = info.Province;
-                    
-                    btnOK.Enabled = true;
-                    break;
+                    var item = lstAvenues.Items[i];
+                    if (item.Tag is AvenueInfo info &&
+                        !string.IsNullOrEmpty(info.Avenue) &&
+                        !string.IsNullOrEmpty(info.Quartier) &&
+                        !string.IsNullOrEmpty(info.Commune) &&
+                        info.Avenue.Equals(avenue, StringComparison.OrdinalIgnoreCase) &&
+                        info.Quartier.Equals(quartier, StringComparison.OrdinalIgnoreCase) &&
+                        info.Commune.Equals(commune, StringComparison.OrdinalIgnoreCase))
+                    {
+                        // Désélectionner tous les éléments d'abord
+                        lstAvenues.SelectedItems.Clear();
+                        
+                        // Sélectionner le nouvel élément
+                        item.Selected = true;
+                        lstAvenues.EnsureVisible(i);
+                        
+                        // Mettre à jour les champs avec gestion des nulls
+                        txtQuartier.Text = info.Quartier ?? string.Empty;
+                        txtCommune.Text = info.Commune ?? string.Empty;
+                        txtVille.Text = info.Ville ?? string.Empty;
+                        txtProvince.Text = info.Province ?? string.Empty;
+                        
+                        // Mettre à jour les propriétés avec gestion des nulls
+                        SelectedAvenue = info.Avenue ?? string.Empty;
+                        SelectedQuartier = info.Quartier ?? string.Empty;
+                        SelectedCommune = info.Commune ?? string.Empty;
+                        SelectedVille = info.Ville ?? string.Empty;
+                        SelectedProvince = info.Province ?? string.Empty;
+                        
+                        btnOK.Enabled = true;
+                        break;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erreur lors de la sélection de la nouvelle avenue: {ex.Message}");
             }
         }
 

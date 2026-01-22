@@ -124,13 +124,13 @@ namespace EduKin.Layouts
                     
                     if (!string.IsNullOrEmpty(logoPath) && System.IO.File.Exists(logoPath))
                     {
-                        pictureBox1.Image = Image.FromFile(logoPath);
-                        pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+                        picLogoEcole.Image = Image.FromFile(logoPath);
+                        picLogoEcole.SizeMode = PictureBoxSizeMode.Zoom;
                     }
                     else
                     {
                         // Logo par défaut ou vide
-                        pictureBox1.Image = null;
+                        picLogoEcole.Image = null;
                     }
                 }
             }

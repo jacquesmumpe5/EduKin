@@ -179,17 +179,17 @@ namespace EduKin.Layouts
                     conn.Open();
 
                     // Récupérer les sections affectées à l'école courante
-                    var query = @"SELECT DISTINCT s.cod_sect, s.description 
+                    var query = @"SELECT DISTINCT s.id_section, s.description 
                                   FROM t_sections s
-                                  INNER JOIN t_affect_sect a ON s.cod_sect = a.cod_sect
-                                  WHERE a.id_ecole = @IdEcole
+                                  INNER JOIN t_affect_sect a ON s.id_section = a.fk_section
+                                  WHERE a.fk_ecole = @IdEcole
                                   ORDER BY s.description";
 
                     var sections = conn.Query(query, new { IdEcole = EduKinContext.CurrentIdEcole });
 
                     foreach (var section in sections)
                     {
-                        var item = new { Text = section.description, Value = section.cod_sect };
+                        var item = new { Text = section.description, Value = section.id_section };
                         CmbSection.Items.Add(item);
                     }
 
@@ -234,16 +234,16 @@ namespace EduKin.Layouts
                 {
                     conn.Open();
 
-                    var query = @"SELECT cod_opt, description 
+                    var query = @"SELECT id_option, description 
                                   FROM t_options 
-                                  WHERE cod_sect = @CodeSection
+                                  WHERE fk_section = @CodeSection
                                   ORDER BY description";
 
                     var options = conn.Query(query, new { CodeSection = codeSection });
 
                     foreach (var option in options)
                     {
-                        var item = new { Text = option.description, Value = option.cod_opt };
+                        var item = new { Text = option.description, Value = option.id_option };
                         CmbOption.Items.Add(item);
                     }
 
@@ -287,16 +287,16 @@ namespace EduKin.Layouts
                 {
                     conn.Open();
 
-                    var query = @"SELECT cod_promo, description 
+                    var query = @"SELECT id_promotion, description 
                                   FROM t_promotions 
-                                  WHERE cod_opt = @CodeOption
+                                  WHERE fk_option = @CodeOption
                                   ORDER BY description";
 
                     var promotions = conn.Query(query, new { CodeOption = codeOption });
 
                     foreach (var promotion in promotions)
                     {
-                        var item = new { Text = promotion.description, Value = promotion.cod_promo };
+                        var item = new { Text = promotion.description, Value = promotion.id_promotion };
                         CmbPromotion.Items.Add(item);
                     }
 
@@ -330,13 +330,13 @@ namespace EduKin.Layouts
                 {
                     conn.Open();
 
-                    var query = @"SELECT p.cod_promo, p.description as promo_desc,
-                                         o.cod_opt, o.description as option_desc,
-                                         s.cod_sect, s.description as section_desc
+                    var query = @"SELECT p.id_promotion, p.description as promo_desc,
+                                         o.id_option, o.description as option_desc,
+                                         s.id_section, s.description as section_desc
                                   FROM t_promotions p
-                                  INNER JOIN t_options o ON p.cod_opt = o.cod_opt
-                                  INNER JOIN t_sections s ON o.cod_sect = s.cod_sect
-                                  WHERE p.cod_promo = @CodePromotion";
+                                  INNER JOIN t_options o ON p.fk_option = o.id_option
+                                  INNER JOIN t_sections s ON o.fk_section = s.id_section
+                                  WHERE p.id_promotion = @CodePromotion";
 
                     var result = conn.QueryFirstOrDefault(query, new { CodePromotion = codePromotion });
 
@@ -344,15 +344,15 @@ namespace EduKin.Layouts
                     {
                         // Charger et sélectionner la section
                         LoadSections();
-                        SelectComboBoxItem(CmbSection, result.cod_sect);
+                        SelectComboBoxItem(CmbSection, result.id_section);
 
                         // Charger et sélectionner l'option
-                        LoadOptions(result.cod_sect);
-                        SelectComboBoxItem(CmbOption, result.cod_opt);
+                        LoadOptions(result.id_section);
+                        SelectComboBoxItem(CmbOption, result.id_option);
 
                         // Charger et sélectionner la promotion
-                        LoadPromotions(result.cod_opt);
-                        SelectComboBoxItem(CmbPromotion, result.cod_promo);
+                        LoadPromotions(result.id_option);
+                        SelectComboBoxItem(CmbPromotion, result.id_promotion);
                     }
                 }
             }

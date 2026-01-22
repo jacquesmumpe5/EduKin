@@ -99,21 +99,27 @@ namespace EduKin.Csharp.Admins
 
         #region CRUD Grille
 
-        public bool CreateGrille(string codPromo, string idCours, int ponderation, string anneeScol)
+        public bool CreateGrille(string matricule, string periode, string anneeScol, string idCours, string intitule, decimal cotes, decimal maxima, string statut, string fkPromo, string indice)
         {
             try
             {
                 using (var conn = _connexion.GetConnection())
                 {
-                    var query = @"INSERT INTO t_grille (cod_promo, id_cours, ponderation, annee_scol) 
-                                  VALUES (@CodPromo, @IdCours, @Ponderation, @AnneeScol)";
+                    var query = @"INSERT INTO t_grilles (fk_matricule_eleve, periode, annee_scol, fk_cours, intitule, cotes, maxima, statut, fk_promo, indice) 
+                                  VALUES (@Matricule, @Periode, @AnneeScol, @IdCours, @Intitule, @Cotes, @Maxima, @Statut, @FkPromo, @Indice)";
                     
                     conn.Execute(query, new 
                     { 
-                        CodPromo = codPromo,
+                        Matricule = matricule,
+                        Periode = periode,
+                        AnneeScol = anneeScol,
                         IdCours = idCours,
-                        Ponderation = ponderation,
-                        AnneeScol = anneeScol
+                        Intitule = intitule,
+                        Cotes = cotes,
+                        Maxima = maxima,
+                        Statut = statut,
+                        FkPromo = fkPromo,
+                        Indice = indice
                     });
                     return true;
                 }
@@ -129,9 +135,9 @@ namespace EduKin.Csharp.Admins
             using (var conn = _connexion.GetConnection())
             {
                 var query = @"SELECT g.*, c.intitule as cours_intitule 
-                              FROM t_grille g 
-                              INNER JOIN t_cours c ON g.id_cours = c.id_cours 
-                              WHERE g.cod_promo = @CodPromo AND g.annee_scol = @AnneeScol 
+                              FROM t_grilles g 
+                              INNER JOIN t_cours c ON g.fk_cours = c.id_cours 
+                              WHERE g.fk_promo = @CodPromo AND g.annee_scol = @AnneeScol 
                               ORDER BY c.intitule";
                 return conn.Query(query, new { CodPromo = codPromo, AnneeScol = anneeScol });
             }
@@ -141,21 +147,21 @@ namespace EduKin.Csharp.Admins
         {
             using (var conn = _connexion.GetConnection())
             {
-                var query = @"SELECT COALESCE(SUM(ponderation), 0) 
-                              FROM t_grille 
-                              WHERE cod_promo = @CodPromo AND annee_scol = @AnneeScol";
+                var query = @"SELECT COALESCE(SUM(maxima), 0) 
+                              FROM t_grilles 
+                              WHERE fk_promo = @CodPromo AND annee_scol = @AnneeScol";
                 return conn.ExecuteScalar<int>(query, new { CodPromo = codPromo, AnneeScol = anneeScol });
             }
         }
 
-        public bool UpdateGrille(int num, int ponderation)
+        public bool UpdateGrille(int num, decimal cotes, decimal maxima)
         {
             try
             {
                 using (var conn = _connexion.GetConnection())
                 {
-                    var query = "UPDATE t_grille SET ponderation = @Ponderation WHERE num = @Num";
-                    conn.Execute(query, new { Num = num, Ponderation = ponderation });
+                    var query = "UPDATE t_grilles SET cotes = @Cotes, maxima = @Maxima WHERE num = @Num";
+                    conn.Execute(query, new { Num = num, Cotes = cotes, Maxima = maxima });
                     return true;
                 }
             }
@@ -171,7 +177,7 @@ namespace EduKin.Csharp.Admins
             {
                 using (var conn = _connexion.GetConnection())
                 {
-                    var query = "DELETE FROM t_grille WHERE num = @Num";
+                    var query = "DELETE FROM t_grilles WHERE num = @Num";
                     conn.Execute(query, new { Num = num });
                     return true;
                 }
@@ -209,8 +215,8 @@ namespace EduKin.Csharp.Admins
             {
                 var query = @"SELECT c.* FROM t_cours c 
                               WHERE c.id_cours NOT IN (
-                                  SELECT id_cours FROM t_grille 
-                                  WHERE cod_promo = @CodPromo AND annee_scol = @AnneeScol
+                                  SELECT fk_cours FROM t_grilles 
+                                  WHERE fk_promo = @CodPromo AND annee_scol = @AnneeScol
                               )
                               ORDER BY c.intitule";
                 return conn.Query(query, new { CodPromo = codPromo, AnneeScol = anneeScol });
@@ -223,14 +229,14 @@ namespace EduKin.Csharp.Admins
             {
                 using (var conn = _connexion.GetConnection())
                 {
-                    var query = @"INSERT INTO t_grille (cod_promo, id_cours, ponderation, annee_scol)
-                                  SELECT cod_promo, id_cours, ponderation, @NewAnneeScol
-                                  FROM t_grille
-                                  WHERE cod_promo = @CodPromo AND annee_scol = @OldAnneeScol";
+                    var query = @"INSERT INTO t_grilles (fk_promo, fk_cours, ponderation, annee_scol, created_at, updated_at)
+                                  SELECT fk_promo, fk_cours, ponderation, @NewAnneeScol, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+                                  FROM t_grilles
+                                  WHERE fk_promo = @FkPromo AND annee_scol = @OldAnneeScol";
                     
                     conn.Execute(query, new 
                     { 
-                        CodPromo = codPromo,
+                        FkPromo = codPromo,
                         OldAnneeScol = oldAnneeScol,
                         NewAnneeScol = newAnneeScol
                     });

@@ -92,7 +92,7 @@ namespace EduKin.Csharp.Admins
         /// ID de l'école d'affectation
         /// </summary>
         [Required(ErrorMessage = "L'école d'affectation est obligatoire")]
-        public string IdEcole { get; set; } = string.Empty;
+        public string FkEcole { get; set; } = string.Empty;
 
         #endregion
 
@@ -109,7 +109,7 @@ namespace EduKin.Csharp.Admins
         /// Numéro de téléphone de l'agent
         /// </summary>
         [StringLength(15, ErrorMessage = "Le téléphone ne peut pas dépasser 15 caractères")]
-        public string? Telephone { get; set; }
+        public string? Tel { get; set; }
 
         /// <summary>
         /// Ecole de provenance
@@ -137,7 +137,7 @@ namespace EduKin.Csharp.Admins
         /// Salaire de base de l'agent
         /// </summary>
         [Range(0, double.MaxValue, ErrorMessage = "Le salaire de base doit être positif")]
-        public decimal? SalaireBase { get; set; }
+        public decimal? SalBase { get; set; }
 
         /// <summary>
         /// Prime de l'agent
@@ -161,7 +161,7 @@ namespace EduKin.Csharp.Admins
         /// Salaire net de l'agent
         /// </summary>
         [Range(0, double.MaxValue, ErrorMessage = "Le salaire net doit être positif")]
-        public decimal? SalaireNet { get; set; }
+        public decimal? SalNet { get; set; }
 
         #endregion
 
@@ -232,7 +232,7 @@ namespace EduKin.Csharp.Admins
         /// <summary>
         /// Statut salarial (Payé/Non payé)
         /// </summary>
-        public string StatutSalarial => SalaireNet.HasValue && SalaireNet > 0 ? "Payé" : "Non payé";
+        public string StatutSalarial => SalNet.HasValue && SalNet > 0 ? "Payé" : "Non payé";
 
         #endregion
 
@@ -271,9 +271,9 @@ namespace EduKin.Csharp.Admins
         public bool ValidateSalaryInfo()
         {
             // Si un salaire de base est défini, le salaire net doit être calculé
-            if (SalaireBase.HasValue && SalaireBase > 0)
+            if (SalBase.HasValue && SalBase > 0)
             {
-                if (!SalaireNet.HasValue)
+                if (!SalNet.HasValue)
                 {
                     return false; // Salaire net manquant
                 }
@@ -282,10 +282,10 @@ namespace EduKin.Csharp.Admins
                 var prime = Prime ?? 0;
                 var cnss = Cnss ?? 0;
                 var ipr = Ipr ?? 0;
-                var expectedNet = SalaireBase + prime - cnss - ipr;
+                var expectedNet = SalBase + prime - cnss - ipr;
 
                 // Tolérance de 1 unité pour les arrondis
-                if (Math.Abs((SalaireNet ?? 0) - expectedNet.Value) > 1)
+                if (Math.Abs((SalNet ?? 0) - expectedNet.Value) > 1)
                 {
                     return false;
                 }
@@ -313,19 +313,19 @@ namespace EduKin.Csharp.Admins
         /// </summary>
         public void CalculateSalaireNet()
         {
-            if (SalaireBase.HasValue && SalaireBase > 0)
+            if (SalBase.HasValue && SalBase > 0)
             {
                 var prime = Prime ?? 0;
                 var cnss = Cnss ?? 0;
                 var ipr = Ipr ?? 0;
                 
                 // Salaire net = Salaire de base + Prime - CNSS - IPR
-                SalaireNet = SalaireBase + prime - cnss - ipr;
+                SalNet = SalBase + prime - cnss - ipr;
                 
                 // S'assurer que le salaire net n'est pas négatif
-                if (SalaireNet < 0)
+                if (SalNet < 0)
                 {
-                    SalaireNet = 0;
+                    SalNet = 0;
                 }
             }
         }
@@ -371,16 +371,16 @@ namespace EduKin.Csharp.Admins
                 Fonction = Fonction,
                 Grade = Grade,
                 Role = Role,
-                IdEcole = IdEcole,
+                FkEcole = FkEcole,
                 Email = Email,
-                Telephone = Telephone,
+                Tel = Tel,
                 FkAvenue = FkAvenue,
                 Numero = Numero,
-                SalaireBase = SalaireBase,
+                SalBase = SalBase,
                 Prime = Prime,
                 Cnss = Cnss,
                 Ipr = Ipr,
-                SalaireNet = SalaireNet,
+                SalNet = SalNet,
                 CheminPhoto = CheminPhoto,
                 DateCreation = DateCreation,
                 DateModification = DateTime.Now
@@ -406,9 +406,9 @@ namespace EduKin.Csharp.Admins
                    !string.IsNullOrEmpty(Fonction) ||
                    !string.IsNullOrEmpty(Grade) ||
                    !string.IsNullOrEmpty(Role) ||
-                   !string.IsNullOrEmpty(IdEcole) ||
+                   !string.IsNullOrEmpty(FkEcole) ||
                    !string.IsNullOrEmpty(Email) ||
-                   !string.IsNullOrEmpty(Telephone) ||
+                   !string.IsNullOrEmpty(Tel) ||
                    !string.IsNullOrEmpty(FkAvenue) ||
                    !string.IsNullOrEmpty(Numero) ||
                    !string.IsNullOrEmpty(EcoleProvenance) },
@@ -423,16 +423,16 @@ namespace EduKin.Csharp.Admins
                 { "fonction", Fonction },
                 { "grade", Grade },
                 { "role", Role },
-                { "id_ecole", IdEcole },
+                { "fk_ecole", FkEcole },
                 { "email", Email },
-                { "tel", Telephone },
-                { "FkAvenue", FkAvenue },
-                { "Numero", Numero },
-                { "sal_base", SalaireBase },
+                { "tel", Tel },
+                { "fk_avenue", FkAvenue },
+                { "numero", Numero },
+                { "sal_base", SalBase },
                 { "prime", Prime },
                 { "cnss", Cnss },
                 { "ipr", Ipr },
-                { "sal_net", SalaireNet },
+                { "sal_net", SalNet },
                 { "profil", CheminPhoto },
                 { "created_at", DateCreation },
                 { "updated_at", DateModification }

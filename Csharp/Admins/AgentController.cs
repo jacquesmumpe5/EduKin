@@ -114,7 +114,7 @@ namespace EduKin.Csharp.Admins
                 _currentAgent.Matricule = matricule;
 
                 // Définir l'école courante
-                _currentAgent.IdEcole = EduKinContext.CurrentIdEcole;
+                _currentAgent.FkEcole = EduKinContext.CurrentIdEcole;
 
                 // Définir le mode création
                 SetOperationMode(OperationMode.Create);
@@ -141,7 +141,7 @@ namespace EduKin.Csharp.Admins
         /// <param name="matricule">Matricule de l'agent à charger</param>
         /// <exception cref="ArgumentException">Si le matricule est vide ou null</exception>
         /// <exception cref="InvalidOperationException">Si l'agent n'est pas trouvé</exception>
-        public void LoadAgentFromGrid(string matricule)
+        public async Task LoadAgentFromGrid(string matricule)
         {
             if (string.IsNullOrWhiteSpace(matricule))
             {
@@ -166,7 +166,7 @@ namespace EduKin.Csharp.Admins
                 SetOperationMode(OperationMode.Edit);
 
                 // Charger les données dans l'interface
-                LoadDataToInterface(_currentAgent);
+                await LoadDataToInterface(_currentAgent);
             }
             catch (Exception ex)
             {
@@ -421,16 +421,16 @@ namespace EduKin.Csharp.Admins
             viewModel.Sexe = data.sexe ?? string.Empty;
             viewModel.DateNaissance = data.date_naiss ?? DateTime.Now.AddYears(-25);
             viewModel.LieuNaissance = data.lieu_naiss ?? string.Empty;
-            viewModel.IdEcole = data.id_ecole ?? string.Empty;
+            viewModel.FkEcole = data.fk_ecole ?? string.Empty;
             viewModel.Email = data.email;
-            viewModel.Telephone = data.tel;
-            viewModel.FkAvenue = data.FkAvenue;
-            viewModel.Numero = data.Numero;
-            viewModel.SalaireBase = data.sal_base ?? 0;
+            viewModel.Tel = data.tel;
+            viewModel.FkAvenue = data.fk_avenue;
+            viewModel.Numero = data.numero;
+            viewModel.SalBase = data.sal_base ?? 0;
             viewModel.Prime = data.prime ?? 0;
             viewModel.Cnss = data.cnss ?? 0;
             viewModel.Ipr = data.ipr ?? 0;
-            viewModel.SalaireNet = data.sal_net ?? 0;
+            viewModel.SalNet = data.sal_net ?? 0;
             viewModel.CheminPhoto = data.profil;
             viewModel.DateCreation = data.created_at ?? DateTime.Now;
             viewModel.DateModification = data.updated_at ?? DateTime.Now;
@@ -440,7 +440,7 @@ namespace EduKin.Csharp.Admins
         /// Charge les données du modèle vers l'interface
         /// </summary>
         /// <param name="viewModel">Modèle de vue contenant les données</param>
-        private void LoadDataToInterface(AgentViewModel viewModel)
+        private async Task LoadDataToInterface(AgentViewModel viewModel)
         {
             // Champs de base de l'agent
             if (_formMain.MatriculeAgentControl != null)
@@ -470,7 +470,7 @@ namespace EduKin.Csharp.Admins
                 _formMain.EmailAgentControl.Text = viewModel.Email ?? string.Empty;
             
             if (_formMain.TelAgentControl != null)
-                _formMain.TelAgentControl.Text = viewModel.Telephone ?? string.Empty;
+                _formMain.TelAgentControl.Text = viewModel.Tel ?? string.Empty;
             
             if (_formMain.AdresseAgentControl != null)
                 _formMain.AdresseAgentControl.Text = $"{viewModel.FkAvenue} - {viewModel.Numero}";
@@ -482,8 +482,15 @@ namespace EduKin.Csharp.Admins
             {
                 try
                 {
-                    if (System.IO.File.Exists(viewModel.CheminPhoto))
+                    if (viewModel.CheminPhoto.StartsWith("http"))
                     {
+                        // Photo depuis URL (ancien système) - plus supporté
+                        // Pour l'instant, afficher une image par défaut
+                        _formMain.PicBoxAgentControl.Image = null;
+                    }
+                    else if (System.IO.File.Exists(viewModel.CheminPhoto))
+                    {
+                        // Photo locale (compatibilité descendante)
                         _formMain.PicBoxAgentControl.Image = System.Drawing.Image.FromFile(viewModel.CheminPhoto);
                     }
                 }

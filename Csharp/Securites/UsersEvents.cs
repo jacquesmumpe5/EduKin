@@ -1,5 +1,6 @@
 using Dapper;
 using EduKin.DataSets;
+using EduKin.Inits;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -121,10 +122,21 @@ namespace EduKin.Csharp.Securites
         #region CRUD Utilisateurs
 
         public bool CreateUser(string nom, string postNom, string prenom, string sexe, string username, string password, 
-                              string telephone = null, string idEcole = null, string roleId = null, string profil = null)
+                              string telephone = null, string idEcole = null, string roleId = null, string profil = null, string userIndex = null)
         {
             try
             {
+                // ✅ Utiliser le userIndex depuis le contexte si non fourni
+                if (string.IsNullOrEmpty(userIndex))
+                {
+                    userIndex = EduKinContext.CurrentUserIndex;
+                }
+                
+                if (string.IsNullOrEmpty(userIndex))
+                {
+                    throw new ArgumentException("Le userIndex est requis pour créer un utilisateur.");
+                }
+                
                 using (var conn = _connexion.GetConnection())
                 {
                     // Vérifier si l'utilisateur existe déjà
@@ -146,8 +158,9 @@ namespace EduKin.Csharp.Securites
                     }
 
                     // Générer un ID utilisateur unique
-                    var generateIdQuery = "CALL sp_generate_id('t_users_infos', 'id_user', 'USR', '001', @new_id)";
+                    var generateIdQuery = "CALL sp_generate_id('t_users_infos', 'id_user', 'USR', @user_index, @new_id)";
                     var parameters = new DynamicParameters();
+                    parameters.Add("@user_index", userIndex);
                     parameters.Add("@new_id", dbType: System.Data.DbType.String, direction: System.Data.ParameterDirection.Output, size: 128);
                     conn.Execute(generateIdQuery, parameters);
                     var newUserId = parameters.Get<string>("@new_id");

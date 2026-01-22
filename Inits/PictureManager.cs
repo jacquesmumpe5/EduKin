@@ -267,7 +267,8 @@ namespace EduKin.Inits
         /// <summary>
         /// Définit une image par défaut (placeholder)
         /// </summary>
-        private void SetDefaultImage(PictureBox pictureBox)
+        /// <param name="pictureBox">PictureBox où définir l'image par défaut</param>
+        public void SetDefaultImage(PictureBox pictureBox)
         {
             // Créer une image par défaut simple
             var defaultImage = new Bitmap(200, 200);

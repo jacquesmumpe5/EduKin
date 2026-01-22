@@ -2,6 +2,7 @@ using Dapper;
 using EduKin.DataSets;
 using EduKin.Inits;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace EduKin.Csharp.Admins
 {
@@ -12,10 +13,12 @@ namespace EduKin.Csharp.Admins
     public class Agents : BaseService
     {
         private readonly Administrations _admin;
+        private readonly PictureManager _pictureManager;
 
         public Agents() : base()
         {
             _admin = new Administrations();
+            _pictureManager = new PictureManager();
         }
 
         #region CRUD Agents
@@ -34,6 +37,13 @@ namespace EduKin.Csharp.Admins
                 // Générer le matricule avec sp_generate_id
                 string matricule = _admin.GenerateId("t_agents", "matricule", "AGT", userIndex);
 
+                // Gérer la photo : si c'est un chemin local, la copier vers l'emplacement sécurisé
+                string? photoPath = profil;
+                if (!string.IsNullOrEmpty(profil) && !profil.StartsWith("http"))
+                {
+                    photoPath = CopyPhotoToSecureLocation(profil, matricule);
+                }
+
                 var agentData = new
                 {
                     matricule = matricule,
@@ -45,9 +55,9 @@ namespace EduKin.Csharp.Admins
                     date_naiss = dateNaiss,
                     email = email,
                     tel = tel,
-                    FkAvenue = fkAvenue,
-                    Numero = numero,
-                    profil = profil,
+                    fk_avenue = fkAvenue,
+                    numero = numero,
+                    profil = photoPath,
                     sal_base = salBase,
                     prime = prime,
                     cnss = cnss,
@@ -152,9 +162,9 @@ namespace EduKin.Csharp.Admins
                     date_naiss = dateNaiss,
                     email = email,
                     tel = tel,
-                    FkAvenue = fkAvenue,
-                    Numero = numero,
-                    profil = profil,
+                    fk_avenue = fkAvenue,
+                    numero = numero,
+                    profil = HandlePhotoUpdate(profil, matricule),
                     sal_base = salBase,
                     prime = prime,
                     cnss = cnss,
@@ -434,6 +444,174 @@ namespace EduKin.Csharp.Admins
                 var result = DeleteWithIsolation("t_affect_cours", "num = @Num", new { Num = num });
                 return result > 0;
             }, "DeleteAffectCours");
+        }
+
+        #endregion
+
+        #region Gestion des Photos
+
+        /// <summary>
+        /// Copie une photo vers l'emplacement sécurisé
+        /// </summary>
+        /// <param name="localPath">Chemin local de l'image</param>
+        /// <param name="matricule">Matricule de l'agent pour le nommage</param>
+        /// <returns>Chemin sécurisé de l'image ou null</returns>
+        private string? CopyPhotoToSecureLocation(string localPath, string matricule)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(localPath) || !File.Exists(localPath))
+                {
+                    return null;
+                }
+
+                // Copier vers l'emplacement sécurisé avec le PictureManager
+                var securePath = _pictureManager.CopyToSecureLocation(localPath, matricule);
+                
+                if (!string.IsNullOrEmpty(securePath))
+                {
+                    System.Diagnostics.Debug.WriteLine($"[AGENTS] Photo copiée pour {matricule}: {securePath}");
+                    
+                    // Supprimer le fichier original après la copie réussie
+                    try
+                    {
+                        File.Delete(localPath);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[AGENTS] Impossible de supprimer le fichier local {localPath}: {ex.Message}");
+                    }
+                }
+                
+                return securePath;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[AGENTS] Erreur copie photo pour {matricule}: {ex.Message}");
+                return localPath; // Fallback vers le chemin local en cas d'erreur
+            }
+        }
+
+        /// <summary>
+        /// Gère la mise à jour de photo lors d'une modification
+        /// </summary>
+        /// <param name="newProfil">Nouveau chemin/URL de photo</param>
+        /// <param name="matricule">Matricule de l'agent</param>
+        /// <returns>Chemin final de la photo</returns>
+        private string? HandlePhotoUpdate(string? newProfil, string matricule)
+        {
+            try
+            {
+                // Récupérer le chemin actuel de la photo
+                var currentAgent = GetAgent(matricule);
+                var currentPhotoPath = currentAgent?.profil;
+
+                // Si la photo n'a pas changé, retourner le chemin actuel
+                if (string.IsNullOrEmpty(newProfil) || newProfil == currentPhotoPath)
+                {
+                    return currentPhotoPath;
+                }
+
+                // Si nouvelle photo est un chemin local, la copier vers l'emplacement sécurisé
+                if (!string.IsNullOrEmpty(newProfil) && !newProfil.StartsWith("http"))
+                {
+                    var newPhotoPath = CopyPhotoToSecureLocation(newProfil, matricule);
+                    
+                    // Supprimer l'ancienne photo si elle existe et est différente
+                    if (!string.IsNullOrEmpty(currentPhotoPath) && currentPhotoPath != newPhotoPath && File.Exists(currentPhotoPath))
+                    {
+                        _pictureManager.DeletePicture(currentPhotoPath);
+                    }
+                    
+                    return newPhotoPath;
+                }
+
+                // Si nouvelle photo est une URL (ancien système), la retourner directement
+                // mais avec un avertissement
+                if (!string.IsNullOrEmpty(newProfil) && newProfil.StartsWith("http"))
+                {
+                    System.Diagnostics.Debug.WriteLine($"[AGENTS] Photo URL détectée pour {matricule}: {newProfil}");
+                    return newProfil;
+                }
+
+                return newProfil;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[AGENTS] Erreur mise à jour photo pour {matricule}: {ex.Message}");
+                return newProfil; // Fallback
+            }
+        }
+
+        /// <summary>
+        /// Charge une photo depuis un chemin local
+        /// </summary>
+        /// <param name="photoPath">Chemin de la photo</param>
+        /// <returns>Image chargée ou null</returns>
+        public System.Drawing.Image? LoadPhoto(string photoPath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(photoPath))
+                {
+                    return null;
+                }
+
+                // Si c'est une URL (ancien système), ne pas charger
+                if (photoPath.StartsWith("http"))
+                {
+                    System.Diagnostics.Debug.WriteLine($"[AGENTS] Tentative de chargement d'URL photo ignorée: {photoPath}");
+                    return null;
+                }
+
+                // Charger depuis le chemin local
+                if (File.Exists(photoPath))
+                {
+                    return Image.FromFile(photoPath);
+                }
+                
+                return null;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[AGENTS] Erreur chargement photo {photoPath}: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Supprime une photo du disque
+        /// </summary>
+        /// <param name="photoPath">Chemin de la photo à supprimer</param>
+        /// <returns>True si succès</returns>
+        public bool DeletePhoto(string photoPath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(photoPath))
+                {
+                    return false;
+                }
+
+                // Si c'est une URL (ancien système), ne pas supprimer
+                if (photoPath.StartsWith("http"))
+                {
+                    System.Diagnostics.Debug.WriteLine($"[AGENTS] Tentative de suppression d'URL photo ignorée: {photoPath}");
+                    return false;
+                }
+
+                var result = _pictureManager.DeletePicture(photoPath);
+                if (result)
+                {
+                    System.Diagnostics.Debug.WriteLine($"[AGENTS] Photo supprimée: {photoPath}");
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"[AGENTS] Erreur suppression photo {photoPath}: {ex.Message}");
+                return false;
+            }
         }
 
         #endregion
